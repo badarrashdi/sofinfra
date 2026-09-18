@@ -77,12 +77,12 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
         isScrolled
           ? 'bg-white/95 backdrop-blur-md shadow-md py-2.5 sm:py-3 border-b border-slate-200/80'
-          : 'bg-white/75 backdrop-blur-xl shadow-xs py-3 sm:py-4 border-b border-white/40'
+          : 'bg-white/35 backdrop-blur-md shadow-xs py-3 sm:py-4 border-b border-white/25'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          {/* Logo only - Strictly no box, crisp natural aspect ratio on white glassy backdrop */}
+          {/* Logo only - Clean natural aspect ratio on transparent glassy backdrop */}
           <a
             href="#hero"
             onClick={(e) => {
@@ -96,7 +96,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
               className={`relative transition-all duration-300 ease-in-out aspect-[1024/682] ${
                 isScrolled
                   ? 'h-10 sm:h-11'
-                  : 'h-12 sm:h-14 md:h-16'
+                  : 'h-13 sm:h-15 md:h-17'
               }`}
             >
               <Image
@@ -104,8 +104,10 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
                 alt="SOFINFRA - Building a Brighter Tomorrow"
                 fill
                 priority
-                className="object-contain object-left transition-all duration-300"
-                sizes="(max-width: 640px) 180px, 260px"
+                className={`object-contain object-left transition-all duration-300 ${
+                  !isScrolled ? 'drop-shadow-[0_1px_3px_rgba(255,255,255,0.7)]' : ''
+                }`}
+                sizes="(max-width: 640px) 190px, 280px"
               />
             </div>
           </a>
@@ -124,7 +126,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
                       ? 'text-[#c59b27] font-bold'
                       : isScrolled
                       ? 'text-slate-700 hover:text-[#0b2240] hover:bg-slate-100/80'
-                      : 'text-slate-800 hover:text-[#0b2240] hover:bg-white/60'
+                      : 'text-slate-900 hover:text-[#c59b27] hover:bg-white/30 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] font-semibold'
                   }`}
                 >
                   {item.name}
@@ -140,7 +142,11 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
           <div className="hidden sm:flex items-center space-x-3.5">
             <a
               href="tel:+918178393751"
-              className="hidden lg:flex items-center space-x-2 text-xs font-semibold tracking-wider px-3 py-2 text-slate-700 hover:text-[#0b2240] transition-colors"
+              className={`hidden lg:flex items-center space-x-2 text-xs font-semibold tracking-wider px-3 py-2 transition-colors ${
+                isScrolled
+                  ? 'text-slate-700 hover:text-[#0b2240]'
+                  : 'text-slate-900 hover:text-[#c59b27] drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] font-semibold'
+              }`}
             >
               <PhoneCall className="w-3.5 h-3.5 text-[#c59b27]" />
               <span>+91 81783 93751</span>
@@ -180,7 +186,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg transition-colors cursor-pointer text-slate-800 hover:bg-slate-100"
+              className="p-2 rounded-lg transition-colors cursor-pointer text-slate-800 hover:bg-white/40"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
