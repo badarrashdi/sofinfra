@@ -7,10 +7,10 @@ import { DELHI_NCR_SOCIETIES, Society } from '@/data/societies';
 
 interface SocietiesSectionProps {
   onSelectSociety?: (society: Society) => void;
-  onSubmitPropertyClick: () => void;
+  onSubmitPropertyClick?: () => void;
 }
 
-export default function SocietiesSection({ onSubmitPropertyClick }: SocietiesSectionProps) {
+export default function SocietiesSection({ onSelectSociety }: SocietiesSectionProps) {
   const [selectedCity, setSelectedCity] = useState<'All' | 'Gurugram' | 'Noida' | 'New Delhi'>('All');
 
   const filteredSocieties = DELHI_NCR_SOCIETIES.filter((soc) => {
@@ -43,7 +43,7 @@ export default function SocietiesSection({ onSubmitPropertyClick }: SocietiesSec
                 key={city}
                 type="button"
                 onClick={() => setSelectedCity(city)}
-                className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${
+                className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all whitespace-nowrap cursor-pointer ${
                   selectedCity === city
                     ? 'bg-[#0b2240] text-white shadow-xs'
                     : 'text-slate-600 hover:text-[#0b2240]'
@@ -60,7 +60,8 @@ export default function SocietiesSection({ onSubmitPropertyClick }: SocietiesSec
           {filteredSocieties.map((society) => (
             <div
               key={society.id}
-              className="group bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-xs hover:shadow-xl hover:border-[#c59b27]/40 transition-all duration-300 flex flex-col justify-between"
+              onClick={() => onSelectSociety?.(society)}
+              className="group bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-xs hover:shadow-xl hover:border-[#c59b27]/40 transition-all duration-300 flex flex-col justify-between cursor-pointer"
             >
               {/* Image & Badges */}
               <div className="relative h-60 w-full overflow-hidden bg-slate-100">
@@ -143,10 +144,13 @@ export default function SocietiesSection({ onSubmitPropertyClick }: SocietiesSec
 
                   <button
                     type="button"
-                    onClick={onSubmitPropertyClick}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider text-[#0b2240] bg-slate-50 group-hover:bg-[#0b2240] group-hover:text-white transition-all duration-200"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectSociety?.(society);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider text-[#0b2240] bg-slate-100 hover:bg-[#0b2240] hover:text-white transition-all duration-200 cursor-pointer shadow-2xs"
                   >
-                    <span>List / Inquire</span>
+                    <span>View Details</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>

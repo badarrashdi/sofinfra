@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { Property } from '@/types/property';
+import { Society } from '@/data/societies';
 import Navbar from '@/components/common/Navbar';
 import CinematicHero from '@/components/hero/CinematicHero';
 import PropertyListings from '@/components/properties/PropertyListings';
 import SocietiesSection from '@/components/sections/SocietiesSection';
+import SocietyDetailModal from '@/components/societies/SocietyDetailModal';
 import AboutSection from '@/components/sections/AboutSection';
 import ServicesSection from '@/components/sections/ServicesSection';
 import TestimonialsSection from '@/components/sections/TestimonialsSection';
@@ -22,10 +24,15 @@ interface HomeClientProps {
 export default function HomeClient({ initialProperties }: HomeClientProps) {
   const [properties] = useState<Property[]>(initialProperties);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [selectedSociety, setSelectedSociety] = useState<Society | null>(null);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState<boolean>(false);
 
   const handleSelectProperty = (property: Property) => {
     setSelectedProperty(property);
+  };
+
+  const handleSelectSociety = (society: Society) => {
+    setSelectedSociety(society);
   };
 
   return (
@@ -43,7 +50,10 @@ export default function HomeClient({ initialProperties }: HomeClientProps) {
       />
 
       {/* 3. Top Societies & Townships Section (#societies) */}
-      <SocietiesSection onSubmitPropertyClick={() => setIsSubmitModalOpen(true)} />
+      <SocietiesSection
+        onSelectSociety={handleSelectSociety}
+        onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
+      />
 
       {/* 4. About SOFINFRA Standard */}
       <AboutSection />
@@ -67,6 +77,12 @@ export default function HomeClient({ initialProperties }: HomeClientProps) {
       <PropertyDetailModal
         property={selectedProperty}
         onClose={() => setSelectedProperty(null)}
+      />
+
+      {/* Society Detail Popup Modal */}
+      <SocietyDetailModal
+        society={selectedSociety}
+        onClose={() => setSelectedSociety(null)}
       />
 
       {/* Submit Property Modal (Multi-Step Form to WordPress Pending Status) */}

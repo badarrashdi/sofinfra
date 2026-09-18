@@ -76,14 +76,14 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm py-2.5 sm:py-3 border-b border-slate-100'
-          : 'bg-transparent border-b border-transparent shadow-none py-4 sm:py-6'
+          ? 'bg-white/95 backdrop-blur-md shadow-md py-2 sm:py-2.5 border-b border-slate-200/80'
+          : 'bg-white/80 backdrop-blur-md shadow-xs py-3 sm:py-4 border-b border-white/40'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo only - Strictly no text beside it */}
-          {/* NO BG ON LOGO: Large by default, reduced size on scroll when header has bg */}
+          {/* Frosted glassy header ensures logo is 100% visible against drone video playback */}
           <a
             href="#hero"
             onClick={(e) => {
@@ -97,7 +97,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
               className={`relative transition-all duration-300 ease-in-out ${
                 isScrolled
                   ? 'h-10 w-36 sm:h-11 sm:w-44'
-                  : 'h-16 w-56 sm:h-20 sm:w-72 md:w-80'
+                  : 'h-13 w-48 sm:h-15 sm:w-56 md:w-64'
               }`}
             >
               <Image
@@ -105,9 +105,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
                 alt="SOFINFRA - Building a Brighter Tomorrow"
                 fill
                 priority
-                className={`object-contain object-left transition-all duration-300 ${
-                  !isScrolled ? 'drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]' : ''
-                }`}
+                className="object-contain object-left transition-all duration-300"
                 sizes="(max-width: 640px) 220px, 320px"
               />
             </div>
@@ -122,14 +120,12 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
                   key={item.name}
                   type="button"
                   onClick={(e) => handleNavClick(e, item)}
-                  className={`px-3.5 py-2 text-sm tracking-wide transition-all duration-200 rounded-md relative cursor-pointer ${
-                    isScrolled
-                      ? isActive
-                        ? 'text-[#c59b27] font-semibold'
-                        : 'text-slate-700 hover:text-[#0b2240] hover:bg-slate-50/80 font-medium'
-                      : isActive
-                      ? 'text-[#c59b27] font-bold drop-shadow-md'
-                      : 'text-white hover:text-[#c59b27] hover:bg-white/10 font-semibold drop-shadow-md'
+                  className={`px-3.5 py-2 text-sm tracking-wide transition-all duration-200 rounded-md relative cursor-pointer font-medium ${
+                    isActive
+                      ? 'text-[#c59b27] font-bold'
+                      : isScrolled
+                      ? 'text-slate-700 hover:text-[#0b2240] hover:bg-slate-100/80'
+                      : 'text-slate-800 hover:text-[#0b2240] hover:bg-white/60'
                   }`}
                 >
                   {item.name}
@@ -145,11 +141,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
           <div className="hidden sm:flex items-center space-x-3.5">
             <a
               href="tel:+918178393751"
-              className={`hidden lg:flex items-center space-x-2 text-xs font-semibold tracking-wider px-3 py-2 transition-colors ${
-                isScrolled
-                  ? 'text-slate-600 hover:text-[#0b2240]'
-                  : 'text-white hover:text-white drop-shadow-md font-medium'
-              }`}
+              className="hidden lg:flex items-center space-x-2 text-xs font-semibold tracking-wider px-3 py-2 text-slate-700 hover:text-[#0b2240] transition-colors"
             >
               <PhoneCall className="w-3.5 h-3.5 text-[#c59b27]" />
               <span>+91 81783 93751</span>
@@ -162,7 +154,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
               className={`group relative inline-flex items-center gap-2 px-5 py-2.5 text-xs uppercase tracking-widest font-semibold rounded-lg shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer ${
                 isScrolled
                   ? 'text-white bg-[#0b2240] hover:bg-[#122f55]'
-                  : 'text-[#07162c] bg-[#c59b27] hover:bg-[#d4af37] shadow-lg shadow-[#c59b27]/30'
+                  : 'text-[#07162c] bg-[#c59b27] hover:bg-[#d4af37] shadow-md shadow-[#c59b27]/20 font-bold'
               }`}
             >
               <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
@@ -189,11 +181,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`p-2 rounded-lg transition-colors cursor-pointer ${
-                isScrolled
-                  ? 'text-slate-700 hover:bg-slate-100'
-                  : 'text-white hover:bg-white/15'
-              }`}
+              className="p-2 rounded-lg transition-colors cursor-pointer text-slate-800 hover:bg-slate-100"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
