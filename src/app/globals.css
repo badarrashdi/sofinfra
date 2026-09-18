@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #091a2f;
+    --brand-navy: #0b2240;
+    --brand-navy-dark: #07162c;
+    --brand-navy-light: #16365c;
+    --brand-gold: #c59b27;
+    --brand-gold-light: #e0bb4f;
+    --brand-gold-dark: #9a7718;
+    --brand-cream: #faf7f2;
+    --brand-slate: #334155;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow-x: hidden;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom utility colors */
+.bg-navy-950 { background-color: #07162c; }
+.bg-navy-900 { background-color: #0b2240; }
+.bg-navy-800 { background-color: #122f55; }
+.text-navy-900 { color: #0b2240; }
+.text-navy-800 { color: #122f55; }
+.border-navy-900 { border-color: #0b2240; }
+
+.bg-gold-500 { background-color: #c59b27; }
+.bg-gold-400 { background-color: #d6af3d; }
+.bg-gold-50 { background-color: #fcf9ee; }
+.text-gold-500 { color: #c59b27; }
+.text-gold-600 { color: #ab841b; }
+.border-gold-500 { border-color: #c59b27; }
+
+.bg-cream { background-color: #faf7f2; }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

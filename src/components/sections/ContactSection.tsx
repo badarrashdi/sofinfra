@@ -1,0 +1,306 @@
+'use client';
+
+import { useState } from 'react';
+import { Mail, Phone, MapPin, MessageSquare, Send, CheckCircle2, Navigation } from 'lucide-react';
+
+export default function ContactSection() {
+  const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: 'Buying Residential in Delhi NCR',
+    message: '',
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  const offices = [
+    {
+      city: 'Headquarters (Gurugram)',
+      address: 'S-306-308, 2nd Floor, Tower A, Palam Corporate Plaza, Palam Vihar, Gurugram(HR)-122017',
+      landmark: 'Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2, Palam Vihar, Gurugram, Haryana 122017',
+      phone: '+91 81783 93751',
+      email: 'gurugram@sofinfra.local',
+      isPrimary: true,
+    },
+    {
+      city: 'Noida Expressway Bureau',
+      address: 'Sector 126, Noida Expressway, Gautam Buddha Nagar, Uttar Pradesh 201301',
+      landmark: 'Near Amity University Metro Corridor',
+      phone: '+91 81783 93751',
+      email: 'noida@sofinfra.local',
+      isPrimary: false,
+    },
+    {
+      city: 'New Delhi Corporate Office',
+      address: 'Statesman House, Barakhamba Road, Connaught Place, New Delhi 110001',
+      landmark: 'Barakhamba Road Central Advisory',
+      phone: '+91 81783 93751',
+      email: 'delhi@sofinfra.local',
+      isPrimary: false,
+    },
+  ];
+
+  return (
+    <section id="contact" className="py-24 sm:py-32 bg-white relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="max-w-3xl mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#faf7f2] border border-[#c59b27]/20 text-[#ab841b] text-xs font-semibold tracking-widest uppercase mb-3">
+            Inquiries &amp; Site Visits
+          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
+            Contact <span className="font-semibold">SOFINFRA Delhi NCR</span>
+          </h2>
+          <p className="mt-4 text-slate-600 text-sm sm:text-base font-light leading-relaxed">
+            Connect with our certified property advisors for private site inspections, society floor plans, valuation estimates, or developer pricing.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+          {/* Left: Offices & Direct WhatsApp */}
+          <div className="lg:col-span-5 space-y-8">
+            <div className="p-6 rounded-2xl bg-[#0b2240] text-white">
+              <div className="flex items-center gap-2 text-[#c59b27] text-xs font-bold uppercase tracking-wider mb-2">
+                <MessageSquare className="w-4 h-4" />
+                <span>Instant NCR Property Concierge</span>
+              </div>
+              <h3 className="text-xl font-light">Direct WhatsApp Advisory</h3>
+              <p className="text-xs text-slate-300 mt-2 font-light leading-relaxed">
+                Chat directly with our senior Gurgaon and Noida property specialists for real-time society inventory and site visit cabs.
+              </p>
+              <a
+                href="https://wa.me/918178393751"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-md"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>Connect on WhatsApp (+91 81783 93751)</span>
+              </a>
+            </div>
+
+            {/* Offices List */}
+            <div className="space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                Delhi NCR Bureau Locations
+              </h4>
+              {offices.map((office) => (
+                <div
+                  key={office.city}
+                  className={`p-5 rounded-xl border transition-colors ${
+                    office.isPrimary
+                      ? 'border-[#c59b27]/40 bg-[#faf7f2]/70 shadow-sm'
+                      : 'border-slate-200/80 bg-slate-50/50 hover:bg-white'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-bold text-[#0b2240]">{office.city}</p>
+                    {office.isPrimary && (
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#c59b27]/20 text-[#ab841b]">
+                        Main HQ
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-600 mt-1.5 flex items-start gap-1.5 leading-relaxed">
+                    <MapPin className="w-3.5 h-3.5 text-[#c59b27] shrink-0 mt-0.5" />
+                    <span>{office.address}</span>
+                  </p>
+                  <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-600">
+                    <a
+                      href={`tel:${office.phone.replace(/\s+/g, '')}`}
+                      className="flex items-center gap-1 hover:text-[#0b2240] transition-colors"
+                    >
+                      <Phone className="w-3 h-3 text-[#c59b27]" />
+                      <span>{office.phone}</span>
+                    </a>
+                    <a
+                      href={`mailto:${office.email}`}
+                      className="flex items-center gap-1 hover:text-[#0b2240] transition-colors"
+                    >
+                      <Mail className="w-3 h-3 text-[#c59b27]" />
+                      <span>{office.email}</span>
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: Contact Form */}
+          <div className="lg:col-span-7 bg-slate-50 p-8 sm:p-10 rounded-2xl border border-slate-200/80">
+            <h3 className="text-xl font-bold text-[#0b2240] mb-2">Request Property Details / Site Visit</h3>
+            <p className="text-xs text-slate-500 mb-6">
+              Our certified RERA advisors will share verified society pricing and brochures.
+            </p>
+
+            {submitted ? (
+              <div className="py-12 text-center space-y-4">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <h4 className="text-lg font-bold text-[#0b2240]">Inquiry Dispatched</h4>
+                <p className="text-xs text-slate-600 max-w-md mx-auto">
+                  Thank you for contacting SOFINFRA. An advisor will reach out via WhatsApp or call within 30 minutes.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setSubmitted(false)}
+                  className="px-5 py-2 text-xs font-semibold rounded-lg bg-[#0b2240] text-white"
+                >
+                  Send Another Inquiry
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Rahul Sharma"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="e.g. rahul@example.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Phone / WhatsApp *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="+91 81783 93751"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Requirement Type
+                    </label>
+                    <select
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
+                    >
+                      <option value="Buying Residential (Gurugram/Noida)">Buying Residential (Gurugram/Noida)</option>
+                      <option value="Renting Luxury Apartment">Renting Luxury Apartment</option>
+                      <option value="Commercial Leasing / Cyber City">Commercial Leasing / Cyber City</option>
+                      <option value="Listing My Property For Sale">Listing My Property For Sale</option>
+                      <option value="NRI Investment Consultation">NRI Investment Consultation</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Your Requirements / Target Society *
+                  </label>
+                  <textarea
+                    required
+                    rows={4}
+                    placeholder="Mention preferred budget, BHK configuration (3/4/5 BHK), target society (e.g. DLF, ATS, M3M, Godrej), or specific sector..."
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3.5 rounded-lg bg-[#0b2240] hover:bg-[#122f55] text-white text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                >
+                  <Send className="w-3.5 h-3.5 text-[#c59b27]" />
+                  <span>Request Callback &amp; Society Dossier</span>
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+
+        {/* Map Location Section */}
+        <div className="mt-16 rounded-2xl overflow-hidden border border-slate-200/80 shadow-lg bg-white">
+          <div className="p-6 sm:p-8 bg-[#0b2240] text-white flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-white/10 text-[#c59b27] text-xs font-semibold tracking-wider uppercase">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>Headquarters &amp; Advisory Center</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-light">
+                Ansal Corporate Plaza <span className="font-medium text-slate-200">· Palam Vihar, Gurugram</span>
+              </h3>
+              <div className="text-xs sm:text-sm text-slate-300 font-light max-w-2xl leading-relaxed space-y-1">
+                <p>
+                  <strong className="text-white font-medium">Official Address:</strong> S-306-308, 2nd Floor, Tower A, Palam Corporate Plaza, Palam Vihar, Gurugram(HR)-122017
+                </p>
+                <p>
+                  <strong className="text-white font-medium">Map Landmark:</strong> Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2, Palam Vihar, Gurugram, Haryana 122017
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <a
+                href="tel:+918178393751"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider transition-colors border border-white/20"
+              >
+                <Phone className="w-4 h-4 text-[#c59b27]" />
+                <span>+91 81783 93751</span>
+              </a>
+              <a
+                href="https://maps.google.com/?q=Ansal+Corporate+Plaza,+block+c,+2,+Carterpuri+Rd,+Block+C+2,+Palam+Vihar,+Gurugram,+Haryana+122017"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#c59b27] hover:bg-[#d4af37] text-[#07162c] text-xs font-bold uppercase tracking-wider transition-colors shadow-md"
+              >
+                <Navigation className="w-4 h-4" />
+                <span>Get Directions</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="relative w-full h-[360px] sm:h-[420px] bg-slate-100">
+            <iframe
+              title="SOFINFRA Headquarters - Ansal Corporate Plaza, Gurugram"
+              src="https://maps.google.com/maps?q=Ansal+Corporate+Plaza,+block+c,+2,+Carterpuri+Rd,+Block+C+2,+Palam+Vihar,+Gurugram,+Haryana+122017&t=&z=16&ie=UTF8&iwloc=&output=embed"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen={false}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="w-full h-full filter saturate-110 contrast-105"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
