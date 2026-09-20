@@ -89,10 +89,10 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className={`flex items-center group transition-all duration-300 rounded-[2px] ${
+            className={`flex items-center group transition-all duration-300 rounded-[2px] border-0 ${
               isScrolled
                 ? 'p-0 bg-transparent shadow-none hover:opacity-95'
-                : 'px-3 sm:px-4 pt-1.5 pb-1 sm:pt-2 sm:pb-1 bg-white/95 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.25)] border border-white/80 hover:shadow-[0_6px_24px_rgba(197,155,39,0.3)] hover:scale-[1.02]'
+                : 'px-3 sm:px-4 pt-1.5 pb-1 sm:pt-2 sm:pb-1 bg-white/95 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_6px_24px_rgba(197,155,39,0.3)] hover:scale-[1.02]'
             }`}
             aria-label="SOFINFRA Home"
           >
