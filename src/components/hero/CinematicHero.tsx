@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from "react";
 import {
   Search,
   PlusCircle,
@@ -9,39 +9,54 @@ import {
   Sliders,
   Sparkles,
   ShieldCheck,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface CinematicHeroProps {
   onSubmitPropertyClick: () => void;
 }
 
-export default function CinematicHero({ onSubmitPropertyClick }: CinematicHeroProps) {
-  const [searchTab, setSearchTab] = useState<'buy' | 'rent' | 'societies'>('buy');
-  const [selectedLocality, setSelectedLocality] = useState('Golf Course Road');
-  const [selectedBudget, setSelectedBudget] = useState('All Budgets');
+export default function CinematicHero({
+  onSubmitPropertyClick,
+}: CinematicHeroProps) {
+  const [searchTab, setSearchTab] = useState<"buy" | "societies">("buy");
+  const [selectedLocality, setSelectedLocality] = useState("Golf Course Road");
+  const [selectedBudget, setSelectedBudget] = useState("All Budgets");
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Slow down video playback for a smooth, cinematic aerial glide (0.7x speed)
+  // Slow down video playback for a smooth, cinematic aerial glide (0.7x speed) and start from 3s
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.7;
+    const video = videoRef.current;
+    if (video) {
+      video.playbackRate = 0.7;
+      if (video.readyState >= 1 && video.currentTime < 3) {
+        video.currentTime = 3;
+      }
     }
   }, []);
 
   const handleVideoLoaded = () => {
     if (videoRef.current) {
       videoRef.current.playbackRate = 0.7;
+      videoRef.current.currentTime = 3;
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current && videoRef.current.currentTime < 3) {
+      videoRef.current.currentTime = 3;
     }
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchTab === 'societies') {
-      const el = document.getElementById('societies');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (searchTab === "societies") {
+      const el = document.getElementById("societies");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
     } else {
-      const el = document.getElementById('buy-rent');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      const el =
+        document.getElementById("buy-properties") ||
+        document.getElementById("buy-rent");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -49,15 +64,18 @@ export default function CinematicHero({ onSubmitPropertyClick }: CinematicHeroPr
     if (societyName) {
       setSelectedLocality(societyName);
     }
-    const el = document.getElementById('societies');
+    const el = document.getElementById("societies");
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      el.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   return (
-    <section id="hero" className="relative min-h-[750px] lg:min-h-[850px] h-screen w-full flex items-center justify-center overflow-hidden bg-[#07162c]">
-      {/* BACKGROUND DRONE VIDEO ONLY (No overlay) with 0.7x slow cinematic playback */}
+    <section
+      id="hero"
+      className="relative min-h-[750px] lg:min-h-[850px] h-screen w-full flex items-center justify-center overflow-hidden bg-[#07162c]"
+    >
+      {/* BACKGROUND DRONE VIDEO ONLY with 0.7x slow cinematic playback starting from 3s */}
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
         <video
           ref={videoRef}
@@ -66,19 +84,18 @@ export default function CinematicHero({ onSubmitPropertyClick }: CinematicHeroPr
           muted
           playsInline
           onLoadedMetadata={handleVideoLoaded}
+          onTimeUpdate={handleTimeUpdate}
           className="absolute inset-0 w-full h-full object-cover scale-105 transition-all duration-700"
         >
-          <source src="/videos/hero-noida-drone.mp4" type="video/mp4" />
+          <source src="/videos/hero-noida-drone.mp4#t=3" type="video/mp4" />
         </video>
+        {/* Subtle top vignette for crystal clear header and logo contrast */}
+        <div className="absolute top-0 left-0 right-0 h-32 bg-linear-to-b from-black/30 to-transparent pointer-events-none" />
       </div>
 
       {/* Hero Content Container */}
       <div className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 pb-16 flex flex-col items-center justify-center h-full">
         {/* Real-time Badge */}
-        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-[#f4ebd0] text-xs font-semibold tracking-wider uppercase mb-5 animate-in fade-in duration-500 shadow-md">
-          <span className="w-2 h-2 rounded-full bg-[#c59b27] animate-ping" />
-          <span>Delhi NCR Prime Aerial Portfolio</span>
-        </div>
 
         {/* Main Brand Headline */}
         <h1 className="text-3xl sm:text-5xl md:text-6xl font-light text-white tracking-tight leading-[1.12] mb-4 max-w-4xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]">
@@ -90,26 +107,27 @@ export default function CinematicHero({ onSubmitPropertyClick }: CinematicHeroPr
 
         {/* Subtitle */}
         <p className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-slate-100 font-light leading-relaxed mb-8 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-          Curating vetted residential societies, sky villas on Golf Course Road, luxury suites along Noida Expressway, and Grade-A commercial tech parks.
+          Curating vetted residential societies, sky villas on Golf Course Road,
+          luxury suites along Noida Expressway, and Grade-A commercial tech
+          parks.
         </p>
 
         {/* GLASSY INTERACTIVE PROPERTY SEARCH WIDGET */}
         <div className="w-full max-w-4xl bg-white/15 backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] border border-white/35 text-left transition-all duration-300">
-          {/* Search Tabs: Buy | Rent | Societies */}
+          {/* Search Tabs: Buy Properties | Societies */}
           <div className="flex items-center gap-2 mb-4 border-b border-white/20 pb-3">
             {[
-              { id: 'buy', label: 'Buy (For Sale)' },
-              { id: 'rent', label: 'Rent (Lease)' },
-              { id: 'societies', label: 'Top Societies' },
+              { id: "buy", label: "Buy Properties" },
+              { id: "societies", label: "Top Societies" },
             ].map((tab) => (
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setSearchTab(tab.id as 'buy' | 'rent' | 'societies')}
+                onClick={() => setSearchTab(tab.id as "buy" | "societies")}
                 className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                   searchTab === tab.id
-                    ? 'bg-white text-[#0b2240] shadow-md scale-102'
-                    : 'text-white/90 hover:text-white hover:bg-white/20 backdrop-blur-xs'
+                    ? "bg-white text-[#0b2240] shadow-md scale-102"
+                    : "text-white/90 hover:text-white hover:bg-white/20 backdrop-blur-xs"
                 }`}
               >
                 {tab.label}
@@ -118,7 +136,10 @@ export default function CinematicHero({ onSubmitPropertyClick }: CinematicHeroPr
           </div>
 
           {/* Search Fields Grid */}
-          <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center"
+          >
             {/* Locality Selector */}
             <div className="sm:col-span-4 relative">
               <label className="block text-[10px] font-bold uppercase tracking-wider text-white/90 drop-shadow-xs mb-1">
@@ -131,12 +152,24 @@ export default function CinematicHero({ onSubmitPropertyClick }: CinematicHeroPr
                   onChange={(e) => setSelectedLocality(e.target.value)}
                   className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/85 hover:bg-white focus:bg-white text-xs sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer"
                 >
-                  <option value="Golf Course Road">Golf Course Road, Gurugram</option>
-                  <option value="Golf Course Extn Road">Golf Course Extn, Gurugram</option>
-                  <option value="Noida Expressway">Noida Expressway, Sector 124/150</option>
-                  <option value="DLF Cyber City">DLF Cyber City &amp; Phase 2</option>
-                  <option value="Dwarka Expressway">Dwarka Expressway Corridors</option>
-                  <option value="Central Delhi">Central &amp; South Delhi</option>
+                  <option value="Golf Course Road">
+                    Golf Course Road, Gurugram
+                  </option>
+                  <option value="Golf Course Extn Road">
+                    Golf Course Extn, Gurugram
+                  </option>
+                  <option value="Noida Expressway">
+                    Noida Expressway, Sector 124/150
+                  </option>
+                  <option value="DLF Cyber City">
+                    DLF Cyber City &amp; Phase 2
+                  </option>
+                  <option value="Dwarka Expressway">
+                    Dwarka Expressway Corridors
+                  </option>
+                  <option value="Central Delhi">
+                    Central &amp; South Delhi
+                  </option>
                 </select>
               </div>
             </div>
@@ -150,10 +183,18 @@ export default function CinematicHero({ onSubmitPropertyClick }: CinematicHeroPr
                 <Building2 className="w-4 h-4 text-[#c59b27] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <select className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/85 hover:bg-white focus:bg-white text-xs sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer">
                   <option value="all">All Typologies</option>
-                  <option value="Sky Villa / Penthouse">Sky Villa / Penthouse</option>
-                  <option value="Luxury Apartment">3 &amp; 4 BHK Apartment</option>
-                  <option value="Independent Floor">Luxury Builder Floor</option>
-                  <option value="Commercial Office">Commercial Tech Suite</option>
+                  <option value="Sky Villa / Penthouse">
+                    Sky Villa / Penthouse
+                  </option>
+                  <option value="Luxury Apartment">
+                    3 &amp; 4 BHK Apartment
+                  </option>
+                  <option value="Independent Floor">
+                    Luxury Builder Floor
+                  </option>
+                  <option value="Commercial Office">
+                    Commercial Tech Suite
+                  </option>
                 </select>
               </div>
             </div>
@@ -174,7 +215,6 @@ export default function CinematicHero({ onSubmitPropertyClick }: CinematicHeroPr
                   <option value="₹2 - 5 Cr">₹2 Cr - ₹5 Cr</option>
                   <option value="₹5 - 12 Cr">₹5 Cr - ₹12 Cr</option>
                   <option value="₹12 Cr+">₹12 Cr+ (Ultra Luxury)</option>
-                  <option value="Rent">₹1.5 L - ₹5 L / Month</option>
                 </select>
               </div>
             </div>
@@ -198,11 +238,11 @@ export default function CinematicHero({ onSubmitPropertyClick }: CinematicHeroPr
               <span>Trending Societies:</span>
             </span>
             {[
-              'DLF The Camellias',
-              'ATS Knightsbridge',
-              'M3M Golfestate',
-              'Godrej Woods',
-              'DLF Cyber City',
+              "DLF The Camellias",
+              "ATS Knightsbridge",
+              "M3M Golfestate",
+              "Godrej Woods",
+              "DLF Cyber City",
             ].map((soc) => (
               <button
                 key={soc}

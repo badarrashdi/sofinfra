@@ -37,7 +37,7 @@ const PROPERTY_TYPES: PropertyType[] = [
   'Other',
 ];
 
-const LISTING_TYPES: ListingType[] = ['For Sale', 'For Rent', 'Lease', 'Other'];
+const LISTING_TYPES: ListingType[] = ['For Sale', 'Resale', 'New Launch', 'Other'];
 
 const AMENITY_OPTIONS = [
   'Swimming Pool',

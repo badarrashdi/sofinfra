@@ -126,8 +126,8 @@ export const INITIAL_PROPERTIES: Property[] = [
     slug: 'horizon-corporate-tower-grade-a-offices',
     category: 'commercial',
     propertyType: 'Office',
-    listingType: 'Lease',
-    propertyStatus: 'Prime Corporate Lease',
+    listingType: 'For Sale',
+    propertyStatus: 'Grade-A Commercial Investment',
     featured: true,
     location: {
       city: 'Gurugram',
@@ -180,7 +180,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     slug: 'm3m-golfestate-luxury-residence',
     category: 'residential',
     propertyType: 'Apartment',
-    listingType: 'For Rent',
+    listingType: 'For Sale',
     propertyStatus: 'Fully Furnished',
     featured: false,
     location: {
@@ -192,9 +192,9 @@ export const INITIAL_PROPERTIES: Property[] = [
     },
     pricing: {
       priceAvailability: 'price',
-      amount: 225000,
+      amount: 68500000,
       currency: 'INR',
-      formattedPrice: '₹2.25 L / Month',
+      formattedPrice: '₹6.85 Cr',
     },
     specs: {
       area: 3850,
@@ -237,8 +237,8 @@ export const INITIAL_PROPERTIES: Property[] = [
     slug: 'dlf-cyberhub-commercial-retail-anchor',
     category: 'commercial',
     propertyType: 'Shop',
-    listingType: 'Lease',
-    propertyStatus: 'Pre-Leased High Street Retail',
+    listingType: 'For Sale',
+    propertyStatus: 'Prime High Street Retail Investment',
     featured: true,
     location: {
       city: 'Gurugram',
@@ -456,7 +456,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     slug: 'noida-sector-150-sports-city-sky-suite',
     category: 'residential',
     propertyType: 'Apartment',
-    listingType: 'For Rent',
+    listingType: 'For Sale',
     propertyStatus: 'Brand New',
     featured: false,
     location: {
@@ -468,9 +468,9 @@ export const INITIAL_PROPERTIES: Property[] = [
     },
     pricing: {
       priceAvailability: 'price',
-      amount: 95000,
+      amount: 28500000,
       currency: 'INR',
-      formattedPrice: '₹95,000 / Month',
+      formattedPrice: '₹2.85 Cr',
     },
     specs: {
       area: 2450,
@@ -494,7 +494,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     description:
       'Bright, high-floor 3 BHK apartment in the greenest sector of NCR (Sector 150). Features continuous wrap-around balconies overlooking pristine open sports facilities, modern modular kitchen, and centralized gas piping.',
     shortDescription:
-      'Golf and sports-facing 3 BHK in Noida Sector 150 available for long-term rental lease.',
+      'Golf and sports-facing 3 BHK in Noida Sector 150 available for immediate acquisition.',
     featuredImage:
       'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1600&q=85',
     galleryImages: [
@@ -511,8 +511,8 @@ export const INITIAL_PROPERTIES: Property[] = [
     slug: 'candor-techspace-grade-a-it-park-suite',
     category: 'commercial',
     propertyType: 'Commercial Property',
-    listingType: 'Lease',
-    propertyStatus: 'SEZ & Non-SEZ Certified',
+    listingType: 'For Sale',
+    propertyStatus: 'SEZ & Non-SEZ Certified Investment',
     featured: true,
     location: {
       city: 'Noida',
@@ -651,9 +651,9 @@ export const INITIAL_PROPERTIES: Property[] = [
       'Direct Sector 137 Metro Station Proximity',
     ],
     description:
-      'High-yield commercial investment asset on Noida Expressway pre-leased to an international IT firm delivering guaranteed 8.4% annual rental yield. Features iconic sky gardens and the signature rooftop infinity lake.',
+      'High-yield commercial investment asset on Noida Expressway housing an international IT firm delivering guaranteed 8.4% annual investment return. Features iconic sky gardens and the signature rooftop infinity lake.',
     shortDescription:
-      'Pre-leased Grade-A commercial office with 8.4% rental return on Noida Expressway.',
+      'Grade-A commercial office asset with 8.4% annual return on Noida Expressway.',
     featuredImage:
       'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=85',
     galleryImages: [

@@ -5,15 +5,15 @@ import Image from 'next/image';
 import {
   X,
   MapPin,
-  Building,
+  Building2,
+  Layers,
+  Maximize2,
   ShieldCheck,
   CheckCircle2,
   MessageSquare,
   Share2,
   Phone,
-  Send,
   Navigation,
-  Sparkles,
 } from 'lucide-react';
 import { Society } from '@/data/societies';
 
@@ -63,33 +63,35 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
 
   const handleShare = () => {
     if (navigator.share) {
-      navigator.share({
-        title: society.name,
-        text: `Explore ${society.name} by ${society.developer} in ${society.location}, ${society.city}.`,
-        url: window.location.href,
-      }).catch(() => {});
+      navigator
+        .share({
+          title: society.name,
+          text: `Explore ${society.name} by ${society.developer} in ${society.location}, ${society.city}.`,
+          url: window.location.href,
+        })
+        .catch(() => {});
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      alert('Society link copied to clipboard!');
     }
   };
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
       onClick={handleClose}
     >
       <div
-        className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col"
+        className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Top Navigation Bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/80">
+        {/* Modal Top Header Bar */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider bg-[#0b2240] text-[#c59b27]">
               {society.city}
             </span>
-            <span className="px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wider bg-slate-200 text-slate-800">
+            <span className="px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wider bg-slate-200 text-slate-700">
               {society.type}
             </span>
             <span className="hidden sm:inline-flex px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wider bg-emerald-100 text-emerald-800">
@@ -101,15 +103,15 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
             <button
               type="button"
               onClick={handleShare}
-              className="p-2 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
-              aria-label="Share society"
+              className="p-2 rounded-full hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
+              title="Share Society"
             >
               <Share2 className="w-4 h-4" />
             </button>
             <button
               type="button"
               onClick={handleClose}
-              className="p-2 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+              className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
@@ -117,106 +119,115 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
           </div>
         </div>
 
-        {/* Scrollable Modal Body */}
-        <div className="overflow-y-auto p-6 sm:p-8 space-y-8">
-          {/* Main Hero Image */}
-          <div className="relative h-[260px] sm:h-[360px] rounded-2xl overflow-hidden bg-slate-900 shadow-md">
-            <Image
-              src={society.image}
-              alt={society.name}
-              fill
-              priority
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 896px"
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-transparent" />
-
-            <div className="absolute bottom-5 left-5 right-5 text-white">
-              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/20 backdrop-blur-md text-[11px] font-bold uppercase tracking-wider text-[#c59b27] mb-2">
-                <Building className="w-3.5 h-3.5" />
-                <span>{society.developer}</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-light text-white tracking-tight drop-shadow-sm">
-                {society.name}
-              </h2>
-              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-200 mt-1">
-                <MapPin className="w-4 h-4 text-[#c59b27] shrink-0" />
-                <span>{society.location}, {society.subLocation}, {society.city}</span>
-              </div>
+        {/* Scrollable Modal Content */}
+        <div className="overflow-y-auto flex-1 p-6 sm:p-8 space-y-8">
+          {/* Main Featured Society Image */}
+          <div>
+            <div className="relative h-72 sm:h-[440px] w-full rounded-2xl overflow-hidden bg-slate-900 shadow-inner">
+              <Image
+                src={society.image}
+                alt={society.name}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 1000px"
+              />
             </div>
           </div>
 
-          {/* Pricing & RERA Accreditation Strip */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-[#faf7f2] border border-[#c59b27]/25">
+          {/* Title, Location & Price Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-slate-100">
             <div>
+              <div className="flex items-center gap-1.5 text-slate-500 text-sm mb-1.5">
+                <MapPin className="w-4 h-4 text-[#c59b27]" />
+                <span>
+                  {society.location}, {society.subLocation}, {society.city}
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-light text-[#0b2240] tracking-tight">
+                {society.name}
+              </h2>
+            </div>
+
+            <div className="bg-[#faf7f2] px-5 py-3 rounded-xl border border-[#c59b27]/20">
               <span className="block text-[11px] font-semibold uppercase tracking-wider text-[#ab841b]">
                 Estimated Price Band
               </span>
-              <span className="text-2xl sm:text-3xl font-bold text-[#0b2240]">
-                {society.priceRange}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-xl bg-white border border-[#c59b27]/30 flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
-                <div>
-                  <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
-                    RERA Registration Verified
-                  </span>
-                  <span className="text-xs font-mono font-bold text-[#0b2240]">
-                    {society.reraId}
-                  </span>
-                </div>
-              </div>
+              <span className="text-2xl font-bold text-[#0b2240]">{society.priceRange}</span>
             </div>
           </div>
 
-          {/* Project Specifications Grid */}
+          {/* Specifications Grid */}
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
-              Project Architecture &amp; Scale
+              Project Specifications &amp; Scale
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="block text-slate-500 text-xs mb-1">Developer</span>
+                <div className="flex items-center gap-2 text-slate-500 text-xs mb-1">
+                  <Building2 className="w-4 h-4 text-[#c59b27]" />
+                  <span>Developer</span>
+                </div>
                 <span className="text-sm font-semibold text-[#0b2240]">{society.developer}</span>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="block text-slate-500 text-xs mb-1">Configurations</span>
+                <div className="flex items-center gap-2 text-slate-500 text-xs mb-1">
+                  <Layers className="w-4 h-4 text-[#c59b27]" />
+                  <span>Configurations</span>
+                </div>
                 <span className="text-sm font-semibold text-[#0b2240]">{society.configurations}</span>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="block text-slate-500 text-xs mb-1">Project Scale</span>
+                <div className="flex items-center gap-2 text-slate-500 text-xs mb-1">
+                  <Maximize2 className="w-4 h-4 text-[#c59b27]" />
+                  <span>Project Scale</span>
+                </div>
                 <span className="text-sm font-semibold text-[#0b2240]">{society.units}</span>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="block text-slate-500 text-xs mb-1">Current Status</span>
-                <span className="text-sm font-semibold text-emerald-700">{society.status}</span>
+                <div className="flex items-center gap-2 text-slate-500 text-xs mb-1">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>RERA Verified</span>
+                </div>
+                <span className="text-xs font-mono font-bold text-[#0b2240] truncate block">
+                  {society.reraId}
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Key Society Amenities & World-Class Features */}
+          {/* Description */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
-              Clubhouse Amenities &amp; Infrastructure
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+              About This Society &amp; Township
             </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {society.amenities.map((amenity, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs font-medium text-slate-700"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-[#c59b27] shrink-0" />
-                  <span>{amenity}</span>
-                </div>
-              ))}
-            </div>
+            <p className="text-slate-700 leading-relaxed font-light text-base whitespace-pre-line">
+              {society.name} is a premier luxury gated residential development by {society.developer}, positioned in the prestigious micro-market of {society.location}, {society.city}. Built to world-class architectural benchmarks with certified RERA compliance ({society.reraId}), generous green landscapes, signature clubhouse amenities, and institutional multi-tier security.
+            </p>
           </div>
+
+          {/* Amenities & Features */}
+          {society.amenities && society.amenities.length > 0 && (
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
+                Amenities &amp; Key Features
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {society.amenities.map((amenity, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs font-medium text-slate-700"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-[#c59b27] shrink-0" />
+                    <span>{amenity}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Location & Connectivity Overview */}
           <div className="p-5 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -228,7 +239,7 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
                 {society.location}, {society.subLocation}, {society.city}
               </p>
               <p className="text-xs text-slate-500">
-                Prime Delhi NCR micro-market with arterial access to expressways, rapid metro corridors, and commercial hubs.
+                Prime Delhi NCR micro-market with arterial connectivity to major expressways, metro corridors, and key commercial hubs.
               </p>
             </div>
             <a
@@ -244,25 +255,24 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
             </a>
           </div>
 
-          {/* Private Site Inspection & Dossier Concierge */}
+          {/* Direct Private Inquiry & Contact Section */}
           <div className="p-6 sm:p-8 rounded-2xl bg-[#0b2240] text-white">
             <div className="max-w-xl">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/10 text-[#c59b27] text-xs font-semibold tracking-wider uppercase mb-2">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Private Advisory Concierge</span>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-light">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#c59b27]">
+                Private Client Concierge
+              </span>
+              <h3 className="text-xl sm:text-2xl font-light mt-1">
                 Schedule Site Visit &amp; Request Society Dossier
               </h3>
-              <p className="text-xs sm:text-sm text-slate-300 mt-2 font-light leading-relaxed">
-                Connect with our certified {society.city} advisory desk for official builder floor plans, unit availability, resale listings, and escorted site visit cab booking.
+              <p className="text-xs sm:text-sm text-slate-300 mt-2 font-light">
+                Connect directly with our senior {society.city} society advisor for verified floor plans, layout options, and private appointment scheduling.
               </p>
             </div>
 
             {inquirySent ? (
               <div className="mt-6 p-4 rounded-xl bg-emerald-900/40 border border-emerald-500/50 text-emerald-200 text-sm flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                <span>Thank you. Our {society.city} society advisor will call you within 30 minutes to confirm your site visit.</span>
+                <span>Thank you. Our luxury society advisor will contact you within 2 business hours.</span>
               </div>
             ) : (
               <form onSubmit={handleInquirySubmit} className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -277,7 +287,7 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
                 <input
                   type="email"
                   required
-                  placeholder="Email Address"
+                  placeholder="Your Email"
                   value={inquiryEmail}
                   onChange={(e) => setInquiryEmail(e.target.value)}
                   className="px-4 py-2.5 rounded-lg bg-white/10 border border-white/20 text-white placeholder-slate-400 text-sm focus:outline-hidden focus:border-[#c59b27]"
@@ -293,30 +303,27 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
                 <div className="sm:col-span-3 flex flex-col sm:flex-row items-center gap-3 pt-2">
                   <button
                     type="submit"
-                    className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[#c59b27] text-[#07162c] text-xs font-bold uppercase tracking-wider hover:bg-[#d4af37] transition-colors flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                    className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[#c59b27] text-[#07162c] text-xs font-bold uppercase tracking-wider hover:bg-[#d4af37] transition-colors"
                   >
-                    <Send className="w-3.5 h-3.5" />
-                    <span>Request Dossier &amp; Site Visit</span>
+                    Submit Confidential Inquiry
                   </button>
-
                   <a
                     href={`https://wa.me/918178393751?text=${encodeURIComponent(
                       `Hello SOFINFRA, I would like to request information and arrange a site visit for ${society.name} (${society.location}, ${society.city}).`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-md"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider transition-colors"
                   >
                     <MessageSquare className="w-4 h-4" />
-                    <span>WhatsApp Concierge (+91 81783 93751)</span>
+                    <span>Instant WhatsApp Inquiry (+91 81783 93751)</span>
                   </a>
-
                   <a
-                    href="tel:+918178393751"
+                    href="tel:+919212316521"
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold tracking-wider transition-colors"
                   >
                     <Phone className="w-3.5 h-3.5 text-[#c59b27]" />
-                    <span>Call Direct</span>
+                    <span>Call Direct (+91 92123 16521)</span>
                   </a>
                 </div>
               </form>

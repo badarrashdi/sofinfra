@@ -12,12 +12,12 @@ const REVIEWS = [
   },
   {
     quote:
-      'We leased our commercial headquarters floorplate in Cyber City through SOFINFRA. They secured optimum rental yields and handled all RERA and fire NOC validations smoothly.',
+      'We acquired our corporate headquarters floorplate in Cyber City through SOFINFRA. They secured exceptional capital terms and handled all RERA and compliance validations smoothly.',
     author: 'Pooja Kashyap',
     title: 'Chief Operating Officer, FinTech Global',
     location: 'DLF Cyber City, Gurugram',
     rating: 5,
-    verified: 'Commercial Tenant',
+    verified: 'Corporate Investor',
   },
   {
     quote:

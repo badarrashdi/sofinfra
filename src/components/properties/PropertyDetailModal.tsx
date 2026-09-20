@@ -16,6 +16,7 @@ import {
   Share2,
   ChevronLeft,
   ChevronRight,
+  Phone,
 } from 'lucide-react';
 import { Property } from '@/types/property';
 
@@ -400,7 +401,14 @@ export default function PropertyDetailModal({ property, onClose }: PropertyDetai
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider transition-colors"
                   >
                     <MessageSquare className="w-4 h-4" />
-                    <span>Instant WhatsApp Inquiry (+91 81783 93751)</span>
+                    <span>WhatsApp (+91 81783 93751)</span>
+                  </a>
+                  <a
+                    href="tel:+919212316521"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold tracking-wider transition-colors"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-[#c59b27]" />
+                    <span>Call Direct (+91 92123 16521)</span>
                   </a>
                 </div>
               </form>

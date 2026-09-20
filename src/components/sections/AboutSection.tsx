@@ -71,12 +71,6 @@ export default function AboutSection() {
                 <p className="text-lg font-light mt-1">Transforming premier spaces into generational legacies.</p>
               </div>
             </div>
-
-            {/* Floating Accreditation Badge */}
-            <div className="absolute -bottom-6 -right-4 sm:right-6 bg-white p-5 rounded-xl shadow-xl border border-slate-100 max-w-[240px] hidden sm:block">
-              <p className="text-2xl font-bold text-[#0b2240]">15+ Years</p>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">Of fiduciary excellence in global real-estate acquisitions.</p>
-            </div>
           </div>
 
           <div className="lg:col-span-5 space-y-6">

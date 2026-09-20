@@ -37,13 +37,13 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-16 border-b border-white/10">
           {/* Col 1 & 2: Brand & Mission */}
           <div className="lg:col-span-2 space-y-5">
-            <div className="relative h-14 w-56">
+            <div className="relative h-16 sm:h-20 aspect-[995/665]">
               <Image
                 src="/brand/sofinfra-logo.png"
                 alt="SOFINFRA"
                 fill
                 className="object-contain object-left brightness-0 invert"
-                sizes="224px"
+                sizes="(max-width: 640px) 180px, 240px"
               />
             </div>
             <p className="text-xs sm:text-sm text-slate-400 font-light leading-relaxed max-w-sm">
@@ -91,7 +91,7 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm">
               {[
-                { name: 'Buy & Rent', href: '#buy-rent' },
+                { name: 'Buy Properties', href: '#buy-properties' },
                 { name: 'Societies', href: '#societies' },
                 { name: 'List Property', href: '#list-property' },
                 { name: 'Reviews', href: '#reviews' },
@@ -110,19 +110,19 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
             </ul>
           </div>
 
-          {/* Col 4: Top Delhi NCR Societies */}
+          {/* Col 4: Featured High-Profile Societies */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#c59b27] mb-4">
-              Top Societies
+              Societies
             </h4>
-            <ul className="space-y-2.5 text-xs sm:text-sm">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
               <li>
                 <a
                   href="#societies"
                   onClick={(e) => handleNavClick(e, '#societies')}
                   className="hover:text-white transition-colors"
                 >
-                  DLF The Camellias (Gurgaon)
+                  The Camellias (Gurugram)
                 </a>
               </li>
               <li>
@@ -188,9 +188,15 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
               </div>
               <p className="flex items-center gap-1.5">
                 <Phone className="w-3.5 h-3.5 text-[#c59b27] shrink-0" />
-                <a href="tel:+918178393751" className="hover:text-white transition-colors">
-                  +91 81783 93751
-                </a>
+                <span className="space-x-1.5">
+                  <a href="tel:+918178393751" className="hover:text-white transition-colors">
+                    +91 81783 93751
+                  </a>
+                  <span className="text-slate-500">/</span>
+                  <a href="tel:+919212316521" className="hover:text-white transition-colors">
+                    +91 92123 16521
+                  </a>
+                </span>
               </p>
               <p className="flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-[#c59b27] shrink-0" />

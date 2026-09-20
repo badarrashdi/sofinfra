@@ -24,6 +24,7 @@ export default function ContactSection() {
       address: 'S-306-308, 2nd Floor, Tower A, Palam Corporate Plaza, Palam Vihar, Gurugram(HR)-122017',
       landmark: 'Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2, Palam Vihar, Gurugram, Haryana 122017',
       phone: '+91 81783 93751',
+      secondaryPhone: '+91 92123 16521',
       email: 'gurugram@sofinfra.local',
       isPrimary: true,
     },
@@ -31,7 +32,8 @@ export default function ContactSection() {
       city: 'Noida Expressway Bureau',
       address: 'Sector 126, Noida Expressway, Gautam Buddha Nagar, Uttar Pradesh 201301',
       landmark: 'Near Amity University Metro Corridor',
-      phone: '+91 81783 93751',
+      phone: '+91 92123 16521',
+      secondaryPhone: '+91 81783 93751',
       email: 'noida@sofinfra.local',
       isPrimary: false,
     },
@@ -40,6 +42,7 @@ export default function ContactSection() {
       address: 'Statesman House, Barakhamba Road, Connaught Place, New Delhi 110001',
       landmark: 'Barakhamba Road Central Advisory',
       phone: '+91 81783 93751',
+      secondaryPhone: '+91 92123 16521',
       email: 'delhi@sofinfra.local',
       isPrimary: false,
     },
@@ -49,39 +52,48 @@ export default function ContactSection() {
     <section id="contact" className="py-24 sm:py-32 bg-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="max-w-3xl mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#faf7f2] border border-[#c59b27]/20 text-[#ab841b] text-xs font-semibold tracking-widest uppercase mb-3">
-            Inquiries &amp; Site Visits
+            Private Client Advisory
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
-            Contact <span className="font-semibold">SOFINFRA Delhi NCR</span>
+            Initiate Discreet <span className="font-semibold">Consultation</span>
           </h2>
           <p className="mt-4 text-slate-600 text-sm sm:text-base font-light leading-relaxed">
-            Connect with our certified property advisors for private site inspections, society floor plans, valuation estimates, or developer pricing.
+            Direct access to senior partners specializing in high-value NCR society acquisitions, title due diligence, and capital asset placement.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-          {/* Left: Offices & Direct WhatsApp */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          {/* Left: Offices & Fast Channels */}
           <div className="lg:col-span-5 space-y-8">
+            {/* Quick WhatsApp & Call Box */}
             <div className="p-6 rounded-2xl bg-[#0b2240] text-white">
-              <div className="flex items-center gap-2 text-[#c59b27] text-xs font-bold uppercase tracking-wider mb-2">
-                <MessageSquare className="w-4 h-4" />
-                <span>Instant NCR Property Concierge</span>
-              </div>
-              <h3 className="text-xl font-light">Direct WhatsApp Advisory</h3>
-              <p className="text-xs text-slate-300 mt-2 font-light leading-relaxed">
-                Chat directly with our senior Gurgaon and Noida property specialists for real-time society inventory and site visit cabs.
+              <span className="text-[11px] uppercase tracking-wider text-[#c59b27] font-semibold">
+                Instant Advisory Desk
+              </span>
+              <h3 className="text-lg font-bold mt-1">Priority WhatsApp &amp; Direct Phone</h3>
+              <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                Connect directly with our desk for fast brochures, verified pricing sheets, and escorted site visits.
               </p>
-              <a
-                href="https://wa.me/918178393751"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-5 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-md"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>Connect on WhatsApp (+91 81783 93751)</span>
-              </a>
+              <div className="mt-5 flex flex-wrap items-center gap-2.5">
+                <a
+                  href="https://wa.me/918178393751"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-md"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span>WhatsApp (+91 81783 93751)</span>
+                </a>
+                <a
+                  href="tel:+919212316521"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider transition-colors"
+                >
+                  <Phone className="w-4 h-4 text-[#c59b27]" />
+                  <span>Direct (+91 92123 16521)</span>
+                </a>
+              </div>
             </div>
 
             {/* Offices List */}
@@ -110,14 +122,27 @@ export default function ContactSection() {
                     <MapPin className="w-3.5 h-3.5 text-[#c59b27] shrink-0 mt-0.5" />
                     <span>{office.address}</span>
                   </p>
-                  <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-600">
-                    <a
-                      href={`tel:${office.phone.replace(/\s+/g, '')}`}
-                      className="flex items-center gap-1 hover:text-[#0b2240] transition-colors"
-                    >
+                  <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-600 flex-wrap gap-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <Phone className="w-3 h-3 text-[#c59b27]" />
-                      <span>{office.phone}</span>
-                    </a>
+                      <a
+                        href={`tel:${office.phone.replace(/\s+/g, '')}`}
+                        className="hover:text-[#0b2240] transition-colors"
+                      >
+                        {office.phone}
+                      </a>
+                      {office.secondaryPhone && (
+                        <>
+                          <span className="text-slate-400">/</span>
+                          <a
+                            href={`tel:${office.secondaryPhone.replace(/\s+/g, '')}`}
+                            className="hover:text-[#0b2240] transition-colors"
+                          >
+                            {office.secondaryPhone}
+                          </a>
+                        </>
+                      )}
+                    </div>
                     <a
                       href={`mailto:${office.email}`}
                       className="flex items-center gap-1 hover:text-[#0b2240] transition-colors"
@@ -212,8 +237,7 @@ export default function ContactSection() {
                       className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
                     >
                       <option value="Buying Residential (Gurugram/Noida)">Buying Residential (Gurugram/Noida)</option>
-                      <option value="Renting Luxury Apartment">Renting Luxury Apartment</option>
-                      <option value="Commercial Leasing / Cyber City">Commercial Leasing / Cyber City</option>
+                      <option value="Commercial Acquisition / Cyber City">Commercial Acquisition / Cyber City</option>
                       <option value="Listing My Property For Sale">Listing My Property For Sale</option>
                       <option value="NRI Investment Consultation">NRI Investment Consultation</option>
                     </select>

@@ -11,7 +11,7 @@ interface PropertyListingsProps {
 }
 
 export default function PropertyListings({ properties, onSelectProperty }: PropertyListingsProps) {
-  const [listingFilter, setListingFilter] = useState<'all' | 'For Sale' | 'For Rent' | 'Lease'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'residential' | 'commercial'>('all');
   const [selectedCity, setSelectedCity] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -32,8 +32,8 @@ export default function PropertyListings({ properties, onSelectProperty }: Prope
   // Filter properties
   const filteredProperties = useMemo(() => {
     return properties.filter((p) => {
-      // Listing type filter (Buy vs Rent)
-      if (listingFilter !== 'all' && p.listingType !== listingFilter) {
+      // Category filter (Residential vs Commercial)
+      if (categoryFilter !== 'all' && p.category !== categoryFilter) {
         return false;
       }
 
@@ -61,7 +61,7 @@ export default function PropertyListings({ properties, onSelectProperty }: Prope
 
       return true;
     });
-  }, [properties, listingFilter, selectedCity, selectedType, searchQuery]);
+  }, [properties, categoryFilter, selectedCity, selectedType, searchQuery]);
 
   const displayedProperties = useMemo(() => {
     return filteredProperties.slice(0, visibleCount);
@@ -77,7 +77,9 @@ export default function PropertyListings({ properties, onSelectProperty }: Prope
   };
 
   return (
-    <section id="buy-rent" className="py-24 sm:py-32 bg-slate-50/70 relative">
+    <section id="buy-properties" className="py-24 sm:py-32 bg-slate-50/70 relative">
+      {/* Anchor alias for smooth legacy navigation */}
+      <div id="buy-rent" className="absolute -top-24" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -86,28 +88,28 @@ export default function PropertyListings({ properties, onSelectProperty }: Prope
               Delhi NCR Prime Portfolio
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
-              Buy &amp; Rent <span className="font-semibold">Properties</span>
+              Buy <span className="font-semibold">Properties</span>
             </h2>
             <p className="mt-3 text-slate-600 text-sm sm:text-base font-light max-w-xl">
               Verified luxury apartments, golf-view sky villas, penthouses, and commercial floorplates across Gurugram, Noida, and New Delhi.
             </p>
           </div>
 
-          {/* Quick Buy vs Rent Tabs */}
+          {/* Category Filter Tabs */}
           <div className="inline-flex p-1 bg-white rounded-xl shadow-xs border border-slate-200 self-start md:self-auto overflow-x-auto">
             {(
               [
-                { id: 'all', label: 'All Listings' },
-                { id: 'For Sale', label: 'Buy (For Sale)' },
-                { id: 'For Rent', label: 'Rent (Lease)' },
+                { id: 'all', label: 'All Properties' },
+                { id: 'residential', label: 'Luxury Residential' },
+                { id: 'commercial', label: 'Grade-A Commercial' },
               ] as const
             ).map((tab) => (
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => handleFilterChange(() => setListingFilter(tab.id))}
+                onClick={() => handleFilterChange(() => setCategoryFilter(tab.id))}
                 className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all tracking-wide whitespace-nowrap cursor-pointer ${
-                  listingFilter === tab.id
+                  categoryFilter === tab.id
                     ? 'bg-[#0b2240] text-white shadow-xs'
                     : 'text-slate-600 hover:text-[#0b2240] hover:bg-slate-50'
                 }`}
@@ -171,14 +173,14 @@ export default function PropertyListings({ properties, onSelectProperty }: Prope
                 Showing <strong className="text-[#0b2240]">{displayedProperties.length}</strong> of{' '}
                 <strong className="text-[#0b2240]">{filteredProperties.length}</strong> listings
               </span>
-              {(selectedCity !== 'all' || selectedType !== 'all' || searchQuery !== '' || listingFilter !== 'all') && (
+              {(selectedCity !== 'all' || selectedType !== 'all' || searchQuery !== '' || categoryFilter !== 'all') && (
                 <button
                   type="button"
                   onClick={() => {
                     setSelectedCity('all');
                     setSelectedType('all');
                     setSearchQuery('');
-                    setListingFilter('all');
+                    setCategoryFilter('all');
                     setVisibleCount(6);
                   }}
                   className="text-[#c59b27] hover:underline font-semibold cursor-pointer"
@@ -227,7 +229,7 @@ export default function PropertyListings({ properties, onSelectProperty }: Prope
             <button
               type="button"
               onClick={() => {
-                setListingFilter('all');
+                setCategoryFilter('all');
                 setSelectedCity('all');
                 setSelectedType('all');
                 setSearchQuery('');

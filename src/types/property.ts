@@ -1,6 +1,6 @@
 export type DetailMode = 'popup' | 'external';
 
-export type ListingType = 'For Sale' | 'For Rent' | 'Lease' | 'Other';
+export type ListingType = 'For Sale' | 'Resale' | 'New Launch' | 'Other' | 'For Rent' | 'Lease';
 
 export type PropertyCategory = 'residential' | 'commercial' | 'project' | 'land';
 

@@ -37,13 +37,13 @@ export default function HomeClient({ initialProperties }: HomeClientProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Sticky Blur Navbar (Menu: Buy & Rent | Societies | List Property | Reviews | Contact Us) */}
+      {/* Sticky Blur Navbar (Menu: Buy Properties | Societies | List Property | Reviews | Contact Us) */}
       <Navbar onSubmitPropertyClick={() => setIsSubmitModalOpen(true)} />
 
       {/* 1. Cinematic Hero Section */}
       <CinematicHero onSubmitPropertyClick={() => setIsSubmitModalOpen(true)} />
 
-      {/* 2. Buy & Rent Section (#buy-rent) */}
+      {/* 2. Buy Properties Section (#buy-properties) */}
       <PropertyListings
         properties={properties}
         onSelectProperty={handleSelectProperty}
