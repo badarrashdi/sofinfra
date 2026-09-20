@@ -100,7 +100,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
               className={`relative transition-all duration-300 ease-in-out aspect-[995/665] ${
                 isScrolled
                   ? 'h-[68px]'
-                  : 'h-[88px]'
+                  : 'h-[68px] md:h-[76px]'
               }`}
             >
               <Image
