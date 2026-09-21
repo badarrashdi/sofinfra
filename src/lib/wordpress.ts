@@ -1,3 +1,5 @@
+import https from 'node:https';
+import http from 'node:http';
 import { Property, PropertySubmissionPayload } from '@/types/property';
 import { Society, DELHI_NCR_SOCIETIES } from '@/data/societies';
 import { INITIAL_PROPERTIES } from '@/data/mock-properties';
@@ -15,6 +17,99 @@ const WP_BASE_URL =
     ? 'https://sofinfraadmin.accelerance.in'
     : 'http://sofinfra.local');
 const WP_API_ENDPOINT = `${WP_BASE_URL}/wp-json/sofinfra/v1`;
+
+interface WpFetchOptions {
+  method?: string;
+  headers?: Record<string, string>;
+  body?: unknown;
+  timeout?: number;
+}
+
+/**
+ * Universal fetch helper that handles self-signed SSL certificates and LiteSpeed SNI
+ * in Node.js / Vercel serverless functions without throwing DEPTH_ZERO_SELF_SIGNED_CERT.
+ */
+async function wpFetchJson<T>(
+  urlString: string,
+  options: WpFetchOptions = {}
+): Promise<{ ok: boolean; status: number; data: T | null }> {
+  // If running in browser, use standard fetch
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch(urlString, {
+        method: options.method || 'GET',
+        headers: {
+          Accept: 'application/json',
+          ...(options.headers || {}),
+        },
+        body: options.body ? JSON.stringify(options.body) : undefined,
+      });
+      if (!res.ok) return { ok: false, status: res.status, data: null };
+      const data = (await res.json()) as T;
+      return { ok: true, status: res.status, data };
+    } catch {
+      return { ok: false, status: 500, data: null };
+    }
+  }
+
+  // Server-side (Node.js / Vercel): use native https with rejectUnauthorized: false and SNI Host
+  return new Promise((resolve) => {
+    try {
+      const url = new URL(urlString);
+      const isHttps = url.protocol === 'https:';
+      const lib = isHttps ? https : http;
+
+      const reqOptions: https.RequestOptions = {
+        method: options.method || 'GET',
+        headers: {
+          Host: url.hostname,
+          'User-Agent': 'Mozilla/5.0 (compatible; SOFINFRA-Headless/1.0)',
+          Accept: 'application/json',
+          ...(options.headers || {}),
+        },
+        rejectUnauthorized: false,
+        timeout: options.timeout || 8000,
+      };
+
+      const req = lib.request(url, reqOptions, (res) => {
+        let rawData = '';
+        res.on('data', (chunk) => {
+          rawData += chunk;
+        });
+        res.on('end', () => {
+          const status = res.statusCode || 500;
+          if (status >= 200 && status < 300) {
+            try {
+              const data = JSON.parse(rawData) as T;
+              resolve({ ok: true, status, data });
+            } catch {
+              resolve({ ok: false, status, data: null });
+            }
+          } else {
+            resolve({ ok: false, status, data: null });
+          }
+        });
+      });
+
+      req.on('timeout', () => {
+        req.destroy();
+        resolve({ ok: false, status: 408, data: null });
+      });
+
+      req.on('error', () => {
+        resolve({ ok: false, status: 500, data: null });
+      });
+
+      if (options.body) {
+        req.write(typeof options.body === 'string' ? options.body : JSON.stringify(options.body));
+      }
+
+      req.end();
+    } catch {
+      resolve({ ok: false, status: 500, data: null });
+    }
+  });
+}
 
 export interface FetchPropertiesOptions {
   category?: string;
@@ -219,24 +314,12 @@ export async function getProperties(options: FetchPropertiesOptions = {}): Promi
     if (options.city) queryParams.append('city', options.city);
     if (options.search) queryParams.append('search', options.search);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const result = await wpFetchJson<unknown[]>(
+      `${WP_API_ENDPOINT}/properties?${queryParams.toString()}`
+    );
 
-    const res = await fetch(`${WP_API_ENDPOINT}/properties?${queryParams.toString()}`, {
-      signal: controller.signal,
-      headers: {
-        Accept: 'application/json',
-      },
-      next: { revalidate: 60 },
-    });
-
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        return data.map(mapWpPropertyToFrontend);
-      }
+    if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
+      return result.data.map(mapWpPropertyToFrontend);
     }
   } catch {
     // WordPress might be offline, unreachable, or in development mode
@@ -283,26 +366,22 @@ export async function submitPropertyToWordPress(
   payload: PropertySubmissionPayload
 ): Promise<SubmissionResponse> {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const result = await wpFetchJson<{ message?: string; post_id?: number | string }>(
+      `${WP_API_ENDPOINT}/submit-property`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: payload,
+      }
+    );
 
-    const res = await fetch(`${WP_API_ENDPOINT}/submit-property`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const result = await res.json();
+    if (result.ok && result.data) {
       return {
         success: true,
-        message: result.message || 'Property submitted successfully! It is now pending admin review.',
-        postId: result.post_id,
+        message: result.data.message || 'Property submitted successfully! It is now pending admin review.',
+        postId: result.data.post_id,
         status: 'pending',
       };
     }
@@ -326,44 +405,25 @@ export async function submitPropertyToWordPress(
  */
 export async function getHomepageData(): Promise<HomepageData | null> {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const result = await wpFetchJson<HomepageData>(`${WP_API_ENDPOINT}/homepage`);
 
-    const res = await fetch(`${WP_API_ENDPOINT}/homepage`, {
-      headers: {
-        Accept: 'application/json',
-      },
-      next: { revalidate: 60 },
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data && Array.isArray(data.sections) && data.sections.length > 0) {
-        return data as HomepageData;
-      }
+    if (result.ok && result.data && Array.isArray(result.data.sections) && result.data.sections.length > 0) {
+      return result.data;
     }
 
     // Fallback: check standard WordPress page API
-    const fallbackRes = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/pages?slug=home`, {
-      headers: {
-        Accept: 'application/json',
-      },
-      next: { revalidate: 60 },
-    });
+    const fallbackResult = await wpFetchJson<Array<{ id: number; title?: { rendered?: string }; slug?: string; acf?: { sections?: unknown[] } }>>(
+      `${WP_BASE_URL}/wp-json/wp/v2/pages?slug=home`
+    );
 
-    if (fallbackRes.ok) {
-      const pages = await fallbackRes.json();
-      if (Array.isArray(pages) && pages[0]?.acf?.sections) {
-        return {
-          id: pages[0].id,
-          title: pages[0].title?.rendered || 'Home',
-          slug: pages[0].slug || 'home',
-          sections: pages[0].acf.sections,
-        };
-      }
+    if (fallbackResult.ok && Array.isArray(fallbackResult.data) && fallbackResult.data[0]?.acf?.sections) {
+      const p = fallbackResult.data[0];
+      return {
+        id: p.id,
+        title: p.title?.rendered || 'Home',
+        slug: p.slug || 'home',
+        sections: p.acf!.sections as HomepageSection[],
+      };
     }
   } catch (error) {
     console.warn('WordPress getHomepageData unavailable, falling back to static defaults:', error);
@@ -378,24 +438,10 @@ export async function getHomepageData(): Promise<HomepageData | null> {
  */
 export async function getProjects(): Promise<Society[]> {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const result = await wpFetchJson<Society[]>(`${WP_API_ENDPOINT}/projects`);
 
-    const res = await fetch(`${WP_API_ENDPOINT}/projects`, {
-      headers: {
-        Accept: 'application/json',
-      },
-      next: { revalidate: 60 },
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        return data as Society[];
-      }
+    if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
+      return result.data;
     }
   } catch (error) {
     console.warn('WordPress getProjects unavailable, falling back to static societies:', error);
