@@ -164,6 +164,21 @@ function sofinfra_get_projects_endpoint_data() {
             }
         }
 
+        $gallery = array();
+        if (!empty($acf['gallery_images']) && is_array($acf['gallery_images'])) {
+            foreach ($acf['gallery_images'] as $img) {
+                if (is_array($img) && isset($img['url'])) {
+                    $gallery[] = $img['url'];
+                } elseif (is_string($img)) {
+                    $gallery[] = $img;
+                }
+            }
+        }
+        $main_img = !empty($acf['image_url']) ? $acf['image_url'] : ($thumb_url ? $thumb_url : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=85');
+        if (empty($gallery)) {
+            $gallery = array($main_img);
+        }
+
         $projects[] = array(
             'id' => 'project-' . $id,
             'wp_id' => $id,
@@ -178,7 +193,9 @@ function sofinfra_get_projects_endpoint_data() {
             'priceRange' => !empty($acf['price_range']) ? $acf['price_range'] : 'Price on Request',
             'units' => !empty($acf['units']) ? $acf['units'] : '',
             'configurations' => !empty($acf['configurations']) ? $acf['configurations'] : '',
-            'image' => !empty($acf['image_url']) ? $acf['image_url'] : ($thumb_url ? $thumb_url : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=85'),
+            'image' => $main_img,
+            'images' => $gallery,
+            'gallery' => $gallery,
             'featured' => !empty($acf['featured']) ? (bool)$acf['featured'] : false,
             'amenities' => array_filter($amenities),
             'reraId' => !empty($acf['rera_id']) ? $acf['rera_id'] : 'Verified',
@@ -271,6 +288,7 @@ function sofinfra_get_properties_endpoint_data() {
             'shortDescription' => $post->post_excerpt,
             'featuredImage' => $main_img,
             'galleryImages' => $gallery,
+            'images' => $gallery,
             'videoUrl' => !empty($acf['video_url']) ? $acf['video_url'] : null,
             'status' => $post->post_status,
             'createdAt' => $post->post_date,
@@ -279,3 +297,86 @@ function sofinfra_get_properties_endpoint_data() {
 
     return rest_ensure_response($properties);
 }
+
+// =========================================================================
+// 6. HEADLESS MODE: DISABLE WORDPRESS FRONTEND & REDIRECT TO NEXT.JS
+// =========================================================================
+
+add_action('template_redirect', 'sofinfra_headless_disable_wp_frontend');
+
+function sofinfra_headless_disable_wp_frontend() {
+    // Never block WP Admin, Cron, AJAX, or REST API
+    if (is_admin() || wp_doing_ajax() || wp_doing_cron()) {
+        return;
+    }
+
+    // Never block REST API requests
+    if (defined('REST_REQUEST') && REST_REQUEST) {
+        return;
+    }
+
+    $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+    if (
+        strpos($request_uri, '/wp-json') !== false ||
+        strpos($request_uri, 'wp-login.php') !== false ||
+        strpos($request_uri, 'wp-admin') !== false
+    ) {
+        return;
+    }
+
+    $frontend_url = getenv('FRONTEND_URL') ?: 'http://localhost:3000';
+
+    // Route single projects or properties directly to the Next.js section
+    if (is_singular('projects')) {
+        wp_redirect(rtrim($frontend_url, '/') . '/#societies', 302);
+        exit;
+    }
+
+    if (is_singular('properties')) {
+        wp_redirect(rtrim($frontend_url, '/') . '/#buy-properties', 302);
+        exit;
+    }
+
+    // Redirect all WordPress frontend pages to Next.js
+    wp_redirect(rtrim($frontend_url, '/'), 302);
+    exit;
+}
+
+// Preview and permalinks in WordPress Admin point directly to Next.js
+add_filter('preview_post_link', 'sofinfra_headless_filter_preview_link', 10, 2);
+add_filter('post_type_link', 'sofinfra_headless_filter_post_link', 10, 2);
+
+function sofinfra_headless_filter_preview_link($link, $post) {
+    $frontend_url = rtrim(getenv('FRONTEND_URL') ?: 'http://localhost:3000', '/');
+    if ($post->post_type === 'projects') {
+        return $frontend_url . '/#societies';
+    }
+    if ($post->post_type === 'properties') {
+        return $frontend_url . '/#buy-properties';
+    }
+    return $frontend_url;
+}
+
+function sofinfra_headless_filter_post_link($url, $post) {
+    if (is_admin()) {
+        $frontend_url = rtrim(getenv('FRONTEND_URL') ?: 'http://localhost:3000', '/');
+        if ($post->post_type === 'projects') {
+            return $frontend_url . '/#societies';
+        }
+        if ($post->post_type === 'properties') {
+            return $frontend_url . '/#buy-properties';
+        }
+    }
+    return $url;
+}
+
+// Clean up unnecessary WordPress frontend assets
+add_action('after_setup_theme', function () {
+    remove_action('wp_head', 'wp_generator');
+    remove_action('wp_head', 'wlwmanifest_link');
+    remove_action('wp_head', 'rsd_link');
+    remove_action('wp_head', 'wp_shortlink_wp_head');
+    remove_action('wp_head', 'adjacent_posts_rel_link_wp_head', 10);
+    remove_action('wp_head', 'print_emoji_detection_script', 7);
+    remove_action('wp_print_styles', 'print_emoji_styles');
+});

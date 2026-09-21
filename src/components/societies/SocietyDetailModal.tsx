@@ -14,6 +14,8 @@ import {
   Share2,
   Phone,
   Navigation,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { Society } from '@/data/societies';
 
@@ -27,11 +29,36 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
   const [inquiryName, setInquiryName] = useState('');
   const [inquiryEmail, setInquiryEmail] = useState('');
   const [inquiryPhone, setInquiryPhone] = useState('');
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  const images = society?.images && society.images.length > 0
+    ? society.images
+    : society?.gallery && society.gallery.length > 0
+    ? society.gallery
+    : society?.image
+    ? [society.image]
+    : [];
 
   const handleClose = useCallback(() => {
     setInquirySent(false);
+    setSelectedImageIndex(0);
     onClose();
   }, [onClose]);
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  // Reset image index when society changes
+  useEffect(() => {
+    setSelectedImageIndex(0);
+  }, [society?.id]);
 
   // Handle ESC key press
   useEffect(() => {
@@ -121,18 +148,70 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
 
         {/* Scrollable Modal Content */}
         <div className="overflow-y-auto flex-1 p-6 sm:p-8 space-y-8">
-          {/* Main Featured Society Image */}
+          {/* Society Image Gallery Carousel */}
           <div>
             <div className="relative h-72 sm:h-[440px] w-full rounded-2xl overflow-hidden bg-slate-900 shadow-inner">
-              <Image
-                src={society.image}
-                alt={society.name}
-                fill
-                priority
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 1000px"
-              />
+              {images.length > 0 ? (
+                <Image
+                  src={images[selectedImageIndex] || society.image}
+                  alt={society.name}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 1000px"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-slate-400">
+                  <Building2 className="w-12 h-12 stroke-[1.5]" />
+                </div>
+              )}
+
+              {/* Prev / Next Arrows & Counter if multiple images */}
+              {images.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition-colors cursor-pointer"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-xs transition-colors cursor-pointer"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+
+                  <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-mono">
+                    {selectedImageIndex + 1} / {images.length}
+                  </div>
+                </>
+              )}
             </div>
+
+            {/* Thumbnail Strip */}
+            {images.length > 1 && (
+              <div className="flex items-center gap-3 mt-3 overflow-x-auto pb-2">
+                {images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setSelectedImageIndex(idx)}
+                    className={`relative w-20 h-14 shrink-0 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                      selectedImageIndex === idx
+                        ? 'border-[#c59b27] ring-2 ring-[#c59b27]/30 scale-105'
+                        : 'border-transparent opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <Image src={img} alt="" fill className="object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Title, Location & Price Header */}

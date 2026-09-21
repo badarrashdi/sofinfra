@@ -11,9 +11,12 @@ export interface Society {
   units: string;
   configurations: string;
   image: string;
+  images?: string[];
+  gallery?: string[];
   featured: boolean;
   amenities: string[];
   reraId: string;
+  description?: string;
 }
 
 export const DELHI_NCR_SOCIETIES: Society[] = [

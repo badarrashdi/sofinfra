@@ -640,9 +640,20 @@ function sofinfra_register_project_acf_fields() {
             ),
             array(
                 'key' => 'field_proj_image_url',
-                'label' => 'Featured Image URL',
+                'label' => 'Featured Image URL (Optional Fallback)',
                 'name' => 'image_url',
                 'type' => 'text',
+            ),
+            array(
+                'key' => 'field_proj_gallery',
+                'label' => 'Project Gallery (Multiple Image Uploads)',
+                'name' => 'gallery_images',
+                'type' => 'gallery',
+                'instructions' => 'Upload or select multiple high-resolution photos, architectural renders, and master plans for this project.',
+                'return_format' => 'array',
+                'preview_size' => 'medium',
+                'insert' => 'append',
+                'library' => 'all',
             ),
             array(
                 'key' => 'field_proj_rera_id',
@@ -784,9 +795,20 @@ function sofinfra_register_property_acf_fields() {
             ),
             array(
                 'key' => 'field_prop_image_url',
-                'label' => 'Featured Image URL',
+                'label' => 'Featured Image URL (Optional Fallback)',
                 'name' => 'featured_image_url',
                 'type' => 'text',
+            ),
+            array(
+                'key' => 'field_prop_gallery',
+                'label' => 'Property Gallery (Multiple Image Uploads)',
+                'name' => 'gallery_images',
+                'type' => 'gallery',
+                'instructions' => 'Upload or select multiple high-resolution photos, floor plans, and interior views for this listing.',
+                'return_format' => 'array',
+                'preview_size' => 'medium',
+                'insert' => 'append',
+                'library' => 'all',
             ),
             array(
                 'key' => 'field_prop_video_url',

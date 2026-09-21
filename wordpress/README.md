@@ -9,16 +9,20 @@ This directory contains the WordPress backend configuration and custom code for 
     - `properties` (Property Listings)
   - Registers Custom REST API endpoints:
     - `GET /wp-json/sofinfra/v1/homepage`: Returns flexible content sections from the Homepage.
-    - `GET /wp-json/sofinfra/v1/projects`: Returns all active societies and megaprojects with ACF meta.
-    - `GET /wp-json/sofinfra/v1/properties`: Returns all active property listings with ACF meta.
+    - `GET /wp-json/sofinfra/v1/projects`: Returns all active societies and megaprojects with ACF meta and gallery images.
+    - `GET /wp-json/sofinfra/v1/properties`: Returns all active property listings with ACF meta and gallery images.
     - `POST /wp-json/sofinfra/v1/submit-property`: Public submission endpoint that creates pending listings for admin review.
+  - Headless Architecture & Routing:
+    - Disables WordPress frontend rendering and automatically redirects any visitor or preview link to the Next.js app (`http://localhost:3000` or `FRONTEND_URL`).
+    - Strips frontend clutter (emojis, generator tags, RSD, embeds).
+    - Preserves full access to `/wp-admin/`, `/wp-login.php`, and `/wp-json/` REST APIs.
   - Configures CORS headers and REST API permissions.
 
 - `mu-plugins/sofinfra-acf-fields.php`:
   - Programmatically defines all ACF Field Groups (no JSON or manual DB sync required):
     - **Homepage Flexible Content**: Hero, Property Listings, Societies, About, Services, Testimonials, CTA, Contact.
-    - **Project / Society Meta**: Developer, Location, City, Price Range, Amenities, RERA ID, Master Plan, Brochure URL, etc.
-    - **Property Meta**: Category, Property Type, Price, Area, Specs, Location, Highlights, Brochure, Featured status.
+    - **Project / Society Meta**: Developer, Location, City, Price Range, Amenities, RERA ID, **Project Gallery (Multiple Image Uploads via ACF Gallery)**, Brochure URL, etc.
+    - **Property Meta**: Category, Property Type, Price, Area, Specs, Location, Highlights, **Property Gallery (Multiple Image Uploads via ACF Gallery)**, Brochure, Featured status.
 
 ---
 
