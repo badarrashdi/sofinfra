@@ -505,7 +505,7 @@ function sofinfra_register_homepage_acf_fields() {
                                 'label' => 'Email Address',
                                 'name' => 'email',
                                 'type' => 'text',
-                                'default_value' => 'contact@sofinfra.com',
+                                'default_value' => 'sales@sofinfra.com',
                             ),
                             array(
                                 'key' => 'field_contact_address',
@@ -513,7 +513,7 @@ function sofinfra_register_homepage_acf_fields() {
                                 'name' => 'address',
                                 'type' => 'textarea',
                                 'rows' => 2,
-                                'default_value' => 'Golf Course Road, Sector 54, Gurugram, Haryana 122002',
+                                'default_value' => 'S-306-308, 2nd Floor, Tower A, Palam Vihar, Gurugram(HR)-122017',
                             ),
                             array(
                                 'key' => 'field_contact_hours',

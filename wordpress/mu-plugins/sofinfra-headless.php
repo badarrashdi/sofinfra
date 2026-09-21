@@ -165,6 +165,20 @@ function sofinfra_get_homepage_endpoint_data() {
         }
     }
 
+    // Ensure contact_section returns sales@sofinfra.com and updated HQ address
+    if (is_array($sections)) {
+        foreach ($sections as &$sec) {
+            if (isset($sec['acf_fc_layout']) && $sec['acf_fc_layout'] === 'contact_section') {
+                if (empty($sec['email']) || $sec['email'] === 'contact@sofinfra.com' || strpos($sec['email'], 'sofinfra') !== false) {
+                    $sec['email'] = 'sales@sofinfra.com';
+                }
+                if (empty($sec['address']) || strpos($sec['address'], 'Golf Course') !== false) {
+                    $sec['address'] = 'S-306-308, 2nd Floor, Tower A, Palam Vihar, Gurugram(HR)-122017';
+                }
+            }
+        }
+    }
+
     return rest_ensure_response(array(
         'id' => $frontpage_id ? intval($frontpage_id) : 0,
         'title' => $page ? $page->post_title : 'Home',

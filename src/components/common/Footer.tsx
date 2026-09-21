@@ -117,7 +117,7 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
               <div className="flex items-start gap-1.5 leading-relaxed">
                 <MapPin className="w-3.5 h-3.5 text-[#c59b27] shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-white font-medium">Palam Corporate Plaza</p>
+                  <p className="text-white font-medium">Corporate Headquarters</p>
                   <p>S-306-308, 2nd Floor, Tower A, Palam Vihar, Gurugram(HR)-122017</p>
                   <a
                     href="https://maps.google.com/?q=Ansal+Corporate+Plaza,+block+c,+2,+Carterpuri+Rd,+Block+C+2,+Palam+Vihar,+Gurugram,+Haryana+122017"
@@ -143,8 +143,8 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
               </p>
               <p className="flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-[#c59b27] shrink-0" />
-                <a href="mailto:info@sofinfra.local" className="hover:text-white transition-colors">
-                  info@sofinfra.local
+                <a href="mailto:sales@sofinfra.com" className="hover:text-white transition-colors">
+                  sales@sofinfra.com
                 </a>
               </p>
             </div>
@@ -154,9 +154,7 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
         {/* Bottom Strip */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>© {new Date().getFullYear()} SOFINFRA India. Building A Brighter Tomorrow. RERA Registered.</p>
-          <div className="flex items-center space-x-6">
-            <span className="hover:text-slate-400 cursor-pointer">Privacy Policy</span>
-            <span className="hover:text-slate-400 cursor-pointer">Terms &amp; Conditions</span>
+          <div className="flex items-center">
             <button
               type="button"
               onClick={scrollToTop}

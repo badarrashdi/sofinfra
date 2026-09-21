@@ -49,14 +49,24 @@ export default function ContactSection({ data }: ContactSectionProps) {
     }
   };
 
+  const currentAddress =
+    data?.address && !data.address.includes('Golf Course Road')
+      ? data.address
+      : 'S-306-308, 2nd Floor, Tower A, Palam Vihar, Gurugram(HR)-122017';
+
+  const currentEmail =
+    data?.email && data.email !== 'contact@sofinfra.com'
+      ? data.email
+      : 'sales@sofinfra.com';
+
   const offices = [
     {
       city: 'Headquarters (Gurugram)',
-      address: data?.address || 'S-306-308, 2nd Floor, Tower A, Palam Corporate Plaza, Palam Vihar, Gurugram(HR)-122017',
+      address: currentAddress,
       landmark: 'Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2, Palam Vihar, Gurugram, Haryana 122017',
       phone: data?.phone || data?.phone_numbers?.[0]?.number || '+91 81783 93751',
       secondaryPhone: '+91 92123 16521',
-      email: data?.email || 'contact@sofinfra.com',
+      email: currentEmail,
       isPrimary: true,
     },
   ];
@@ -313,7 +323,7 @@ export default function ContactSection({ data }: ContactSectionProps) {
               </h3>
               <div className="text-xs sm:text-sm text-slate-300 font-light max-w-2xl leading-relaxed space-y-1">
                 <p>
-                  <strong className="text-white font-medium">Official Address:</strong> S-306-308, 2nd Floor, Tower A, Palam Corporate Plaza, Palam Vihar, Gurugram(HR)-122017
+                  <strong className="text-white font-medium">Official Address:</strong> S-306-308, 2nd Floor, Tower A, Palam Vihar, Gurugram(HR)-122017
                 </p>
                 <p>
                   <strong className="text-white font-medium">Map Landmark:</strong> Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2, Palam Vihar, Gurugram, Haryana 122017
