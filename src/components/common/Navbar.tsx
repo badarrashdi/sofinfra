@@ -77,30 +77,26 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
         isScrolled
           ? 'bg-white/98 backdrop-blur-md shadow-md py-2 sm:py-2.5 border-b border-slate-200'
-          : 'bg-transparent py-3 sm:py-4 border-b border-transparent shadow-none'
+          : 'bg-white/90 backdrop-blur-md shadow-xs py-2.5 sm:py-3.5 border-b border-slate-200/60'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          {/* Logo - Background only on logo in default mode with whitespace removed below */}
+          {/* Logo - Natural crisp display directly on header background */}
           <a
             href="#hero"
             onClick={(e) => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className={`flex items-center group transition-all duration-300 rounded-[2px] border-0 ${
-              isScrolled
-                ? 'p-0 bg-transparent shadow-none hover:opacity-95'
-                : 'px-3 sm:px-4 pt-1.5 pb-1 sm:pt-2 sm:pb-1 bg-white/95 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_6px_24px_rgba(197,155,39,0.3)] hover:scale-[1.02]'
-            }`}
+            className="flex items-center group transition-transform duration-200 hover:opacity-95"
             aria-label="SOFINFRA Home"
           >
             <div
               className={`relative transition-all duration-300 ease-in-out aspect-[995/665] ${
                 isScrolled
-                  ? 'h-[68px]'
-                  : 'h-[68px] md:h-[76px]'
+                  ? 'h-[64px]'
+                  : 'h-[68px] md:h-[74px]'
               }`}
             >
               <Image
@@ -124,13 +120,11 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
                   type="button"
                   onClick={(e) => handleNavClick(e, item)}
                   className={`px-3.5 py-2 text-sm tracking-wide transition-all duration-200 rounded-md relative cursor-pointer font-medium ${
-                    isScrolled
-                      ? isActive
-                        ? 'text-[#c59b27] font-bold'
-                        : 'text-slate-700 hover:text-[#0b2240] hover:bg-slate-100/80 font-medium'
-                      : isActive
-                      ? 'text-[#c59b27] font-bold drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]'
-                      : 'text-white hover:text-[#c59b27] hover:bg-white/10 font-semibold drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]'
+                    isActive
+                      ? 'text-[#c59b27] font-bold'
+                      : isScrolled
+                      ? 'text-slate-700 hover:text-[#0b2240] hover:bg-slate-100/80 font-medium'
+                      : 'text-slate-800 hover:text-[#0b2240] hover:bg-slate-100/60 font-medium'
                   }`}
                 >
                   {item.name}
@@ -145,11 +139,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
           {/* Action CTAs */}
           <div className="hidden sm:flex items-center space-x-3.5">
             {/* Direct Dual Phone Numbers */}
-            <div
-              className={`hidden lg:flex items-center space-x-1.5 text-xs font-semibold tracking-wider px-2 py-1.5 transition-colors ${
-                isScrolled ? 'text-slate-700' : 'text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]'
-              }`}
-            >
+            <div className="hidden lg:flex items-center space-x-1.5 text-xs font-semibold tracking-wider px-2 py-1.5 transition-colors text-slate-700">
               <PhoneCall className="w-3.5 h-3.5 text-[#c59b27] shrink-0" />
               <div className="flex items-center gap-1.5">
                 <a
@@ -159,7 +149,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
                 >
                   +91 81783 93751
                 </a>
-                <span className={isScrolled ? 'text-slate-400' : 'text-white/60'}>/</span>
+                <span className="text-slate-400">/</span>
                 <a
                   href="tel:+919212316521"
                   className="hover:text-[#c59b27] transition-colors whitespace-nowrap"
@@ -204,11 +194,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`p-2 rounded-lg transition-colors cursor-pointer ${
-                isScrolled
-                  ? 'text-slate-700 hover:bg-slate-100'
-                  : 'text-white hover:bg-white/15 drop-shadow-md'
-              }`}
+              className="p-2 rounded-lg transition-colors cursor-pointer text-slate-700 hover:bg-slate-100"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

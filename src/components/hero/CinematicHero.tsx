@@ -23,27 +23,18 @@ export default function CinematicHero({
   const [selectedBudget, setSelectedBudget] = useState("All Budgets");
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Slow down video playback for a smooth, cinematic aerial glide (0.7x speed) and start from 3.7s
+  // Slow down video playback for a smooth, cinematic aerial glide (0.5x speed - 30% slower)
   useEffect(() => {
     const video = videoRef.current;
     if (video) {
-      video.playbackRate = 0.7;
-      if (video.readyState >= 1 && video.currentTime < 3.7) {
-        video.currentTime = 3.7;
-      }
+      video.playbackRate = 0.5;
     }
   }, []);
 
   const handleVideoLoaded = () => {
     if (videoRef.current) {
-      videoRef.current.playbackRate = 0.7;
-      videoRef.current.currentTime = 3.7;
-    }
-  };
-
-  const handleTimeUpdate = () => {
-    if (videoRef.current && videoRef.current.currentTime < 3.7) {
-      videoRef.current.currentTime = 3.7;
+      videoRef.current.playbackRate = 0.5;
+      videoRef.current.currentTime = 0;
     }
   };
 
@@ -75,7 +66,7 @@ export default function CinematicHero({
       id="hero"
       className="relative min-h-[750px] lg:min-h-[850px] h-screen w-full flex items-center justify-center overflow-hidden bg-[#07162c]"
     >
-      {/* BACKGROUND DRONE VIDEO ONLY with 0.7x slow cinematic playback starting from 3.7s */}
+      {/* BACKGROUND DRONE VIDEO ONLY with 0.5x slow cinematic playback starting from 0s */}
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
         <video
           ref={videoRef}
@@ -84,10 +75,9 @@ export default function CinematicHero({
           muted
           playsInline
           onLoadedMetadata={handleVideoLoaded}
-          onTimeUpdate={handleTimeUpdate}
           className="absolute inset-0 w-full h-full object-cover scale-105 transition-all duration-700"
         >
-          <source src="/videos/hero-noida-drone.mp4#t=3.7" type="video/mp4" />
+          <source src="/videos/hero-noida-drone.mp4" type="video/mp4" />
         </video>
         {/* Subtle top vignette for crystal clear header and logo contrast */}
         <div className="absolute top-0 left-0 right-0 h-32 bg-linear-to-b from-black/30 to-transparent pointer-events-none" />
