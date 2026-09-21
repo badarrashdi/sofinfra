@@ -380,3 +380,113 @@ add_action('after_setup_theme', function () {
     remove_action('wp_head', 'print_emoji_detection_script', 7);
     remove_action('wp_print_styles', 'print_emoji_styles');
 });
+
+// =========================================================================
+// 7. PUBLISH TRIGGER: INSTANT ON-DEMAND REVALIDATION FOR VERCEL NEXT.JS
+// =========================================================================
+
+function sofinfra_get_frontend_url() {
+    $url = getenv('FRONTEND_URL');
+    if ($url) {
+        return rtrim($url, '/');
+    }
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    if (strpos($host, 'local') !== false) {
+        return 'http://localhost:3000';
+    }
+    return 'https://sofinfra.vercel.app';
+}
+
+function sofinfra_get_revalidate_secret() {
+    return getenv('REVALIDATION_SECRET') ?: 'sofinfra_publish_secret_2026';
+}
+
+function sofinfra_trigger_frontend_revalidate($path = '/') {
+    $frontend_url = sofinfra_get_frontend_url();
+    $secret = sofinfra_get_revalidate_secret();
+    $target_url = add_query_arg(array(
+        'secret' => $secret,
+        'path' => $path,
+    ), rtrim($frontend_url, '/') . '/api/revalidate');
+
+    wp_remote_get($target_url, array(
+        'timeout' => 5,
+        'blocking' => false, // Non-blocking so saving in WP admin is instant
+        'sslverify' => false,
+    ));
+}
+
+// Automatically trigger on publish, update, trash of pages, projects, and properties
+add_action('save_post', 'sofinfra_on_save_post_trigger_revalidate', 20, 2);
+add_action('trashed_post', 'sofinfra_on_trash_post_trigger_revalidate');
+add_action('untrashed_post', 'sofinfra_on_trash_post_trigger_revalidate');
+
+function sofinfra_on_save_post_trigger_revalidate($post_id, $post) {
+    if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+        return;
+    }
+    if (!in_array($post->post_type, array('page', 'projects', 'properties'), true)) {
+        return;
+    }
+    sofinfra_trigger_frontend_revalidate('/');
+}
+
+function sofinfra_on_trash_post_trigger_revalidate($post_id) {
+    sofinfra_trigger_frontend_revalidate('/');
+}
+
+// Add 1-Click "Sync Frontend (Vercel)" Button to WordPress Admin Bar
+add_action('admin_bar_menu', 'sofinfra_add_admin_bar_purge_button', 100);
+
+function sofinfra_add_admin_bar_purge_button($admin_bar) {
+    if (!current_user_can('edit_posts')) {
+        return;
+    }
+
+    $admin_bar->add_node(array(
+        'id' => 'sofinfra_purge_cache',
+        'title' => '<span style="color:#c59b27;font-weight:bold;">⚡ Sync Frontend (Vercel)</span>',
+        'href' => wp_nonce_url(admin_url('admin-post.php?action=sofinfra_purge_cache'), 'sofinfra_purge_nonce'),
+        'meta' => array(
+            'title' => 'Instantly purge Vercel cache and publish latest changes to frontend',
+        ),
+    ));
+}
+
+add_action('admin_post_sofinfra_purge_cache', 'sofinfra_handle_admin_bar_purge');
+
+function sofinfra_handle_admin_bar_purge() {
+    check_admin_referer('sofinfra_purge_nonce');
+
+    if (!current_user_can('edit_posts')) {
+        wp_die('Unauthorized');
+    }
+
+    $frontend_url = sofinfra_get_frontend_url();
+    $secret = sofinfra_get_revalidate_secret();
+    $target_url = add_query_arg(array(
+        'secret' => $secret,
+        'path' => '/',
+    ), rtrim($frontend_url, '/') . '/api/revalidate');
+
+    $res = wp_remote_get($target_url, array(
+        'timeout' => 10,
+        'sslverify' => false,
+    ));
+
+    $status = wp_remote_retrieve_response_code($res);
+    $msg = ($status === 200) ? 'success' : 'error';
+
+    wp_safe_redirect(add_query_arg('sofinfra_cache_purged', $msg, wp_get_referer() ?: admin_url()));
+    exit;
+}
+
+add_action('admin_notices', function () {
+    if (isset($_GET['sofinfra_cache_purged'])) {
+        if ($_GET['sofinfra_cache_purged'] === 'success') {
+            echo '<div class="notice notice-success is-dismissible"><p><strong>Vercel Frontend Synced:</strong> The cache has been successfully purged and updated!</p></div>';
+        } else {
+            echo '<div class="notice notice-warning is-dismissible"><p><strong>Vercel Sync Dispatched:</strong> Request was sent to frontend.</p></div>';
+        }
+    }
+});

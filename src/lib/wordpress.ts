@@ -2,11 +2,13 @@ import { Property, PropertySubmissionPayload } from '@/types/property';
 import { Society, DELHI_NCR_SOCIETIES } from '@/data/societies';
 import { INITIAL_PROPERTIES } from '@/data/mock-properties';
 
-// WordPress endpoint - defaults to http://sofinfra.local/ or configured environment variable
+// WordPress endpoint - defaults to live production host in production, or http://sofinfra.local in local development
 const WP_BASE_URL =
   process.env.WORDPRESS_URL ||
   process.env.NEXT_PUBLIC_WORDPRESS_URL ||
-  'http://sofinfra.local';
+  (process.env.NODE_ENV === 'production' || process.env.VERCEL
+    ? 'https://sofinfraadmin.accelerance.in'
+    : 'http://sofinfra.local');
 const WP_API_ENDPOINT = `${WP_BASE_URL}/wp-json/sofinfra/v1`;
 
 export interface FetchPropertiesOptions {
@@ -213,7 +215,7 @@ export async function getProperties(options: FetchPropertiesOptions = {}): Promi
     if (options.search) queryParams.append('search', options.search);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
 
     const res = await fetch(`${WP_API_ENDPOINT}/properties?${queryParams.toString()}`, {
       signal: controller.signal,
@@ -320,9 +322,9 @@ export async function submitPropertyToWordPress(
 export async function getHomepageData(): Promise<HomepageData | null> {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
 
-    const res = await fetch(`${WP_BASE_URL}/wp-json/sofinfra/v1/homepage`, {
+    const res = await fetch(`${WP_API_ENDPOINT}/homepage`, {
       headers: {
         Accept: 'application/json',
       },
@@ -372,7 +374,7 @@ export async function getHomepageData(): Promise<HomepageData | null> {
 export async function getProjects(): Promise<Society[]> {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
 
     const res = await fetch(`${WP_API_ENDPOINT}/projects`, {
       headers: {
