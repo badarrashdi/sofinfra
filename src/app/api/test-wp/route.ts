@@ -39,13 +39,13 @@ export async function GET() {
       rawSample: text.substring(0, 300),
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    const stack = err instanceof Error ? err.stack : undefined;
+    const errorObj = err as { message?: string; stack?: string; cause?: unknown };
     return NextResponse.json({
       wpBaseUrl,
       endpoint,
-      error: message,
-      stack,
+      error: errorObj.message || String(err),
+      cause: errorObj.cause,
+      stack: errorObj.stack,
     }, { status: 500 });
   }
 }
