@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { submitPropertyToWordPress } from '@/lib/wordpress';
+import { submitPropertyToWordPress, submitContactInquiry } from '@/lib/wordpress';
 import { PropertySubmissionPayload } from '@/types/property';
 
 export async function POST(request: Request) {
@@ -37,6 +37,18 @@ export async function POST(request: Request) {
 
     // Submit to WordPress backend (enforcing pending review status)
     const result = await submitPropertyToWordPress(payload);
+
+    // Also explicitly ensure a lead is logged in Inquiries & Leads
+    const priceDisplay = payload.priceAvailability === 'request' ? 'Price on Request' : (payload.price ? `${payload.price} ${payload.currency || 'INR'}` : 'Not Specified');
+    await submitContactInquiry({
+      name: payload.fullName,
+      email: payload.email,
+      phone: payload.phone,
+      subject: `Property Listing: ${payload.title} (${payload.city})`,
+      message: `[Property Submission]\nTitle: ${payload.title}\nProperty Type: ${payload.propertyType}\nListing Type: ${payload.listingType}\nCity: ${payload.city}\nLocality/Society: ${payload.locality || 'N/A'}\nArea: ${payload.area} ${payload.areaUnit || 'sq ft'}\nExpected Price: ${priceDisplay}\n\nDescription:\n${payload.description}`,
+    }).catch((inqErr) => {
+      console.warn('Failed to mirror property submission into Inquiries & Leads:', inqErr);
+    });
 
     return NextResponse.json({
       success: true,
