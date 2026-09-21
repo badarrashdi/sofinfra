@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Search,
   PlusCircle,
@@ -12,21 +12,107 @@ import {
 } from "lucide-react";
 
 import { HeroSectionData } from "@/lib/wordpress";
+import { Society } from "@/data/societies";
+import { Property } from "@/types/property";
+
+export interface HeroSearchFilter {
+  location?: string;
+  propertyType?: string;
+  budget?: string;
+}
 
 interface CinematicHeroProps {
   onSubmitPropertyClick: () => void;
   data?: HeroSectionData;
+  projects?: Society[];
+  properties?: Property[];
+  onSearch?: (filter: HeroSearchFilter) => void;
 }
 
 export default function CinematicHero({
   onSubmitPropertyClick,
   data,
+  projects = [],
+  properties = [],
+  onSearch,
 }: CinematicHeroProps) {
-  const [selectedLocality, setSelectedLocality] = useState("Golf Course Road");
-  const [selectedBudget, setSelectedBudget] = useState("All Budgets");
+  const [selectedLocality, setSelectedLocality] = useState("all");
+  const [selectedType, setSelectedType] = useState("all");
+  const [selectedBudget, setSelectedBudget] = useState("all");
+
+  // Dynamically derive location options from projects and properties
+  const locationOptions = useMemo(() => {
+    const list: { label: string; value: string }[] = [
+      { label: "All Delhi NCR Corridors", value: "all" },
+    ];
+    const seen = new Set<string>();
+
+    // 1. Add from Projects
+    projects.forEach((proj) => {
+      const val = proj.location || proj.name;
+      const key = val.toLowerCase().trim();
+      if (val && !seen.has(key)) {
+        seen.add(key);
+        const label = proj.city ? `${val} (${proj.city})` : val;
+        list.push({ label, value: val });
+      }
+    });
+
+    // 2. Add from Properties if not already present
+    properties.forEach((prop) => {
+      const loc = prop.location?.locality;
+      if (loc) {
+        const key = loc.toLowerCase().trim();
+        if (!seen.has(key)) {
+          seen.add(key);
+          const label = prop.location.city ? `${loc} (${prop.location.city})` : loc;
+          list.push({ label, value: loc });
+        }
+      }
+    });
+
+    return list;
+  }, [projects, properties]);
+
+  // Dynamically derive property types from properties and projects
+  const propertyTypeOptions = useMemo(() => {
+    const list: { label: string; value: string }[] = [
+      { label: "All Typologies", value: "all" },
+    ];
+    const seen = new Set<string>();
+
+    properties.forEach((p) => {
+      if (p.propertyType) {
+        const key = p.propertyType.toLowerCase().trim();
+        if (!seen.has(key)) {
+          seen.add(key);
+          list.push({ label: p.propertyType, value: p.propertyType });
+        }
+      }
+    });
+
+    projects.forEach((proj) => {
+      if (proj.type) {
+        const key = proj.type.toLowerCase().trim();
+        if (!seen.has(key)) {
+          seen.add(key);
+          list.push({ label: proj.type, value: proj.type });
+        }
+      }
+    });
+
+    return list;
+  }, [properties, projects]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (onSearch) {
+      onSearch({
+        location: selectedLocality,
+        propertyType: selectedType,
+        budget: selectedBudget,
+      });
+    }
     const el =
       document.getElementById("buy-properties") ||
       document.getElementById("buy-rent");
@@ -36,8 +122,17 @@ export default function CinematicHero({
   const quickJumpToSociety = (societyName?: string) => {
     if (societyName) {
       setSelectedLocality(societyName);
+      if (onSearch) {
+        onSearch({
+          location: societyName,
+          propertyType: "all",
+          budget: "all",
+        });
+      }
     }
-    const el = document.getElementById("societies");
+    const el =
+      document.getElementById("buy-properties") ||
+      document.getElementById("societies");
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
     }
@@ -86,7 +181,7 @@ export default function CinematicHero({
             onSubmit={handleSearchSubmit}
             className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center"
           >
-            {/* Locality Selector */}
+            {/* Locality Selector (Dynamic from Projects & Properties) */}
             <div className="sm:col-span-4 relative">
               <label className="block text-[10px] font-bold uppercase tracking-wider text-white/90 drop-shadow-xs mb-1">
                 Location / Prime Corridor
@@ -98,49 +193,32 @@ export default function CinematicHero({
                   onChange={(e) => setSelectedLocality(e.target.value)}
                   className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/85 hover:bg-white focus:bg-white text-xs sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer"
                 >
-                  <option value="Golf Course Road">
-                    Golf Course Road, Gurugram
-                  </option>
-                  <option value="Golf Course Extn Road">
-                    Golf Course Extn, Gurugram
-                  </option>
-                  <option value="Noida Expressway">
-                    Noida Expressway, Sector 124/150
-                  </option>
-                  <option value="DLF Cyber City">
-                    DLF Cyber City &amp; Phase 2
-                  </option>
-                  <option value="Dwarka Expressway">
-                    Dwarka Expressway Corridors
-                  </option>
-                  <option value="Central Delhi">
-                    Central &amp; South Delhi
-                  </option>
+                  {locationOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
 
-            {/* Property Typology */}
+            {/* Property Typology (Dynamic from Projects & Properties) */}
             <div className="sm:col-span-3 relative">
               <label className="block text-[10px] font-bold uppercase tracking-wider text-white/90 drop-shadow-xs mb-1">
                 Property Type
               </label>
               <div className="relative">
                 <Building2 className="w-4 h-4 text-[#c59b27] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <select className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/85 hover:bg-white focus:bg-white text-xs sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer">
-                  <option value="all">All Typologies</option>
-                  <option value="Sky Villa / Penthouse">
-                    Sky Villa / Penthouse
-                  </option>
-                  <option value="Luxury Apartment">
-                    3 &amp; 4 BHK Apartment
-                  </option>
-                  <option value="Independent Floor">
-                    Luxury Builder Floor
-                  </option>
-                  <option value="Commercial Office">
-                    Commercial Tech Suite
-                  </option>
+                <select
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/85 hover:bg-white focus:bg-white text-xs sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer"
+                >
+                  {propertyTypeOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -157,10 +235,11 @@ export default function CinematicHero({
                   onChange={(e) => setSelectedBudget(e.target.value)}
                   className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/85 hover:bg-white focus:bg-white text-xs sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer"
                 >
-                  <option value="All Budgets">All Price Ranges</option>
-                  <option value="₹2 - 5 Cr">₹2 Cr - ₹5 Cr</option>
-                  <option value="₹5 - 12 Cr">₹5 Cr - ₹12 Cr</option>
-                  <option value="₹12 Cr+">₹12 Cr+ (Ultra Luxury)</option>
+                  <option value="all">All Price Ranges</option>
+                  <option value="under-5">Under ₹5 Cr</option>
+                  <option value="5-15">₹5 Cr - ₹15 Cr</option>
+                  <option value="15-35">₹15 Cr - ₹35 Cr</option>
+                  <option value="35-plus">₹35 Cr+ (Ultra Luxury)</option>
                 </select>
               </div>
             </div>
@@ -185,6 +264,8 @@ export default function CinematicHero({
             </span>
             {(data?.trending_societies && data.trending_societies.length > 0
               ? data.trending_societies.map((s) => s.name)
+              : projects && projects.length > 0
+              ? projects.slice(0, 5).map((p) => p.name)
               : [
                   "DLF The Camellias",
                   "ATS Knightsbridge",

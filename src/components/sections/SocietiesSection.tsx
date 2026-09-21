@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Building, MapPin, CheckCircle2, ShieldCheck, ArrowRight } from 'lucide-react';
 import { DELHI_NCR_SOCIETIES, Society } from '@/data/societies';
@@ -14,9 +14,19 @@ interface SocietiesSectionProps {
 }
 
 export default function SocietiesSection({ onSelectSociety, data, societies }: SocietiesSectionProps) {
-  const [selectedCity, setSelectedCity] = useState<'All' | 'Gurugram' | 'Noida' | 'New Delhi'>('All');
+  const [selectedCity, setSelectedCity] = useState<string>('All');
 
   const list = societies && societies.length > 0 ? societies : DELHI_NCR_SOCIETIES;
+
+  // Dynamically derive unique cities from projects
+  const availableCities: string[] = useMemo(() => {
+    const set = new Set<string>();
+    list.forEach((s) => {
+      if (s.city) set.add(s.city);
+    });
+    return ['All', ...Array.from(set)];
+  }, [list]);
+
   const filteredSocieties = list.filter((soc) => {
     if (selectedCity === 'All') return true;
     return soc.city === selectedCity;
@@ -41,9 +51,9 @@ export default function SocietiesSection({ onSelectSociety, data, societies }: S
             </p>
           </div>
 
-          {/* City Filter Tabs */}
+          {/* City Filter Tabs (Dynamic) */}
           <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 self-start md:self-auto overflow-x-auto">
-            {(['All', 'Gurugram', 'Noida', 'New Delhi'] as const).map((city) => (
+            {availableCities.map((city: string) => (
               <button
                 key={city}
                 type="button"

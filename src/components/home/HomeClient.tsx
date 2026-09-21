@@ -5,7 +5,7 @@ import { Property } from '@/types/property';
 import { Society } from '@/data/societies';
 import { HomepageData, HomepageSection } from '@/lib/wordpress';
 import Navbar from '@/components/common/Navbar';
-import CinematicHero from '@/components/hero/CinematicHero';
+import CinematicHero, { HeroSearchFilter } from '@/components/hero/CinematicHero';
 import PropertyListings from '@/components/properties/PropertyListings';
 import SocietiesSection from '@/components/sections/SocietiesSection';
 import SocietyDetailModal from '@/components/societies/SocietyDetailModal';
@@ -30,6 +30,7 @@ export default function HomeClient({ initialProperties, initialProjects, homepag
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [selectedSociety, setSelectedSociety] = useState<Society | null>(null);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState<boolean>(false);
+  const [heroSearchFilter, setHeroSearchFilter] = useState<HeroSearchFilter | null>(null);
 
   const handleSelectProperty = (property: Property) => {
     setSelectedProperty(property);
@@ -46,6 +47,9 @@ export default function HomeClient({ initialProperties, initialProjects, homepag
           <CinematicHero
             key={`section-hero-${index}`}
             data={section}
+            projects={societies}
+            properties={properties}
+            onSearch={(filter) => setHeroSearchFilter(filter)}
             onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
           />
         );
@@ -55,6 +59,9 @@ export default function HomeClient({ initialProperties, initialProjects, homepag
             key={`section-listings-${index}`}
             data={section}
             properties={properties}
+            projects={societies}
+            heroSearchFilter={heroSearchFilter}
+            onClearHeroFilter={() => setHeroSearchFilter(null)}
             onSelectProperty={handleSelectProperty}
           />
         );
@@ -103,11 +110,19 @@ export default function HomeClient({ initialProperties, initialProjects, homepag
       ) : (
         <>
           {/* 1. Cinematic Hero Section */}
-          <CinematicHero onSubmitPropertyClick={() => setIsSubmitModalOpen(true)} />
+          <CinematicHero
+            projects={societies}
+            properties={properties}
+            onSearch={(filter) => setHeroSearchFilter(filter)}
+            onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
+          />
 
           {/* 2. Buy Properties Section (#buy-properties) */}
           <PropertyListings
             properties={properties}
+            projects={societies}
+            heroSearchFilter={heroSearchFilter}
+            onClearHeroFilter={() => setHeroSearchFilter(null)}
             onSelectProperty={handleSelectProperty}
           />
 
