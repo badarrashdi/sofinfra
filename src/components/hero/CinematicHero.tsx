@@ -22,21 +22,15 @@ export default function CinematicHero({
   onSubmitPropertyClick,
   data,
 }: CinematicHeroProps) {
-  const [searchTab, setSearchTab] = useState<"buy" | "societies">("buy");
   const [selectedLocality, setSelectedLocality] = useState("Golf Course Road");
   const [selectedBudget, setSelectedBudget] = useState("All Budgets");
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchTab === "societies") {
-      const el = document.getElementById("societies");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    } else {
-      const el =
-        document.getElementById("buy-properties") ||
-        document.getElementById("buy-rent");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    }
+    const el =
+      document.getElementById("buy-properties") ||
+      document.getElementById("buy-rent");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
   const quickJumpToSociety = (societyName?: string) => {
@@ -87,27 +81,6 @@ export default function CinematicHero({
 
         {/* GLASSY INTERACTIVE PROPERTY SEARCH WIDGET */}
         <div className="w-full max-w-4xl bg-white/15 backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] border border-white/35 text-left transition-all duration-300">
-          {/* Search Tabs: Buy Properties | Societies */}
-          <div className="flex items-center gap-2 mb-4 border-b border-white/20 pb-3">
-            {[
-              { id: "buy", label: "Buy Properties" },
-              { id: "societies", label: "Top Societies" },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setSearchTab(tab.id as "buy" | "societies")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  searchTab === tab.id
-                    ? "bg-white text-[#0b2240] shadow-md scale-102"
-                    : "text-white/90 hover:text-white hover:bg-white/20 backdrop-blur-xs"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
           {/* Search Fields Grid */}
           <form
             onSubmit={handleSearchSubmit}

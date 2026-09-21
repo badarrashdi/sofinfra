@@ -30,26 +30,8 @@ export default function ContactSection({ data }: ContactSectionProps) {
       landmark: 'Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2, Palam Vihar, Gurugram, Haryana 122017',
       phone: data?.phone || data?.phone_numbers?.[0]?.number || '+91 81783 93751',
       secondaryPhone: '+91 92123 16521',
-      email: data?.email || 'gurugram@sofinfra.local',
+      email: data?.email || 'contact@sofinfra.com',
       isPrimary: true,
-    },
-    {
-      city: 'Noida Expressway Bureau',
-      address: 'Sector 126, Noida Expressway, Gautam Buddha Nagar, Uttar Pradesh 201301',
-      landmark: 'Near Amity University Metro Corridor',
-      phone: '+91 92123 16521',
-      secondaryPhone: '+91 81783 93751',
-      email: 'noida@sofinfra.local',
-      isPrimary: false,
-    },
-    {
-      city: 'New Delhi Corporate Office',
-      address: 'Statesman House, Barakhamba Road, Connaught Place, New Delhi 110001',
-      landmark: 'Barakhamba Road Central Advisory',
-      phone: '+91 81783 93751',
-      secondaryPhone: '+91 92123 16521',
-      email: 'delhi@sofinfra.local',
-      isPrimary: false,
     },
   ];
 
@@ -105,7 +87,7 @@ export default function ContactSection({ data }: ContactSectionProps) {
             {/* Offices List */}
             <div className="space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Delhi NCR Bureau Locations
+                Corporate Headquarters
               </h4>
               {offices.map((office) => (
                 <div

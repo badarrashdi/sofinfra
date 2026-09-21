@@ -34,7 +34,7 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
   return (
     <footer className="bg-[#07162c] text-slate-300 pt-16 pb-12 border-t border-white/10 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-16 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-16 border-b border-white/10">
           {/* Col 1 & 2: Brand & Mission */}
           <div className="lg:col-span-2 space-y-5">
             <div className="relative h-16 sm:h-20 aspect-[995/665]">
@@ -73,9 +73,7 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
                 </svg>
               </a>
               <a
-                href="https://sofinfra.local"
-                target="_blank"
-                rel="noreferrer"
+                href="#"
                 className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#c59b27] hover:text-[#07162c] transition-all flex items-center justify-center text-slate-400"
                 aria-label="Global"
               >
@@ -110,62 +108,7 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
             </ul>
           </div>
 
-          {/* Col 4: Featured High-Profile Societies */}
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-[#c59b27] mb-4">
-              Societies
-            </h4>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
-              <li>
-                <a
-                  href="#societies"
-                  onClick={(e) => handleNavClick(e, '#societies')}
-                  className="hover:text-white transition-colors"
-                >
-                  The Camellias (Gurugram)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#societies"
-                  onClick={(e) => handleNavClick(e, '#societies')}
-                  className="hover:text-white transition-colors"
-                >
-                  ATS Knightsbridge (Noida)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#societies"
-                  onClick={(e) => handleNavClick(e, '#societies')}
-                  className="hover:text-white transition-colors"
-                >
-                  M3M Golfestate (Extn Rd)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#societies"
-                  onClick={(e) => handleNavClick(e, '#societies')}
-                  className="hover:text-white transition-colors"
-                >
-                  Godrej Woods (Sec 43 Noida)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="http://sofinfra.local/wp-admin/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-slate-400 hover:text-[#c59b27] transition-colors inline-flex items-center gap-1 text-xs mt-2"
-                >
-                  <span>WordPress Admin Access</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 5: Delhi NCR Headquarters */}
+          {/* Col 4: Delhi NCR Headquarters */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#c59b27] mb-4">
               Delhi NCR Hub

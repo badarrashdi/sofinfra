@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, Filter, ChevronDown } from 'lucide-react';
+import { Filter, ChevronDown } from 'lucide-react';
 import { Property } from '@/types/property';
 import { PropertyListingsSectionData } from '@/lib/wordpress';
 import PropertyCard from './PropertyCard';
@@ -17,57 +17,23 @@ export default function PropertyListings({
   onSelectProperty,
   data,
 }: PropertyListingsProps) {
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'residential' | 'commercial'>('all');
-  const [selectedCity, setSelectedCity] = useState<string>('all');
-  const [selectedType, setSelectedType] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCity, setSelectedCity] = useState<'All' | 'Gurugram' | 'Noida' | 'New Delhi'>('All');
   const [visibleCount, setVisibleCount] = useState<number>(6);
 
-  // Extract unique cities
-  const cities = useMemo(() => {
-    const set = new Set(properties.map((p) => p.location.city));
-    return Array.from(set);
-  }, [properties]);
-
-  // Extract unique types
-  const propertyTypes = useMemo(() => {
-    const set = new Set(properties.map((p) => p.propertyType));
-    return Array.from(set);
-  }, [properties]);
-
-  // Filter properties
+  // Filter properties by city (matching Top Societies filter)
   const filteredProperties = useMemo(() => {
     return properties.filter((p) => {
-      // Category filter (Residential vs Commercial)
-      if (categoryFilter !== 'all' && p.category !== categoryFilter) {
-        return false;
-      }
+      if (selectedCity === 'All') return true;
+      const city = (p.location?.city || '').toLowerCase();
+      const locality = (p.location?.locality || '').toLowerCase();
+      const target = selectedCity.toLowerCase();
 
-      // City filter
-      if (selectedCity !== 'all' && p.location.city.toLowerCase() !== selectedCity.toLowerCase()) {
-        return false;
+      if (target === 'gurugram') {
+        return city.includes('gurugram') || city.includes('gurgaon') || locality.includes('gurugram') || locality.includes('gurgaon');
       }
-
-      // Type filter
-      if (selectedType !== 'all' && p.propertyType !== selectedType) {
-        return false;
-      }
-
-      // Search
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchesTitle = p.title.toLowerCase().includes(q);
-        const matchesCity = p.location.city.toLowerCase().includes(q);
-        const matchesLocality = p.location.locality?.toLowerCase().includes(q);
-        const matchesType = p.propertyType.toLowerCase().includes(q);
-        if (!matchesTitle && !matchesCity && !matchesLocality && !matchesType) {
-          return false;
-        }
-      }
-
-      return true;
+      return city.includes(target) || locality.includes(target);
     });
-  }, [properties, categoryFilter, selectedCity, selectedType, searchQuery]);
+  }, [properties, selectedCity]);
 
   const displayedProperties = useMemo(() => {
     return filteredProperties.slice(0, visibleCount);
@@ -77,8 +43,8 @@ export default function PropertyListings({
     setVisibleCount((prev) => prev + 6);
   };
 
-  const handleFilterChange = (cb: () => void) => {
-    cb();
+  const handleCityChange = (city: 'All' | 'Gurugram' | 'Noida' | 'New Delhi') => {
+    setSelectedCity(city);
     setVisibleCount(6); // Reset pagination on filter change
   };
 
@@ -94,7 +60,7 @@ export default function PropertyListings({
               {data?.badge || 'Delhi NCR Prime Portfolio'}
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
-              {data?.heading || 'Featured Properties'}
+              {data?.heading || 'Curated Luxury Residences & Commercial Assets'}
             </h2>
             <p className="mt-3 text-slate-600 text-sm sm:text-base font-light max-w-xl">
               {data?.subheading ||
@@ -102,100 +68,22 @@ export default function PropertyListings({
             </p>
           </div>
 
-          {/* Category Filter Tabs */}
+          {/* City Filter Tabs - Matching Top Societies filters */}
           <div className="inline-flex p-1 bg-white rounded-xl shadow-xs border border-slate-200 self-start md:self-auto overflow-x-auto">
-            {(
-              [
-                { id: 'all', label: 'All Properties' },
-                { id: 'residential', label: 'Luxury Residential' },
-                { id: 'commercial', label: 'Grade-A Commercial' },
-              ] as const
-            ).map((tab) => (
+            {(['All', 'Gurugram', 'Noida', 'New Delhi'] as const).map((city) => (
               <button
-                key={tab.id}
+                key={city}
                 type="button"
-                onClick={() => handleFilterChange(() => setCategoryFilter(tab.id))}
+                onClick={() => handleCityChange(city)}
                 className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all tracking-wide whitespace-nowrap cursor-pointer ${
-                  categoryFilter === tab.id
+                  selectedCity === city
                     ? 'bg-[#0b2240] text-white shadow-xs'
                     : 'text-slate-600 hover:text-[#0b2240] hover:bg-slate-50'
                 }`}
               >
-                {tab.label}
+                {city === 'All' ? 'All NCR' : city}
               </button>
             ))}
-          </div>
-        </div>
-
-        {/* Filter Bar */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs mb-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-            {/* Search Input */}
-            <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search Golf Course Rd, Sector 150, Noida..."
-                value={searchQuery}
-                onChange={(e) => handleFilterChange(() => setSearchQuery(e.target.value))}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-[#c59b27]"
-              />
-            </div>
-
-            {/* City Dropdown */}
-            <div className="relative">
-              <select
-                value={selectedCity}
-                onChange={(e) => handleFilterChange(() => setSelectedCity(e.target.value))}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
-              >
-                <option value="all">All Delhi NCR Hubs</option>
-                {cities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Property Type Dropdown */}
-            <div className="relative">
-              <select
-                value={selectedType}
-                onChange={(e) => handleFilterChange(() => setSelectedType(e.target.value))}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
-              >
-                <option value="all">All Typologies</option>
-                {propertyTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Reset / Status Counter */}
-            <div className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-xl border border-slate-100 text-xs">
-              <span className="text-slate-500 font-medium">
-                Showing <strong className="text-[#0b2240]">{displayedProperties.length}</strong> of{' '}
-                <strong className="text-[#0b2240]">{filteredProperties.length}</strong> listings
-              </span>
-              {(selectedCity !== 'all' || selectedType !== 'all' || searchQuery !== '' || categoryFilter !== 'all') && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedCity('all');
-                    setSelectedType('all');
-                    setSearchQuery('');
-                    setCategoryFilter('all');
-                    setVisibleCount(6);
-                  }}
-                  className="text-[#c59b27] hover:underline font-semibold cursor-pointer"
-                >
-                  Reset
-                </button>
-              )}
-            </div>
           </div>
         </div>
 
@@ -229,22 +117,16 @@ export default function PropertyListings({
         ) : (
           <div className="py-20 text-center bg-white rounded-2xl border border-dashed border-slate-200">
             <Filter className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-lg font-semibold text-slate-700">No properties match your filter</h3>
+            <h3 className="text-lg font-semibold text-slate-700">No properties found for {selectedCity}</h3>
             <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-              Try adjusting your search criteria or resetting filters to explore all available properties.
+              We are constantly onboarding verified prime residences and commercial spaces in this hub.
             </p>
             <button
               type="button"
-              onClick={() => {
-                setCategoryFilter('all');
-                setSelectedCity('all');
-                setSelectedType('all');
-                setSearchQuery('');
-                setVisibleCount(6);
-              }}
+              onClick={() => handleCityChange('All')}
               className="mt-4 px-4 py-2 rounded-lg bg-[#0b2240] text-white text-xs font-semibold cursor-pointer"
             >
-              Reset All Filters
+              Show All NCR Properties
             </button>
           </div>
         )}
