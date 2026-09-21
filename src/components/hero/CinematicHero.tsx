@@ -31,13 +31,6 @@ export default function CinematicHero({
     }
   }, []);
 
-  const handleVideoLoaded = () => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.5;
-      videoRef.current.currentTime = 0;
-    }
-  };
-
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTab === "societies") {
@@ -74,7 +67,6 @@ export default function CinematicHero({
           loop
           muted
           playsInline
-          onLoadedMetadata={handleVideoLoaded}
           className="absolute inset-0 w-full h-full object-cover scale-105 transition-all duration-700"
         >
           <source src="/videos/hero-noida-drone.mp4" type="video/mp4" />
