@@ -59,16 +59,28 @@ async function wpFetchJson<T>(
       const isHttps = url.protocol === 'https:';
       const lib = isHttps ? https : http;
 
+      const bodyData = options.body
+        ? typeof options.body === 'string'
+          ? options.body
+          : JSON.stringify(options.body)
+        : undefined;
+
       const reqOptions: https.RequestOptions = {
         method: options.method || 'GET',
         headers: {
           Host: url.hostname,
           'User-Agent': 'Mozilla/5.0 (compatible; SOFINFRA-Headless/1.0)',
           Accept: 'application/json',
+          ...(bodyData
+            ? {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(bodyData).toString(),
+              }
+            : {}),
           ...(options.headers || {}),
         },
         rejectUnauthorized: false,
-        timeout: options.timeout || 8000,
+        timeout: options.timeout || 10000,
       };
 
       const req = lib.request(url, reqOptions, (res) => {
@@ -86,7 +98,12 @@ async function wpFetchJson<T>(
               resolve({ ok: false, status, data: null });
             }
           } else {
-            resolve({ ok: false, status, data: null });
+            try {
+              const data = JSON.parse(rawData) as T;
+              resolve({ ok: false, status, data });
+            } catch {
+              resolve({ ok: false, status, data: null });
+            }
           }
         });
       });
@@ -96,12 +113,13 @@ async function wpFetchJson<T>(
         resolve({ ok: false, status: 408, data: null });
       });
 
-      req.on('error', () => {
+      req.on('error', (err) => {
+        console.error('wpFetchJson request error:', err);
         resolve({ ok: false, status: 500, data: null });
       });
 
-      if (options.body) {
-        req.write(typeof options.body === 'string' ? options.body : JSON.stringify(options.body));
+      if (bodyData) {
+        req.write(bodyData);
       }
 
       req.end();
@@ -365,38 +383,31 @@ export async function getProperties(options: FetchPropertiesOptions = {}): Promi
 export async function submitPropertyToWordPress(
   payload: PropertySubmissionPayload
 ): Promise<SubmissionResponse> {
-  try {
-    const result = await wpFetchJson<{ message?: string; post_id?: number | string }>(
-      `${WP_API_ENDPOINT}/submit-property`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: payload,
-      }
-    );
-
-    if (result.ok && result.data) {
-      return {
-        success: true,
-        message: result.data.message || 'Property submitted successfully! It is now pending admin review.',
-        postId: result.data.post_id,
-        status: 'pending',
-      };
+  const result = await wpFetchJson<{ message?: string; post_id?: number | string; error?: string }>(
+    `${WP_API_ENDPOINT}/submit-property`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: payload,
     }
-  } catch {
-    // If local WordPress is offline during dev, return simulated success
+  );
+
+  if (result.ok && result.data) {
+    return {
+      success: true,
+      message: result.data.message || 'Property submitted successfully! It is now pending admin review.',
+      postId: result.data.post_id,
+      status: 'pending',
+    };
   }
 
-  // Graceful fallback response guaranteeing pending workflow
-  return {
-    success: true,
-    message:
-      'Property submitted successfully! It has been placed in "Pending Review" status and will be verified by our team before publishing.',
-    postId: Date.now(),
-    status: 'pending',
-  };
+  throw new Error(
+    (result.data as { error?: string; message?: string })?.error ||
+      (result.data as { error?: string; message?: string })?.message ||
+      `Failed to record property submission in WordPress (HTTP ${result.status}).`
+  );
 }
 
 /**
@@ -471,35 +482,30 @@ export interface ContactInquiryResponse {
 export async function submitContactInquiry(
   payload: ContactInquiryPayload
 ): Promise<ContactInquiryResponse> {
-  try {
-    const result = await wpFetchJson<{ message?: string; id?: number | string }>(
-      `${WP_API_ENDPOINT}/contact`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: payload,
-      }
-    );
-
-    if (result.ok && result.data) {
-      return {
-        success: true,
-        message:
-          result.data.message ||
-          'Your inquiry has been received. Our senior advisory desk will connect with you shortly.',
-        id: result.data.id,
-      };
+  const result = await wpFetchJson<{ message?: string; id?: number | string; error?: string }>(
+    `${WP_API_ENDPOINT}/contact`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: payload,
     }
-  } catch (error) {
-    console.warn('WordPress submitContactInquiry offline, returning graceful confirmation:', error);
+  );
+
+  if (result.ok && result.data) {
+    return {
+      success: true,
+      message:
+        result.data.message ||
+        'Your inquiry has been received! Our senior advisory desk will connect with you within 30 minutes.',
+      id: result.data.id,
+    };
   }
 
-  return {
-    success: true,
-    message:
-      'Your inquiry has been received. Our senior advisory desk will connect with you within 30 minutes.',
-    id: Date.now(),
-  };
+  throw new Error(
+    (result.data as { error?: string; message?: string })?.error ||
+      (result.data as { error?: string; message?: string })?.message ||
+      `Failed to record inquiry in WordPress (HTTP ${result.status}).`
+  );
 }

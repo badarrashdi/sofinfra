@@ -5,12 +5,17 @@ export async function POST(request: Request) {
   try {
     const payload: ContactInquiryPayload = await request.json();
 
-    // Server-side validation
-    if (!payload.name || !payload.email || !payload.phone || !payload.message) {
+    // Server-side validation - name and at least phone or email
+    if (!payload.name || (!payload.email && !payload.phone)) {
       return NextResponse.json(
-        { error: 'Name, email, phone, and requirements message are required.' },
+        { error: 'Name and at least a Phone number or Email are required.' },
         { status: 400 }
       );
+    }
+
+    // Default message if empty
+    if (!payload.message || !payload.message.trim()) {
+      payload.message = `Client requested advisory consultation regarding ${payload.subject || 'properties'}.`;
     }
 
     const result = await submitContactInquiry(payload);
@@ -20,10 +25,11 @@ export async function POST(request: Request) {
       message: result.message,
       id: result.id,
     });
-  } catch (error) {
-    console.error('Contact API Error:', error);
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Failed to process inquiry.';
+    console.error('Contact API Error:', msg);
     return NextResponse.json(
-      { error: 'Failed to process inquiry. Please try again or WhatsApp us directly.' },
+      { error: msg },
       { status: 500 }
     );
   }

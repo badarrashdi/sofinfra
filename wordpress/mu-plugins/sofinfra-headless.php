@@ -74,13 +74,20 @@ function sofinfra_register_cpts() {
             'not_found' => 'No inquiries found',
             'menu_name' => 'Inquiries & Leads',
         ),
-        'public' => false,
+        'public' => true,
+        'publicly_queryable' => false,
+        'exclude_from_search' => true,
         'show_ui' => true,
         'show_in_menu' => true,
+        'show_in_nav_menus' => false,
+        'show_in_admin_bar' => true,
         'show_in_rest' => true,
+        'capability_type' => 'post',
+        'map_meta_cap' => true,
+        'hierarchical' => false,
         'menu_icon' => 'dashicons-email-alt',
         'menu_position' => 7,
-        'supports' => array('title', 'editor'),
+        'supports' => array('title', 'editor', 'custom-fields', 'author'),
     ));
 }
 
@@ -718,17 +725,21 @@ function sofinfra_handle_contact_submission($request) {
     $email = !empty($params['email']) ? sanitize_email($params['email']) : '';
     $phone = !empty($params['phone']) ? sanitize_text_field($params['phone']) : '';
     $subject = !empty($params['subject']) ? sanitize_text_field($params['subject']) : 'General Advisory Inquiry';
-    $message = !empty($params['message']) ? sanitize_textarea_field($params['message']) : '';
+    $message = !empty($params['message']) ? sanitize_textarea_field($params['message']) : 'Client requested consultation regarding ' . $subject;
 
-    if (empty($name) || empty($email) || empty($phone) || empty($message)) {
-        return new WP_Error('missing_required_fields', 'Name, Email, Phone, and Requirements message are required.', array('status' => 400));
+    if (empty($name) || (empty($email) && empty($phone))) {
+        return new WP_Error('missing_required_fields', 'Name and at least Phone or Email are required.', array('status' => 400));
     }
+
+    $admin_user = get_user_by('email', get_option('admin_email'));
+    $author_id = $admin_user ? $admin_user->ID : 1;
 
     $post_id = wp_insert_post(array(
         'post_type' => 'contact_inquiries',
         'post_title' => $name . ' — ' . $phone . ' (' . $subject . ')',
         'post_content' => $message,
         'post_status' => 'publish',
+        'post_author' => $author_id,
     ));
 
     if (is_wp_error($post_id)) {
@@ -743,7 +754,7 @@ function sofinfra_handle_contact_submission($request) {
     update_post_meta($post_id, '_sofinfra_contact_date', current_time('mysql'));
 
     // Send email to admin
-    $admin_email = get_option('admin_email');
+    $admin_email = get_option('admin_email') ?: 'sales@sofinfra.com';
     $clean_phone = preg_replace('/[^\d+]/', '', $phone);
     $wa_link = 'https://wa.me/' . ltrim($clean_phone, '+');
     $admin_link = admin_url('post.php?post=' . $post_id . '&action=edit');
@@ -813,19 +824,23 @@ function sofinfra_handle_property_submission($request) {
     $price = !empty($params['price']) ? sanitize_text_field($params['price']) : '';
     $area = !empty($params['area']) ? sanitize_text_field($params['area']) : '';
 
-    // Enforce PENDING status
+    $admin_user = get_user_by('email', get_option('admin_email'));
+    $author_id = $admin_user ? $admin_user->ID : 1;
+
+    // 1. Create PENDING Property Listing
     $post_id = wp_insert_post(array(
         'post_title' => $title,
         'post_content' => $description,
         'post_status' => 'pending',
         'post_type' => 'properties',
+        'post_author' => $author_id,
     ));
 
     if (is_wp_error($post_id)) {
         return new WP_Error('insert_failed', 'Failed to create property submission', array('status' => 500));
     }
 
-    // Save metadata
+    // Save metadata on property
     update_post_meta($post_id, '_sofinfra_owner_name', $fullName);
     update_post_meta($post_id, '_sofinfra_owner_email', $email);
     update_post_meta($post_id, '_sofinfra_owner_phone', $phone);
@@ -835,6 +850,34 @@ function sofinfra_handle_property_submission($request) {
     update_post_meta($post_id, 'city', $city);
     update_post_meta($post_id, 'price', $price);
     update_post_meta($post_id, 'area', $area);
+
+    // 2. ALSO record as Lead in "Inquiries & Leads" so admin sees it there too!
+    $lead_summary = "Property Listing Submission:\n" .
+                    "Title: {$title}\n" .
+                    "Type: {$propertyType} ({$listingType})\n" .
+                    "City: {$city}\n" .
+                    "Area: {$area} sq ft\n" .
+                    "Price: ₹{$price}\n" .
+                    "WhatsApp: {$whatsapp}\n\n" .
+                    "Description:\n{$description}";
+
+    $lead_id = wp_insert_post(array(
+        'post_type' => 'contact_inquiries',
+        'post_title' => $fullName . ' — ' . $phone . ' (Listing: ' . $title . ')',
+        'post_content' => $lead_summary,
+        'post_status' => 'publish',
+        'post_author' => $author_id,
+    ));
+
+    if (!is_wp_error($lead_id)) {
+        update_post_meta($lead_id, '_sofinfra_contact_name', $fullName);
+        update_post_meta($lead_id, '_sofinfra_contact_email', $email);
+        update_post_meta($lead_id, '_sofinfra_contact_phone', $phone);
+        update_post_meta($lead_id, '_sofinfra_contact_subject', 'Listing My Property For Sale');
+        update_post_meta($lead_id, '_sofinfra_contact_message', $lead_summary);
+        update_post_meta($lead_id, '_sofinfra_contact_date', current_time('mysql'));
+        update_post_meta($lead_id, '_sofinfra_related_property_id', $post_id);
+    }
 
     // Send email to admin
     $admin_email = get_option('admin_email');

@@ -17,7 +17,7 @@ export default function ContactSection({ data }: ContactSectionProps) {
     name: '',
     email: '',
     phone: '',
-    subject: 'Buying Residential in Delhi NCR',
+    subject: 'Buying Residential (Gurugram/Noida)',
     message: '',
   });
 
@@ -36,14 +36,14 @@ export default function ContactSection({ data }: ContactSectionProps) {
       });
 
       const json = await res.json();
-      if (!res.ok && json.error) {
-        throw new Error(json.error);
+      if (!res.ok) {
+        throw new Error(json.error || 'Failed to submit inquiry. Please check your inputs.');
       }
 
       setSubmitted(true);
     } catch (err: unknown) {
-      console.warn('Contact form error, showing success confirmation:', err);
-      setSubmitted(true);
+      const msg = err instanceof Error ? err.message : 'Submission error. Please try again or WhatsApp us directly.';
+      setErrorMessage(msg);
     } finally {
       setIsSubmitting(false);
     }
