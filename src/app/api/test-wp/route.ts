@@ -39,12 +39,21 @@ export async function GET() {
       rawSample: text.substring(0, 300),
     });
   } catch (err: unknown) {
-    const errorObj = err as { message?: string; stack?: string; cause?: unknown };
+    const errorObj = err as { message?: string; stack?: string; cause?: any };
+    const causeDetails = errorObj.cause ? {
+      name: errorObj.cause.name,
+      message: errorObj.cause.message,
+      code: errorObj.cause.code,
+      errno: errorObj.cause.errno,
+      syscall: errorObj.cause.syscall,
+      hostname: errorObj.cause.hostname,
+    } : null;
+
     return NextResponse.json({
       wpBaseUrl,
       endpoint,
       error: errorObj.message || String(err),
-      cause: errorObj.cause,
+      cause: causeDetails,
       stack: errorObj.stack,
     }, { status: 500 });
   }
