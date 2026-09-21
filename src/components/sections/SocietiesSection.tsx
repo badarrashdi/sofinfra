@@ -52,7 +52,7 @@ export default function SocietiesSection({ onSelectSociety, data, societies }: S
           </div>
 
           {/* City Filter Tabs (Dynamic) */}
-          <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 self-start md:self-auto overflow-x-auto">
+          <div className="inline-flex max-w-full p-1 bg-slate-100 rounded-xl border border-slate-200 self-start md:self-auto overflow-x-auto">
             {availableCities.map((city: string) => (
               <button
                 key={city}

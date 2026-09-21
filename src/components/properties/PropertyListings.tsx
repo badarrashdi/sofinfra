@@ -215,7 +215,7 @@ export default function PropertyListings({
                 placeholder="Search location, sector..."
                 value={searchQuery}
                 onChange={(e) => handleFilterChange(() => setSearchQuery(e.target.value))}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-[#c59b27]"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-[#c59b27]"
               />
             </div>
 
@@ -224,7 +224,7 @@ export default function PropertyListings({
               <select
                 value={selectedProject}
                 onChange={(e) => handleFilterChange(() => setSelectedProject(e.target.value))}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm text-slate-800 focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
               >
                 <option value="all">All Projects &amp; Societies</option>
                 {projects.map((proj) => (
@@ -240,7 +240,7 @@ export default function PropertyListings({
               <select
                 value={selectedCity}
                 onChange={(e) => handleFilterChange(() => setSelectedCity(e.target.value))}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm text-slate-800 focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
               >
                 <option value="all">All Delhi NCR Hubs</option>
                 {cities.map((city) => (
@@ -256,7 +256,7 @@ export default function PropertyListings({
               <select
                 value={selectedType}
                 onChange={(e) => handleFilterChange(() => setSelectedType(e.target.value))}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-base sm:text-sm text-slate-800 focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
               >
                 <option value="all">All Typologies</option>
                 {propertyTypes.map((type) => (

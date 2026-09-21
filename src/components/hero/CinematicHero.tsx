@@ -141,7 +141,7 @@ export default function CinematicHero({
   return (
     <section
       id="hero"
-      className="relative min-h-[750px] lg:min-h-[850px] h-screen w-full flex items-center justify-center overflow-hidden bg-[#07162c]"
+      className="relative min-h-screen h-auto md:h-screen sm:min-h-[750px] lg:min-h-[850px] w-full flex items-center justify-center overflow-hidden bg-[#07162c] py-24 sm:py-0"
     >
       {/* BACKGROUND DRONE VIDEO ONLY with natural playback speed */}
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
@@ -155,27 +155,27 @@ export default function CinematicHero({
           <source src={data?.video_url || "/videos/hero-noida-drone.mp4"} type="video/mp4" />
         </video>
         {/* Subtle top vignette for crystal clear header and logo contrast */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-linear-to-b from-black/30 to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-36 bg-linear-to-b from-black/40 via-black/20 to-transparent pointer-events-none" />
       </div>
 
       {/* Hero Content Container */}
-      <div className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 pb-16 flex flex-col items-center justify-center h-full">
+      <div className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20 sm:pt-28 pb-10 sm:pb-16 flex flex-col items-center justify-center w-full my-auto">
         {/* Main Brand Headline */}
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-light text-white tracking-tight leading-[1.12] mb-4 max-w-4xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]">
-          {data?.headline || "Premier Real Estate Across"} <br className="hidden sm:inline" />
-          <span className="font-semibold text-transparent bg-clip-text bg-linear-to-r from-white via-[#f4ebd0] to-[#c59b27] drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+        <h1 className="text-[26px] xs:text-3xl sm:text-5xl md:text-6xl font-light text-white tracking-tight leading-[1.22] sm:leading-[1.14] mb-3 sm:mb-5 max-w-4xl drop-shadow-[0_2px_14px_rgba(0,0,0,0.85)]">
+          <span className="block">{data?.headline || "Premier Real Estate Across"}</span>
+          <span className="block mt-1 sm:mt-2 font-semibold text-transparent bg-clip-text bg-linear-to-r from-white via-[#f4ebd0] to-[#c59b27]">
             {data?.headline_gradient || "Delhi NCR & Global Capitals."}
           </span>
         </h1>
 
         {/* Subtitle */}
-        <p className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-slate-100 font-light leading-relaxed mb-8 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+        <p className="max-w-2xl mx-auto text-xs sm:text-base md:text-lg text-slate-100/95 font-light leading-relaxed mb-6 sm:mb-8 px-2 sm:px-0 drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
           {data?.subheadline ||
             "Curating vetted residential societies, sky villas on Golf Course Road, luxury suites along Noida Expressway, and Grade-A commercial tech parks."}
         </p>
 
         {/* GLASSY INTERACTIVE PROPERTY SEARCH WIDGET */}
-        <div className="w-full max-w-4xl bg-white/15 backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] border border-white/35 text-left transition-all duration-300">
+        <div className="w-full max-w-4xl bg-white/15 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] border border-white/35 text-left transition-all duration-300">
           {/* Search Fields Grid */}
           <form
             onSubmit={handleSearchSubmit}
@@ -191,7 +191,7 @@ export default function CinematicHero({
                 <select
                   value={selectedLocality}
                   onChange={(e) => setSelectedLocality(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/85 hover:bg-white focus:bg-white text-xs sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/90 hover:bg-white focus:bg-white text-base sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer"
                 >
                   {locationOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -212,7 +212,7 @@ export default function CinematicHero({
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/85 hover:bg-white focus:bg-white text-xs sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/90 hover:bg-white focus:bg-white text-base sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer"
                 >
                   {propertyTypeOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -233,7 +233,7 @@ export default function CinematicHero({
                 <select
                   value={selectedBudget}
                   onChange={(e) => setSelectedBudget(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/85 hover:bg-white focus:bg-white text-xs sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-white/40 bg-white/90 hover:bg-white focus:bg-white text-base sm:text-sm font-semibold text-[#0b2240] focus:outline-hidden focus:ring-2 focus:ring-[#c59b27] shadow-sm transition-colors cursor-pointer"
                 >
                   <option value="all">All Price Ranges</option>
                   <option value="under-5">Under ₹5 Cr</option>
@@ -245,7 +245,7 @@ export default function CinematicHero({
             </div>
 
             {/* Search CTA */}
-            <div className="sm:col-span-2 pt-3 sm:pt-4">
+            <div className="sm:col-span-2 pt-1 sm:pt-4">
               <button
                 type="submit"
                 className="w-full py-3 px-4 rounded-xl bg-[#c59b27] hover:bg-[#d4af37] text-[#07162c] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-lg hover:shadow-xl hover:scale-102 transition-all cursor-pointer"

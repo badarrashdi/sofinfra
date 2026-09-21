@@ -207,7 +207,7 @@ export default function ContactSection({ data }: ContactSectionProps) {
                       placeholder="e.g. Rahul Sharma"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-base sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
                     />
                   </div>
 
@@ -221,7 +221,7 @@ export default function ContactSection({ data }: ContactSectionProps) {
                       placeholder="e.g. rahul@example.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-base sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
                     />
                   </div>
                 </div>
@@ -237,7 +237,7 @@ export default function ContactSection({ data }: ContactSectionProps) {
                       placeholder="+91 81783 93751"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-base sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
                     />
                   </div>
 
@@ -248,7 +248,7 @@ export default function ContactSection({ data }: ContactSectionProps) {
                     <select
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-base sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
                     >
                       <option value="Buying Residential (Gurugram/Noida)">Buying Residential (Gurugram/Noida)</option>
                       <option value="Commercial Acquisition / Cyber City">Commercial Acquisition / Cyber City</option>
@@ -268,7 +268,7 @@ export default function ContactSection({ data }: ContactSectionProps) {
                     placeholder="Mention preferred budget, BHK configuration (3/4/5 BHK), target society (e.g. DLF, ATS, M3M, Godrej), or specific sector..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
+                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-base sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
                   />
                 </div>
 

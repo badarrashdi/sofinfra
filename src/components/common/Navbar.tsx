@@ -87,6 +87,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
             href="#hero"
             onClick={(e) => {
               e.preventDefault();
+              setMobileMenuOpen(false);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             className="flex items-center group transition-transform duration-200 hover:opacity-95"
@@ -95,8 +96,8 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
             <div
               className={`relative transition-all duration-300 ease-in-out aspect-[995/665] ${
                 isScrolled
-                  ? 'h-[64px]'
-                  : 'h-[68px] md:h-[74px]'
+                  ? 'h-[48px] sm:h-[64px]'
+                  : 'h-[54px] sm:h-[68px] md:h-[74px]'
               }`}
             >
               <Image
