@@ -4,13 +4,15 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Building, MapPin, CheckCircle2, ShieldCheck, ArrowRight } from 'lucide-react';
 import { DELHI_NCR_SOCIETIES, Society } from '@/data/societies';
+import { SocietiesSectionData } from '@/lib/wordpress';
 
 interface SocietiesSectionProps {
   onSelectSociety?: (society: Society) => void;
   onSubmitPropertyClick?: () => void;
+  data?: SocietiesSectionData;
 }
 
-export default function SocietiesSection({ onSelectSociety }: SocietiesSectionProps) {
+export default function SocietiesSection({ onSelectSociety, data }: SocietiesSectionProps) {
   const [selectedCity, setSelectedCity] = useState<'All' | 'Gurugram' | 'Noida' | 'New Delhi'>('All');
 
   const filteredSocieties = DELHI_NCR_SOCIETIES.filter((soc) => {
@@ -26,13 +28,14 @@ export default function SocietiesSection({ onSelectSociety }: SocietiesSectionPr
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#faf7f2] border border-[#c59b27]/20 text-[#ab841b] text-xs font-semibold tracking-widest uppercase mb-3">
               <Building className="w-3.5 h-3.5 text-[#c59b27]" />
-              <span>Delhi NCR Megaprojects</span>
+              <span>{data?.badge || 'Delhi NCR Megaprojects'}</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
-              Top Societies &amp; <span className="font-semibold">Townships</span>
+              {data?.heading || 'Top Societies & Townships'}
             </h2>
             <p className="mt-3 text-slate-600 text-sm sm:text-base font-light max-w-2xl leading-relaxed">
-              Explore premier gated societies across Gurugram, Noida, and Delhi with verified RERA registration, institutional amenities, and superior appreciation potential.
+              {data?.subheading ||
+                'Explore premier gated societies across Gurugram, Noida, and Delhi with verified RERA registration, institutional amenities, and superior appreciation potential.'}
             </p>
           </div>
 

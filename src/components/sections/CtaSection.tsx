@@ -1,10 +1,12 @@
 import { PlusCircle, Calendar, ShieldCheck } from 'lucide-react';
+import { CtaSectionData } from '@/lib/wordpress';
 
 interface CtaSectionProps {
   onSubmitPropertyClick: () => void;
+  data?: CtaSectionData;
 }
 
-export default function CtaSection({ onSubmitPropertyClick }: CtaSectionProps) {
+export default function CtaSection({ onSubmitPropertyClick, data }: CtaSectionProps) {
   const scrollToContact = () => {
     const el = document.getElementById('contact');
     if (el) {
@@ -21,15 +23,16 @@ export default function CtaSection({ onSubmitPropertyClick }: CtaSectionProps) {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#c59b27] text-xs font-semibold tracking-widest uppercase mb-6">
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>Delhi NCR Owner &amp; Investor Portal</span>
+          <span>{data?.badge || 'Delhi NCR Owner & Investor Portal'}</span>
         </span>
 
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight leading-tight max-w-3xl mx-auto">
-          Looking to Sell or Lease Your Property in Delhi NCR?
+          {data?.heading || 'Looking to Sell or Lease Your Property in Delhi NCR?'}
         </h2>
 
         <p className="mt-6 text-base sm:text-lg text-slate-300 font-light max-w-2xl mx-auto leading-relaxed">
-          List your luxury apartment, penthouse, floor, or commercial shop with SOFINFRA. Connect directly with pre-verified buyers and corporate tenants with full RERA compliance and zero spam.
+          {data?.subheading ||
+            'List your luxury apartment, penthouse, floor, or commercial shop with SOFINFRA. Connect directly with pre-verified buyers and corporate tenants with full RERA compliance and zero spam.'}
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -39,7 +42,7 @@ export default function CtaSection({ onSubmitPropertyClick }: CtaSectionProps) {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl text-xs uppercase tracking-widest font-bold bg-[#c59b27] text-[#07162c] hover:bg-[#d4af37] shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" />
-            <span>List Property Now (Free)</span>
+            <span>{data?.button_text || 'List Property Now (Free)'}</span>
           </button>
 
           <button

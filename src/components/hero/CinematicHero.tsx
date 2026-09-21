@@ -11,12 +11,16 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
+import { HeroSectionData } from "@/lib/wordpress";
+
 interface CinematicHeroProps {
   onSubmitPropertyClick: () => void;
+  data?: HeroSectionData;
 }
 
 export default function CinematicHero({
   onSubmitPropertyClick,
+  data,
 }: CinematicHeroProps) {
   const [searchTab, setSearchTab] = useState<"buy" | "societies">("buy");
   const [selectedLocality, setSelectedLocality] = useState("Golf Course Road");
@@ -59,7 +63,7 @@ export default function CinematicHero({
           playsInline
           className="absolute inset-0 w-full h-full object-cover scale-105 transition-all duration-700"
         >
-          <source src="/videos/hero-noida-drone.mp4" type="video/mp4" />
+          <source src={data?.video_url || "/videos/hero-noida-drone.mp4"} type="video/mp4" />
         </video>
         {/* Subtle top vignette for crystal clear header and logo contrast */}
         <div className="absolute top-0 left-0 right-0 h-32 bg-linear-to-b from-black/30 to-transparent pointer-events-none" />
@@ -67,21 +71,18 @@ export default function CinematicHero({
 
       {/* Hero Content Container */}
       <div className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 pb-16 flex flex-col items-center justify-center h-full">
-        {/* Real-time Badge */}
-
         {/* Main Brand Headline */}
         <h1 className="text-3xl sm:text-5xl md:text-6xl font-light text-white tracking-tight leading-[1.12] mb-4 max-w-4xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]">
-          Premier Real Estate Across <br className="hidden sm:inline" />
+          {data?.headline || "Premier Real Estate Across"} <br className="hidden sm:inline" />
           <span className="font-semibold text-transparent bg-clip-text bg-linear-to-r from-white via-[#f4ebd0] to-[#c59b27] drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
-            Delhi NCR &amp; Global Capitals.
+            {data?.headline_gradient || "Delhi NCR & Global Capitals."}
           </span>
         </h1>
 
         {/* Subtitle */}
         <p className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-slate-100 font-light leading-relaxed mb-8 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-          Curating vetted residential societies, sky villas on Golf Course Road,
-          luxury suites along Noida Expressway, and Grade-A commercial tech
-          parks.
+          {data?.subheadline ||
+            "Curating vetted residential societies, sky villas on Golf Course Road, luxury suites along Noida Expressway, and Grade-A commercial tech parks."}
         </p>
 
         {/* GLASSY INTERACTIVE PROPERTY SEARCH WIDGET */}
@@ -209,13 +210,16 @@ export default function CinematicHero({
               <Sparkles className="w-3.5 h-3.5 text-[#c59b27]" />
               <span>Trending Societies:</span>
             </span>
-            {[
-              "DLF The Camellias",
-              "ATS Knightsbridge",
-              "M3M Golfestate",
-              "Godrej Woods",
-              "DLF Cyber City",
-            ].map((soc) => (
+            {(data?.trending_societies && data.trending_societies.length > 0
+              ? data.trending_societies.map((s) => s.name)
+              : [
+                  "DLF The Camellias",
+                  "ATS Knightsbridge",
+                  "M3M Golfestate",
+                  "Godrej Woods",
+                  "DLF Cyber City",
+                ]
+            ).map((soc) => (
               <button
                 key={soc}
                 type="button"

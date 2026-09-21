@@ -1,58 +1,73 @@
 import { ShieldCheck, TrendingUp, KeyRound, Compass, Scale, Landmark } from 'lucide-react';
+import { ServicesSectionData } from '@/lib/wordpress';
 
-const SERVICES = [
+const DEFAULT_SERVICES = [
   {
     icon: Landmark,
-    title: 'Off-Market Asset Sourcing',
-    desc: 'Bespoke access to prime penthouses, trophy commercial towers, and private family compounds never marketed on public syndicates.',
+    title: 'Primary Luxury Acquisition',
+    desc: 'Direct developer allocations and priority access to penthouses, sky villas, and luxury floors.',
   },
   {
     icon: Scale,
-    title: 'Cross-Border Legal Due Diligence',
-    desc: 'Comprehensive multi-jurisdictional legal auditing, land registry verification, tax efficiency, and escrow governance.',
+    title: 'Commercial Leasing & Sales',
+    desc: 'Grade-A office spaces, retail anchors, and institutional pre-leased assets with guaranteed yields.',
   },
   {
     icon: TrendingUp,
-    title: 'Institutional Yield Optimization',
-    desc: 'Commercial leasing restructuring, blue-chip tenant acquisition, and asset enhancement modeling to maximize capitalization rates.',
+    title: 'NRI & Global Investor Desk',
+    desc: 'Seamless overseas acquisition, repatriation guidance, FEMA compliance, and property management.',
   },
   {
     icon: ShieldCheck,
-    title: 'Private Wealth Discretion',
-    desc: 'Strict non-disclosure agreements, encrypted correspondence, and confidential beneficial ownership representation.',
+    title: 'Fiduciary Legal Scrutiny',
+    desc: '30-year chain title searches, encumbrance verification, and structural audit coordination.',
   },
   {
     icon: Compass,
-    title: 'Architectural & Engineering Auditing',
-    desc: 'Structural health diagnostics, MEP mechanical evaluations, and sustainability certification feasibility studies.',
+    title: 'Portfolio Structuring',
+    desc: 'Strategic asset allocation, exit timing, tax optimization, and yield-focused reinvestment.',
   },
   {
     icon: KeyRound,
-    title: 'End-to-End Asset Stewardship',
-    desc: 'Turnkey handover, property maintenance coordination, interior design curation, and tenant liaison post-closing.',
+    title: 'Private Concierge Viewings',
+    desc: 'Confidential site visits, luxury chauffeured tours, and direct access to developer leadership.',
   },
 ];
 
-export default function ServicesSection() {
+interface ServicesSectionProps {
+  data?: ServicesSectionData;
+}
+
+export default function ServicesSection({ data }: ServicesSectionProps) {
+  const services =
+    data?.services && data.services.length > 0
+      ? data.services.map((s, i) => ({
+          icon: DEFAULT_SERVICES[i % DEFAULT_SERVICES.length].icon,
+          title: s.title,
+          desc: s.description,
+        }))
+      : DEFAULT_SERVICES;
+
   return (
     <section id="services" className="py-24 sm:py-32 bg-slate-50/70 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200 text-[#0b2240] text-xs font-semibold tracking-widest uppercase mb-3">
-            Advisory &amp; Capabilities
+            {data?.badge || 'Advisory & Capabilities'}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
-            Why Discerning Clients <span className="font-semibold">Choose SOFINFRA</span>
+            {data?.heading || 'Comprehensive Real Estate Solutions'}
           </h2>
           <p className="mt-4 text-slate-600 text-sm sm:text-base font-light leading-relaxed">
-            Combining the analytical rigor of an investment bank with the private discretion of a boutique family office.
+            {data?.subheading ||
+              'From strategic asset acquisition to fiduciary closing, we provide full-spectrum advisory across premium asset classes.'}
           </p>
         </div>
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {SERVICES.map((item) => {
+          {services.map((item) => {
             const IconComp = item.icon;
             return (
               <div

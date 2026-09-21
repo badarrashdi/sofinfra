@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Property } from '@/types/property';
 import { Society } from '@/data/societies';
+import { HomepageData, HomepageSection } from '@/lib/wordpress';
 import Navbar from '@/components/common/Navbar';
 import CinematicHero from '@/components/hero/CinematicHero';
 import PropertyListings from '@/components/properties/PropertyListings';
@@ -19,9 +20,10 @@ import SubmitPropertyModal from '@/components/submit/SubmitPropertyModal';
 
 interface HomeClientProps {
   initialProperties: Property[];
+  homepageData?: HomepageData | null;
 }
 
-export default function HomeClient({ initialProperties }: HomeClientProps) {
+export default function HomeClient({ initialProperties, homepageData }: HomeClientProps) {
   const [properties] = useState<Property[]>(initialProperties);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [selectedSociety, setSelectedSociety] = useState<Society | null>(null);
@@ -35,40 +37,99 @@ export default function HomeClient({ initialProperties }: HomeClientProps) {
     setSelectedSociety(society);
   };
 
+  const renderSection = (section: HomepageSection, index: number) => {
+    switch (section.acf_fc_layout) {
+      case 'hero_section':
+        return (
+          <CinematicHero
+            key={`section-hero-${index}`}
+            data={section}
+            onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
+          />
+        );
+      case 'property_listings_section':
+        return (
+          <PropertyListings
+            key={`section-listings-${index}`}
+            data={section}
+            properties={properties}
+            onSelectProperty={handleSelectProperty}
+          />
+        );
+      case 'societies_section':
+        return (
+          <SocietiesSection
+            key={`section-societies-${index}`}
+            data={section}
+            onSelectSociety={handleSelectSociety}
+            onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
+          />
+        );
+      case 'about_section':
+        return <AboutSection key={`section-about-${index}`} data={section} />;
+      case 'services_section':
+        return <ServicesSection key={`section-services-${index}`} data={section} />;
+      case 'testimonials_section':
+        return <TestimonialsSection key={`section-reviews-${index}`} data={section} />;
+      case 'cta_section':
+        return (
+          <CtaSection
+            key={`section-cta-${index}`}
+            data={section}
+            onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
+          />
+        );
+      case 'contact_section':
+        return <ContactSection key={`section-contact-${index}`} data={section} />;
+      default:
+        return null;
+    }
+  };
+
+  const hasDynamicSections =
+    homepageData?.sections && Array.isArray(homepageData.sections) && homepageData.sections.length > 0;
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Sticky Blur Navbar (Menu: Buy Properties | Societies | List Property | Reviews | Contact Us) */}
+      {/* Sticky Blur Navbar */}
       <Navbar onSubmitPropertyClick={() => setIsSubmitModalOpen(true)} />
 
-      {/* 1. Cinematic Hero Section */}
-      <CinematicHero onSubmitPropertyClick={() => setIsSubmitModalOpen(true)} />
+      {/* Flexible Content Sections from WordPress (or static fallbacks) */}
+      {hasDynamicSections ? (
+        homepageData.sections.map((section, index) => renderSection(section, index))
+      ) : (
+        <>
+          {/* 1. Cinematic Hero Section */}
+          <CinematicHero onSubmitPropertyClick={() => setIsSubmitModalOpen(true)} />
 
-      {/* 2. Buy Properties Section (#buy-properties) */}
-      <PropertyListings
-        properties={properties}
-        onSelectProperty={handleSelectProperty}
-      />
+          {/* 2. Buy Properties Section (#buy-properties) */}
+          <PropertyListings
+            properties={properties}
+            onSelectProperty={handleSelectProperty}
+          />
 
-      {/* 3. Top Societies & Townships Section (#societies) */}
-      <SocietiesSection
-        onSelectSociety={handleSelectSociety}
-        onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
-      />
+          {/* 3. Top Societies & Townships Section (#societies) */}
+          <SocietiesSection
+            onSelectSociety={handleSelectSociety}
+            onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
+          />
 
-      {/* 4. About SOFINFRA Standard */}
-      <AboutSection />
+          {/* 4. About SOFINFRA Standard */}
+          <AboutSection />
 
-      {/* 5. Services & Advisory */}
-      <ServicesSection />
+          {/* 5. Services & Advisory */}
+          <ServicesSection />
 
-      {/* 6. Client Reviews & Ratings (#reviews) */}
-      <TestimonialsSection />
+          {/* 6. Client Reviews & Ratings (#reviews) */}
+          <TestimonialsSection />
 
-      {/* 7. List Property CTA (#list-property) */}
-      <CtaSection onSubmitPropertyClick={() => setIsSubmitModalOpen(true)} />
+          {/* 7. List Property CTA (#list-property) */}
+          <CtaSection onSubmitPropertyClick={() => setIsSubmitModalOpen(true)} />
 
-      {/* 8. Contact Us (#contact) */}
-      <ContactSection />
+          {/* 8. Contact Us (#contact) */}
+          <ContactSection />
+        </>
+      )}
 
       {/* 9. Footer */}
       <Footer onSubmitPropertyClick={() => setIsSubmitModalOpen(true)} />

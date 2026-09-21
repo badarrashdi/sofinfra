@@ -20,6 +20,106 @@ export interface SubmissionResponse {
   status?: string;
 }
 
+// ACF Pro Flexible Content Layout Interfaces
+export interface HeroSectionData {
+  acf_fc_layout: 'hero_section';
+  headline?: string;
+  headline_gradient?: string;
+  subheadline?: string;
+  video_url?: string;
+  trending_societies?: Array<{ name: string }>;
+}
+
+export interface PropertyListingsSectionData {
+  acf_fc_layout: 'property_listings_section';
+  badge?: string;
+  heading?: string;
+  subheading?: string;
+}
+
+export interface SocietiesSectionData {
+  acf_fc_layout: 'societies_section';
+  badge?: string;
+  heading?: string;
+  subheading?: string;
+  societies?: Array<{
+    name: string;
+    location: string;
+    price_range: string;
+    image_url: string;
+    description: string;
+  }>;
+}
+
+export interface AboutSectionData {
+  acf_fc_layout: 'about_section';
+  badge?: string;
+  heading?: string;
+  paragraph_1?: string;
+  paragraph_2?: string;
+  stats?: Array<{ value: string; label: string }>;
+  pillars?: Array<{ title: string; description: string; icon?: string }>;
+}
+
+export interface ServicesSectionData {
+  acf_fc_layout: 'services_section';
+  badge?: string;
+  heading?: string;
+  subheading?: string;
+  services?: Array<{ title: string; tag: string; description: string }>;
+}
+
+export interface TestimonialsSectionData {
+  acf_fc_layout: 'testimonials_section';
+  badge?: string;
+  heading?: string;
+  subheading?: string;
+  average_rating?: string;
+  total_reviews?: string;
+  testimonials?: Array<{
+    author_name: string;
+    role_locality: string;
+    rating?: number;
+    review_text: string;
+  }>;
+}
+
+export interface CtaSectionData {
+  acf_fc_layout: 'cta_section';
+  badge?: string;
+  heading?: string;
+  subheading?: string;
+  button_text?: string;
+}
+
+export interface ContactSectionData {
+  acf_fc_layout: 'contact_section';
+  badge?: string;
+  heading?: string;
+  subheading?: string;
+  phone_numbers?: Array<{ number: string; label: string }>;
+  email?: string;
+  address?: string;
+  office_hours?: string;
+}
+
+export type HomepageSection =
+  | HeroSectionData
+  | PropertyListingsSectionData
+  | SocietiesSectionData
+  | AboutSectionData
+  | ServicesSectionData
+  | TestimonialsSectionData
+  | CtaSectionData
+  | ContactSectionData;
+
+export interface HomepageData {
+  id: number;
+  title: string;
+  slug: string;
+  sections: HomepageSection[];
+}
+
 /**
  * Transforms raw WordPress API post response into standardized frontend Property format
  */
@@ -204,3 +304,56 @@ export async function submitPropertyToWordPress(
     status: 'pending',
   };
 }
+
+/**
+ * Fetches homepage data with ACF flexible content sections from WordPress.
+ * Falls back gracefully to null if WordPress is offline.
+ */
+export async function getHomepageData(): Promise<HomepageData | null> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+    const res = await fetch(`${WP_BASE_URL}/wp-json/sofinfra/v1/homepage`, {
+      headers: {
+        Accept: 'application/json',
+      },
+      next: { revalidate: 60 },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.sections) && data.sections.length > 0) {
+        return data as HomepageData;
+      }
+    }
+
+    // Fallback: check standard WordPress page API
+    const fallbackRes = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/pages?slug=home`, {
+      headers: {
+        Accept: 'application/json',
+      },
+      next: { revalidate: 60 },
+    });
+
+    if (fallbackRes.ok) {
+      const pages = await fallbackRes.json();
+      if (Array.isArray(pages) && pages[0]?.acf?.sections) {
+        return {
+          id: pages[0].id,
+          title: pages[0].title?.rendered || 'Home',
+          slug: pages[0].slug || 'home',
+          sections: pages[0].acf.sections,
+        };
+      }
+    }
+  } catch (error) {
+    console.warn('WordPress getHomepageData unavailable, falling back to static defaults:', error);
+  }
+
+  return null;
+}
+

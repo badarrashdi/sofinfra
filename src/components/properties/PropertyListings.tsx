@@ -3,14 +3,20 @@
 import { useState, useMemo } from 'react';
 import { Search, Filter, ChevronDown } from 'lucide-react';
 import { Property } from '@/types/property';
+import { PropertyListingsSectionData } from '@/lib/wordpress';
 import PropertyCard from './PropertyCard';
 
 interface PropertyListingsProps {
   properties: Property[];
   onSelectProperty: (property: Property) => void;
+  data?: PropertyListingsSectionData;
 }
 
-export default function PropertyListings({ properties, onSelectProperty }: PropertyListingsProps) {
+export default function PropertyListings({
+  properties,
+  onSelectProperty,
+  data,
+}: PropertyListingsProps) {
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'residential' | 'commercial'>('all');
   const [selectedCity, setSelectedCity] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
@@ -85,13 +91,14 @@ export default function PropertyListings({ properties, onSelectProperty }: Prope
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200 text-[#0b2240] text-xs font-semibold tracking-widest uppercase mb-3">
-              Delhi NCR Prime Portfolio
+              {data?.badge || 'Delhi NCR Prime Portfolio'}
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
-              Buy <span className="font-semibold">Properties</span>
+              {data?.heading || 'Featured Properties'}
             </h2>
             <p className="mt-3 text-slate-600 text-sm sm:text-base font-light max-w-xl">
-              Verified luxury apartments, golf-view sky villas, penthouses, and commercial floorplates across Gurugram, Noida, and New Delhi.
+              {data?.subheading ||
+                'Verified luxury apartments, golf-view sky villas, penthouses, and commercial floorplates across Gurugram, Noida, and New Delhi.'}
             </p>
           </div>
 

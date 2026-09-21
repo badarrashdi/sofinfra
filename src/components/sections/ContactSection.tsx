@@ -2,8 +2,13 @@
 
 import { useState } from 'react';
 import { Mail, Phone, MapPin, MessageSquare, Send, CheckCircle2, Navigation } from 'lucide-react';
+import { ContactSectionData } from '@/lib/wordpress';
 
-export default function ContactSection() {
+interface ContactSectionProps {
+  data?: ContactSectionData;
+}
+
+export default function ContactSection({ data }: ContactSectionProps) {
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -54,13 +59,14 @@ export default function ContactSection() {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#faf7f2] border border-[#c59b27]/20 text-[#ab841b] text-xs font-semibold tracking-widest uppercase mb-3">
-            Private Client Advisory
+            {data?.badge || 'Private Client Advisory'}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
-            Initiate Discreet <span className="font-semibold">Consultation</span>
+            {data?.heading || 'Initiate Discreet Consultation'}
           </h2>
           <p className="mt-4 text-slate-600 text-sm sm:text-base font-light leading-relaxed">
-            Direct access to senior partners specializing in high-value NCR society acquisitions, title due diligence, and capital asset placement.
+            {data?.subheading ||
+              'Direct access to senior partners specializing in high-value NCR society acquisitions, title due diligence, and capital asset placement.'}
           </p>
         </div>
 

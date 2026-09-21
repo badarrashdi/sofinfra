@@ -1,15 +1,20 @@
 import Image from 'next/image';
 import { Award, Shield, Globe2, Building } from 'lucide-react';
+import { AboutSectionData } from '@/lib/wordpress';
 
-export default function AboutSection() {
-  const stats = [
-    { value: '$2.8B+', label: 'Global Transaction Volume' },
-    { value: '1,400+', label: 'Properties Curated & Managed' },
-    { value: '18+', label: 'Prime Global Metropolises' },
-    { value: '99.4%', label: 'Private Discretion Rate' },
+interface AboutSectionProps {
+  data?: AboutSectionData;
+}
+
+export default function AboutSection({ data }: AboutSectionProps) {
+  const defaultStats = [
+    { value: '₹2,500+ Cr', label: 'Transaction Volume' },
+    { value: '100%', label: 'Verified Clear Titles' },
+    { value: '15+ Yrs', label: 'NCR Advisory Heritage' },
+    { value: '98%', label: 'Client Retention Rate' },
   ];
 
-  const pillars = [
+  const defaultPillars = [
     {
       icon: Award,
       title: 'Architectural Distinctiveness',
@@ -32,6 +37,16 @@ export default function AboutSection() {
     },
   ];
 
+  const stats = data?.stats && data.stats.length > 0 ? data.stats : defaultStats;
+  const pillars =
+    data?.pillars && data.pillars.length > 0
+      ? data.pillars.map((p, i) => ({
+          icon: defaultPillars[i % defaultPillars.length].icon,
+          title: p.title,
+          desc: p.description,
+        }))
+      : defaultPillars;
+
   return (
     <section id="about" className="py-24 sm:py-32 bg-white relative overflow-hidden">
       {/* Subtle Background Geometry */}
@@ -42,14 +57,14 @@ export default function AboutSection() {
         {/* Section Header */}
         <div className="max-w-3xl mb-16 sm:mb-20">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#faf7f2] border border-[#c59b27]/20 text-[#ab841b] text-xs font-semibold tracking-widest uppercase mb-4">
-            The SOFINFRA Standard
+            {data?.badge || 'The SOFINFRA Standard'}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight leading-[1.2]">
-            Curating Distinction. <br />
-            <span className="font-semibold">Building A Brighter Tomorrow.</span>
+            {data?.heading || 'Building Trust, Delivering Excellence in Prime Real Estate'}
           </h2>
           <p className="mt-6 text-base sm:text-lg text-slate-600 font-light leading-relaxed">
-            At SOFINFRA, we bridge discerning private capital and institutional visionaries with the world’s most consequential real estate. Rooted in absolute discretion and refined aesthetic taste, our platform curates unlisted penthouses, private coastal compounds, and premier commercial hubs across global capitals.
+            {data?.paragraph_1 ||
+              'At SOFINFRA, we bridge discerning private capital and institutional visionaries with the world’s most consequential real estate. Rooted in absolute discretion and refined aesthetic taste, our platform curates unlisted penthouses, private coastal compounds, and premier commercial hubs across global capitals.'}
           </p>
         </div>
 

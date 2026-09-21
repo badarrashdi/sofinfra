@@ -1,4 +1,5 @@
 import { Star, ShieldCheck, Quote, CheckCircle } from 'lucide-react';
+import { TestimonialsSectionData } from '@/lib/wordpress';
 
 const REVIEWS = [
   {
@@ -37,26 +38,43 @@ const TRUST_METRICS = [
   { label: 'Verified Societies Only', desc: 'Clear legal & structural titles' },
 ];
 
-export default function TestimonialsSection() {
+interface TestimonialsSectionProps {
+  data?: TestimonialsSectionData;
+}
+
+export default function TestimonialsSection({ data }: TestimonialsSectionProps) {
+  const reviews =
+    data?.testimonials && data.testimonials.length > 0
+      ? data.testimonials.map((t) => ({
+          quote: t.review_text,
+          author: t.author_name,
+          title: t.role_locality,
+          location: t.role_locality,
+          rating: t.rating || 5,
+          verified: 'Verified Client',
+        }))
+      : REVIEWS;
+
   return (
     <section id="reviews" className="py-24 sm:py-32 bg-slate-50/70 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200 text-[#0b2240] text-xs font-semibold tracking-widest uppercase mb-3">
-            Client Testimonials &amp; Trust
+            {data?.badge || 'Client Testimonials & Trust'}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
-            Client <span className="font-semibold">Reviews</span> &amp; Ratings
+            {data?.heading || 'Client Reviews & Ratings'}
           </h2>
           <p className="mt-4 text-slate-600 text-sm sm:text-base font-light leading-relaxed">
-            Rated 4.9/5 by premium home buyers, NRI investors, and high-net-worth property owners across Delhi NCR.
+            {data?.subheading ||
+              `Rated ${data?.average_rating || '4.9/5'} by premium home buyers, NRI investors, and high-net-worth property owners across Delhi NCR.`}
           </p>
         </div>
 
         {/* Reviews Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {REVIEWS.map((r, idx) => (
+          {reviews.map((r, idx) => (
             <div
               key={idx}
               className="p-8 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between relative group hover:shadow-xl transition-all duration-300"
