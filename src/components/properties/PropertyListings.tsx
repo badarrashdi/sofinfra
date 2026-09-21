@@ -76,7 +76,6 @@ export default function PropertyListings({
   heroSearchFilter,
   onClearHeroFilter,
 }: PropertyListingsProps) {
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'residential' | 'commercial'>('all');
   const [selectedCity, setSelectedCity] = useState<string>('all');
   const [selectedProject, setSelectedProject] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
@@ -117,12 +116,7 @@ export default function PropertyListings({
   // Filter properties
   const filteredProperties = useMemo(() => {
     return properties.filter((p) => {
-      // 1. Category tab
-      if (categoryFilter !== 'all' && p.category !== categoryFilter) {
-        return false;
-      }
-
-      // 2. City dropdown filter
+      // 1. City dropdown filter
       if (selectedCity !== 'all') {
         const pCity = (p.location?.city || '').toLowerCase();
         const target = selectedCity.toLowerCase();
@@ -167,7 +161,7 @@ export default function PropertyListings({
 
       return true;
     });
-  }, [properties, projects, categoryFilter, selectedCity, selectedProject, selectedType, searchQuery, heroSearchFilter]);
+  }, [properties, projects, selectedCity, selectedProject, selectedType, searchQuery, heroSearchFilter]);
 
   const displayedProperties = useMemo(() => {
     return filteredProperties.slice(0, visibleCount);
@@ -183,7 +177,6 @@ export default function PropertyListings({
   };
 
   const handleResetAll = () => {
-    setCategoryFilter('all');
     setSelectedCity('all');
     setSelectedProject('all');
     setSelectedType('all');
@@ -198,43 +191,17 @@ export default function PropertyListings({
       <div id="buy-rent" className="absolute -top-24" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200 text-[#0b2240] text-xs font-semibold tracking-widest uppercase mb-3">
-              {data?.badge || 'Delhi NCR Prime Portfolio'}
-            </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
-              {data?.heading || 'Curated Luxury Residences & Commercial Assets'}
-            </h2>
-            <p className="mt-3 text-slate-600 text-sm sm:text-base font-light max-w-xl">
-              {data?.subheading ||
-                'Verified luxury apartments, golf-view sky villas, penthouses, and commercial floorplates across Gurugram, Noida, and New Delhi.'}
-            </p>
+        <div className="mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200 text-[#0b2240] text-xs font-semibold tracking-widest uppercase mb-3">
+            {data?.badge || 'Delhi NCR Prime Portfolio'}
           </div>
-
-          {/* Category Filter Tabs */}
-          <div className="inline-flex p-1 bg-white rounded-xl shadow-xs border border-slate-200 self-start md:self-auto">
-            {(
-              [
-                { id: 'all', label: 'All Properties' },
-                { id: 'residential', label: 'Luxury Residential' },
-                { id: 'commercial', label: 'Grade-A Commercial' },
-              ] as const
-            ).map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => handleFilterChange(() => setCategoryFilter(tab.id))}
-                className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all tracking-wide whitespace-nowrap cursor-pointer ${
-                  categoryFilter === tab.id
-                    ? 'bg-[#0b2240] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-[#0b2240] hover:bg-slate-50'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
+            {data?.heading || 'Curated Luxury Residences & Commercial Assets'}
+          </h2>
+          <p className="mt-3 text-slate-600 text-sm sm:text-base font-light max-w-2xl">
+            {data?.subheading ||
+              'Verified luxury apartments, golf-view sky villas, penthouses, and commercial floorplates across Gurugram, Noida, and New Delhi.'}
+          </p>
         </div>
 
         {/* Filter Bar (Restored with dynamic Projects, City, Type & Search, NO scroller) */}
@@ -306,7 +273,7 @@ export default function PropertyListings({
                 Showing <strong className="text-[#0b2240]">{displayedProperties.length}</strong> of{' '}
                 <strong className="text-[#0b2240]">{filteredProperties.length}</strong> listings
               </span>
-              {(selectedCity !== 'all' || selectedProject !== 'all' || selectedType !== 'all' || searchQuery !== '' || categoryFilter !== 'all' || (heroSearchFilter && (heroSearchFilter.location !== 'all' || heroSearchFilter.propertyType !== 'all' || heroSearchFilter.budget !== 'all'))) && (
+              {(selectedCity !== 'all' || selectedProject !== 'all' || selectedType !== 'all' || searchQuery !== '' || (heroSearchFilter && (heroSearchFilter.location !== 'all' || heroSearchFilter.propertyType !== 'all' || heroSearchFilter.budget !== 'all'))) && (
                 <button
                   type="button"
                   onClick={handleResetAll}
