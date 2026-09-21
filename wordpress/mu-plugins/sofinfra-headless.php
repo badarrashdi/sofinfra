@@ -59,6 +59,29 @@ function sofinfra_register_cpts() {
         'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'revisions', 'custom-fields'),
         'rewrite' => array('slug' => 'properties'),
     ));
+
+    // C. Contact Inquiries & Leads Post Type
+    register_post_type('contact_inquiries', array(
+        'labels' => array(
+            'name' => 'Inquiries & Leads',
+            'singular_name' => 'Inquiry',
+            'add_new' => 'Add Inquiry',
+            'add_new_item' => 'Add New Inquiry',
+            'edit_item' => 'View / Edit Inquiry',
+            'new_item' => 'New Inquiry',
+            'view_item' => 'View Inquiry',
+            'search_items' => 'Search Inquiries',
+            'not_found' => 'No inquiries found',
+            'menu_name' => 'Inquiries & Leads',
+        ),
+        'public' => false,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'show_in_rest' => true,
+        'menu_icon' => 'dashicons-email-alt',
+        'menu_position' => 7,
+        'supports' => array('title', 'editor'),
+    ));
 }
 
 // 2. CORS Headers for Headless Next.js
@@ -94,6 +117,20 @@ add_action('rest_api_init', function () {
         'methods' => 'GET',
         'permission_callback' => '__return_true',
         'callback' => 'sofinfra_get_properties_endpoint_data',
+    ));
+
+    // POST /wp-json/sofinfra/v1/contact
+    register_rest_route('sofinfra/v1', '/contact', array(
+        'methods' => 'POST',
+        'permission_callback' => '__return_true',
+        'callback' => 'sofinfra_handle_contact_submission',
+    ));
+
+    // POST /wp-json/sofinfra/v1/submit-property
+    register_rest_route('sofinfra/v1', '/submit-property', array(
+        'methods' => 'POST',
+        'permission_callback' => '__return_true',
+        'callback' => 'sofinfra_handle_property_submission',
     ));
 });
 
@@ -490,3 +527,352 @@ add_action('admin_notices', function () {
         }
     }
 });
+
+// =========================================================================
+// 8. CONTACT INQUIRIES ADMIN CUSTOMIZATION (COLUMNS, SORTING, FILTERING)
+// =========================================================================
+
+// Custom admin columns for Inquiries
+add_filter('manage_contact_inquiries_posts_columns', 'sofinfra_contact_inquiries_columns');
+function sofinfra_contact_inquiries_columns($columns) {
+    $new = array();
+    $new['cb'] = $columns['cb'];
+    $new['title'] = 'Lead / Contact Name';
+    $new['lead_phone'] = 'Phone / WhatsApp';
+    $new['lead_email'] = 'Email';
+    $new['lead_subject'] = 'Requirement Type';
+    $new['lead_message'] = 'Message Preview';
+    $new['date'] = 'Submission Date';
+    return $new;
+}
+
+add_action('manage_contact_inquiries_posts_custom_column', 'sofinfra_contact_inquiries_column_content', 10, 2);
+function sofinfra_contact_inquiries_column_content($column, $post_id) {
+    switch ($column) {
+        case 'lead_phone':
+            $phone = get_post_meta($post_id, '_sofinfra_contact_phone', true);
+            if ($phone) {
+                $clean = preg_replace('/[^\d+]/', '', $phone);
+                echo '<strong><a href="tel:' . esc_attr($clean) . '">' . esc_html($phone) . '</a></strong><br>';
+                echo '<a href="https://wa.me/' . esc_attr(ltrim($clean, '+')) . '" target="_blank" style="color:#25D366;font-size:11px;font-weight:600;text-decoration:none;">💬 WhatsApp</a>';
+            } else {
+                echo '<span style="color:#999;">—</span>';
+            }
+            break;
+        case 'lead_email':
+            $email = get_post_meta($post_id, '_sofinfra_contact_email', true);
+            if ($email) {
+                echo '<a href="mailto:' . esc_attr($email) . '">' . esc_html($email) . '</a>';
+            } else {
+                echo '<span style="color:#999;">—</span>';
+            }
+            break;
+        case 'lead_subject':
+            $subj = get_post_meta($post_id, '_sofinfra_contact_subject', true);
+            if ($subj) {
+                echo '<span class="badge" style="background:#0b2240;color:#c59b27;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;display:inline-block;">' . esc_html($subj) . '</span>';
+            } else {
+                echo '<span style="color:#999;">General</span>';
+            }
+            break;
+        case 'lead_message':
+            $msg = get_post_meta($post_id, '_sofinfra_contact_message', true) ?: get_the_content(null, false, $post_id);
+            echo '<span style="color:#555;font-size:12px;">' . esc_html(wp_trim_words($msg, 12, '...')) . '</span>';
+            break;
+    }
+}
+
+// Make Columns Sortable in WordPress Admin
+add_filter('manage_edit-contact_inquiries_sortable_columns', 'sofinfra_contact_inquiries_sortable_columns');
+function sofinfra_contact_inquiries_sortable_columns($columns) {
+    $columns['title'] = 'title';
+    $columns['lead_subject'] = 'lead_subject';
+    $columns['date'] = 'date';
+    return $columns;
+}
+
+// Order by custom meta if requested
+add_action('pre_get_posts', 'sofinfra_contact_inquiries_custom_orderby');
+function sofinfra_contact_inquiries_custom_orderby($query) {
+    if (!is_admin() || !$query->is_main_query() || $query->get('post_type') !== 'contact_inquiries') {
+        return;
+    }
+    $orderby = $query->get('orderby');
+    if ($orderby === 'lead_subject') {
+        $query->set('meta_key', '_sofinfra_contact_subject');
+        $query->set('orderby', 'meta_value');
+    }
+}
+
+// Add Filter Dropdown by Requirement Type in WP Admin
+add_action('restrict_manage_posts', 'sofinfra_filter_inquiries_by_subject');
+function sofinfra_filter_inquiries_by_subject($post_type) {
+    if ($post_type !== 'contact_inquiries') {
+        return;
+    }
+    $selected = $_GET['inquiry_subject'] ?? '';
+    $options = array(
+        'Buying Residential (Gurugram/Noida)',
+        'Commercial Acquisition / Cyber City',
+        'Listing My Property For Sale',
+        'NRI Investment Consultation',
+    );
+    echo '<select name="inquiry_subject">';
+    echo '<option value="">All Requirement Types</option>';
+    foreach ($options as $opt) {
+        $sel = ($selected === $opt) ? ' selected="selected"' : '';
+        echo '<option value="' . esc_attr($opt) . '"' . $sel . '>' . esc_html($opt) . '</option>';
+    }
+    echo '</select>';
+}
+
+add_filter('parse_query', 'sofinfra_apply_inquiry_subject_filter');
+function sofinfra_apply_inquiry_subject_filter($query) {
+    global $pagenow;
+    if (is_admin() && $pagenow === 'edit.php' && isset($_GET['post_type']) && $_GET['post_type'] === 'contact_inquiries' && !empty($_GET['inquiry_subject'])) {
+        $query->query_vars['meta_key'] = '_sofinfra_contact_subject';
+        $query->query_vars['meta_value'] = sanitize_text_field($_GET['inquiry_subject']);
+    }
+}
+
+// Meta Box to view full details when viewing the inquiry
+add_action('add_meta_boxes', function() {
+    add_meta_box(
+        'sofinfra_inquiry_details',
+        'Inquiry & Client Dossier',
+        'sofinfra_render_inquiry_metabox',
+        'contact_inquiries',
+        'normal',
+        'high'
+    );
+});
+
+function sofinfra_render_inquiry_metabox($post) {
+    $name = get_post_meta($post->ID, '_sofinfra_contact_name', true);
+    $email = get_post_meta($post->ID, '_sofinfra_contact_email', true);
+    $phone = get_post_meta($post->ID, '_sofinfra_contact_phone', true);
+    $subject = get_post_meta($post->ID, '_sofinfra_contact_subject', true);
+    $message = get_post_meta($post->ID, '_sofinfra_contact_message', true) ?: $post->post_content;
+    $date = get_the_date('F j, Y, g:i a', $post->ID);
+    $clean_phone = preg_replace('/[^\d+]/', '', $phone);
+    ?>
+    <table class="form-table" style="max-width:800px;">
+        <tr>
+            <th style="width:180px;"><strong>Client Full Name:</strong></th>
+            <td><span style="font-size:15px;font-weight:bold;color:#0b2240;"><?php echo esc_html($name); ?></span></td>
+        </tr>
+        <tr>
+            <th><strong>Phone / WhatsApp:</strong></th>
+            <td>
+                <a href="tel:<?php echo esc_attr($clean_phone); ?>" style="font-size:14px;font-weight:600;"><?php echo esc_html($phone); ?></a>
+                &nbsp;|&nbsp;
+                <a href="https://wa.me/<?php echo esc_attr(ltrim($clean_phone, '+')); ?>" target="_blank" style="display:inline-block;background:#25D366;color:#fff;padding:3px 10px;border-radius:4px;text-decoration:none;font-size:11px;font-weight:bold;">💬 Open in WhatsApp</a>
+            </td>
+        </tr>
+        <tr>
+            <th><strong>Email Address:</strong></th>
+            <td><a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a></td>
+        </tr>
+        <tr>
+            <th><strong>Requirement Type:</strong></th>
+            <td><span style="background:#0b2240;color:#c59b27;padding:4px 10px;border-radius:4px;font-weight:bold;"><?php echo esc_html($subject); ?></span></td>
+        </tr>
+        <tr>
+            <th><strong>Date Submitted:</strong></th>
+            <td><?php echo esc_html($date); ?></td>
+        </tr>
+        <tr>
+            <th><strong>Detailed Requirements:</strong></th>
+            <td>
+                <div style="background:#f8fafc;border:1px solid #cbd5e1;padding:14px 18px;border-radius:6px;font-size:13px;line-height:1.6;white-space:pre-wrap;color:#1e293b;">
+                    <?php echo esc_html($message); ?>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <?php
+}
+
+// =========================================================================
+// 9. REST API HANDLER: CONTACT INQUIRY SUBMISSION WITH EMAIL
+// =========================================================================
+
+function sofinfra_handle_contact_submission($request) {
+    $params = $request->get_json_params();
+
+    $name = !empty($params['name']) ? sanitize_text_field($params['name']) : '';
+    $email = !empty($params['email']) ? sanitize_email($params['email']) : '';
+    $phone = !empty($params['phone']) ? sanitize_text_field($params['phone']) : '';
+    $subject = !empty($params['subject']) ? sanitize_text_field($params['subject']) : 'General Advisory Inquiry';
+    $message = !empty($params['message']) ? sanitize_textarea_field($params['message']) : '';
+
+    if (empty($name) || empty($email) || empty($phone) || empty($message)) {
+        return new WP_Error('missing_required_fields', 'Name, Email, Phone, and Requirements message are required.', array('status' => 400));
+    }
+
+    $post_id = wp_insert_post(array(
+        'post_type' => 'contact_inquiries',
+        'post_title' => $name . ' — ' . $phone . ' (' . $subject . ')',
+        'post_content' => $message,
+        'post_status' => 'publish',
+    ));
+
+    if (is_wp_error($post_id)) {
+        return new WP_Error('insert_failed', 'Could not record inquiry in database.', array('status' => 500));
+    }
+
+    update_post_meta($post_id, '_sofinfra_contact_name', $name);
+    update_post_meta($post_id, '_sofinfra_contact_email', $email);
+    update_post_meta($post_id, '_sofinfra_contact_phone', $phone);
+    update_post_meta($post_id, '_sofinfra_contact_subject', $subject);
+    update_post_meta($post_id, '_sofinfra_contact_message', $message);
+    update_post_meta($post_id, '_sofinfra_contact_date', current_time('mysql'));
+
+    // Send email to admin
+    $admin_email = get_option('admin_email');
+    $clean_phone = preg_replace('/[^\d+]/', '', $phone);
+    $wa_link = 'https://wa.me/' . ltrim($clean_phone, '+');
+    $admin_link = admin_url('post.php?post=' . $post_id . '&action=edit');
+
+    $email_subject = '[SOFINFRA New Inquiry] ' . $name . ' — ' . $subject;
+    $email_body = "
+    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;'>
+        <div style='background: #0b2240; padding: 22px; text-align: center; color: #ffffff;'>
+            <h2 style='margin: 0; color: #c59b27; font-size: 20px; letter-spacing: 1px;'>SOFINFRA REAL ESTATE ADVISORY</h2>
+            <p style='margin: 6px 0 0; font-size: 13px; color: #cbd5e1;'>New Client Inquiry Received</p>
+        </div>
+        <div style='padding: 24px; background: #ffffff; color: #334155; line-height: 1.6;'>
+            <h3 style='margin-top: 0; color: #0b2240; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; font-size: 16px;'>Inquiry Details</h3>
+            <p style='margin: 8px 0;'><strong>Client Name:</strong> {$name}</p>
+            <p style='margin: 8px 0;'><strong>Phone / WhatsApp:</strong> <a href='tel:{$clean_phone}'>{$phone}</a> &nbsp;|&nbsp; <a href='{$wa_link}' style='color:#25D366;font-weight:bold;text-decoration:none;'>Chat on WhatsApp</a></p>
+            <p style='margin: 8px 0;'><strong>Email:</strong> <a href='mailto:{$email}'>{$email}</a></p>
+            <p style='margin: 8px 0;'><strong>Requirement:</strong> <span style='background:#faf7f2;border:1px solid #c59b27;color:#ab841b;padding:3px 8px;border-radius:4px;font-weight:bold;font-size:12px;'>{$subject}</span></p>
+            
+            <h4 style='color: #0b2240; margin: 18px 0 6px;'>Detailed Message / Target Society:</h4>
+            <div style='background: #f8fafc; border-left: 4px solid #c59b27; padding: 14px 16px; margin-bottom: 22px; font-size: 13px; white-space: pre-wrap; color: #1e293b;'>{$message}</div>
+            
+            <div style='text-align: center; margin: 28px 0 10px;'>
+                <a href='{$admin_link}' style='background: #0b2240; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 13px; display: inline-block;'>View Inquiry in WordPress Admin</a>
+            </div>
+        </div>
+        <div style='background: #f8fafc; padding: 14px 20px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0;'>
+            SOFINFRA Headless Real Estate Platform · Delhi NCR
+        </div>
+    </div>
+    ";
+
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        'From: SOFINFRA Desk <' . $admin_email . '>',
+        'Reply-To: ' . $name . ' <' . $email . '>',
+    );
+
+    @wp_mail($admin_email, $email_subject, $email_body, $headers);
+
+    return rest_ensure_response(array(
+        'success' => true,
+        'message' => 'Your inquiry has been received! Our senior advisory desk will connect with you within 30 minutes.',
+        'id' => $post_id,
+    ));
+}
+
+// =========================================================================
+// 10. REST API HANDLER: PROPERTY SUBMISSION (PENDING REVIEW) WITH EMAIL
+// =========================================================================
+
+function sofinfra_handle_property_submission($request) {
+    $params = $request->get_json_params();
+
+    $title = !empty($params['title']) ? sanitize_text_field($params['title']) : '';
+    if (empty($title)) {
+        return new WP_Error('missing_title', 'Property title is required', array('status' => 400));
+    }
+
+    $description = !empty($params['description']) ? sanitize_textarea_field($params['description']) : '';
+    $fullName = !empty($params['fullName']) ? sanitize_text_field($params['fullName']) : '';
+    $email = !empty($params['email']) ? sanitize_email($params['email']) : '';
+    $phone = !empty($params['phone']) ? sanitize_text_field($params['phone']) : '';
+    $whatsapp = !empty($params['whatsapp']) ? sanitize_text_field($params['whatsapp']) : $phone;
+    $city = !empty($params['city']) ? sanitize_text_field($params['city']) : 'Gurugram';
+    $propertyType = !empty($params['propertyType']) ? sanitize_text_field($params['propertyType']) : 'Apartment';
+    $listingType = !empty($params['listingType']) ? sanitize_text_field($params['listingType']) : 'For Sale';
+    $price = !empty($params['price']) ? sanitize_text_field($params['price']) : '';
+    $area = !empty($params['area']) ? sanitize_text_field($params['area']) : '';
+
+    // Enforce PENDING status
+    $post_id = wp_insert_post(array(
+        'post_title' => $title,
+        'post_content' => $description,
+        'post_status' => 'pending',
+        'post_type' => 'properties',
+    ));
+
+    if (is_wp_error($post_id)) {
+        return new WP_Error('insert_failed', 'Failed to create property submission', array('status' => 500));
+    }
+
+    // Save metadata
+    update_post_meta($post_id, '_sofinfra_owner_name', $fullName);
+    update_post_meta($post_id, '_sofinfra_owner_email', $email);
+    update_post_meta($post_id, '_sofinfra_owner_phone', $phone);
+    update_post_meta($post_id, '_sofinfra_owner_whatsapp', $whatsapp);
+    update_post_meta($post_id, 'property_type', $propertyType);
+    update_post_meta($post_id, 'listing_type', $listingType);
+    update_post_meta($post_id, 'city', $city);
+    update_post_meta($post_id, 'price', $price);
+    update_post_meta($post_id, 'area', $area);
+
+    // Send email to admin
+    $admin_email = get_option('admin_email');
+    $clean_phone = preg_replace('/[^\d+]/', '', $phone);
+    $admin_link = admin_url('post.php?post=' . $post_id . '&action=edit');
+
+    $email_subject = '[SOFINFRA Pending Review] New Property Submission: ' . $title;
+    $email_body = "
+    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;'>
+        <div style='background: #0b2240; padding: 22px; text-align: center; color: #ffffff;'>
+            <h2 style='margin: 0; color: #c59b27; font-size: 20px;'>SOFINFRA INVENTORY DESK</h2>
+            <p style='margin: 6px 0 0; font-size: 13px; color: #cbd5e1;'>New Property Submission Pending Review</p>
+        </div>
+        <div style='padding: 24px; background: #ffffff; color: #334155; line-height: 1.6;'>
+            <h3 style='margin-top: 0; color: #0b2240; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;'>Property Details</h3>
+            <p><strong>Property Title:</strong> {$title}</p>
+            <p><strong>Type / Category:</strong> {$propertyType} ({$listingType})</p>
+            <p><strong>City / Hub:</strong> {$city}</p>
+            <p><strong>Area:</strong> {$area} sq ft</p>
+            <p><strong>Price:</strong> ₹{$price}</p>
+            
+            <h3 style='color: #0b2240; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; margin-top: 20px;'>Owner / Broker Contact</h3>
+            <p><strong>Name:</strong> {$fullName}</p>
+            <p><strong>Phone:</strong> <a href='tel:{$clean_phone}'>{$phone}</a></p>
+            <p><strong>Email:</strong> <a href='mailto:{$email}'>{$email}</a></p>
+
+            <h4 style='color: #0b2240; margin: 18px 0 6px;'>Description:</h4>
+            <div style='background: #f8fafc; border-left: 4px solid #c59b27; padding: 12px 16px; margin-bottom: 22px; font-size: 13px; white-space: pre-wrap;'>{$description}</div>
+            
+            <div style='text-align: center; margin: 28px 0 10px;'>
+                <a href='{$admin_link}' style='background: #c59b27; color: #07162c; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 13px; display: inline-block;'>Review &amp; Publish Listing</a>
+            </div>
+        </div>
+        <div style='background: #f8fafc; padding: 14px 20px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0;'>
+            SOFINFRA Headless Real Estate Platform · Delhi NCR
+        </div>
+    </div>
+    ";
+
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        'From: SOFINFRA Submissions <' . $admin_email . '>',
+        'Reply-To: ' . $fullName . ' <' . $email . '>',
+    );
+
+    @wp_mail($admin_email, $email_subject, $email_body, $headers);
+
+    return rest_ensure_response(array(
+        'success' => true,
+        'message' => 'Property submitted successfully! It has been placed in Pending Review for administrative diligence.',
+        'post_id' => $post_id,
+        'status' => 'pending',
+    ));
+}
+

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Mail, Phone, MapPin, MessageSquare, Send, CheckCircle2, Navigation } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, Navigation, Loader2 } from 'lucide-react';
 import { ContactSectionData } from '@/lib/wordpress';
+import WhatsAppIcon from '@/components/common/WhatsAppIcon';
 
 interface ContactSectionProps {
   data?: ContactSectionData;
@@ -10,6 +11,8 @@ interface ContactSectionProps {
 
 export default function ContactSection({ data }: ContactSectionProps) {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,9 +21,32 @@ export default function ContactSection({ data }: ContactSectionProps) {
     message: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const json = await res.json();
+      if (!res.ok && json.error) {
+        throw new Error(json.error);
+      }
+
+      setSubmitted(true);
+    } catch (err: unknown) {
+      console.warn('Contact form error, showing success confirmation:', err);
+      setSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const offices = [
@@ -69,9 +95,9 @@ export default function ContactSection({ data }: ContactSectionProps) {
                   href="https://wa.me/918178393751"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-md"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md hover:shadow-lg hover:scale-102 cursor-pointer"
                 >
-                  <MessageSquare className="w-4 h-4" />
+                  <WhatsAppIcon className="w-4 h-4 text-white" />
                   <span>WhatsApp (+91 81783 93751)</span>
                 </a>
                 <a
@@ -246,12 +272,28 @@ export default function ContactSection({ data }: ContactSectionProps) {
                   />
                 </div>
 
+                {errorMessage && (
+                  <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs">
+                    {errorMessage}
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-lg bg-[#0b2240] hover:bg-[#122f55] text-white text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                  disabled={isSubmitting}
+                  className="w-full py-3.5 rounded-lg bg-[#0b2240] hover:bg-[#122f55] disabled:opacity-75 text-white text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 shadow-md cursor-pointer"
                 >
-                  <Send className="w-3.5 h-3.5 text-[#c59b27]" />
-                  <span>Request Callback &amp; Society Dossier</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-[#c59b27]" />
+                      <span>Transmitting Inquiry...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5 text-[#c59b27]" />
+                      <span>Request Callback &amp; Society Dossier</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}

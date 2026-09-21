@@ -19,6 +19,7 @@ import {
   Phone,
 } from 'lucide-react';
 import { Property } from '@/types/property';
+import WhatsAppIcon from '@/components/common/WhatsAppIcon';
 
 interface PropertyDetailModalProps {
   property: Property | null;
@@ -398,9 +399,9 @@ export default function PropertyDetailModal({ property, onClose }: PropertyDetai
                     href="https://wa.me/918178393751"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider transition-colors"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md hover:shadow-lg cursor-pointer"
                   >
-                    <MessageSquare className="w-4 h-4" />
+                    <WhatsAppIcon className="w-4 h-4 text-white" />
                     <span>WhatsApp (+91 81783 93751)</span>
                   </a>
                   <a
