@@ -2,6 +2,11 @@ import { Property, PropertySubmissionPayload } from '@/types/property';
 import { Society, DELHI_NCR_SOCIETIES } from '@/data/societies';
 import { INITIAL_PROPERTIES } from '@/data/mock-properties';
 
+// Allow connections to WordPress hosts with self-signed or incomplete SSL certificate chains
+if (typeof process !== 'undefined' && process.env) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
 // WordPress endpoint - defaults to live production host in production, or http://sofinfra.local in local development
 const WP_BASE_URL =
   process.env.WORDPRESS_URL ||
