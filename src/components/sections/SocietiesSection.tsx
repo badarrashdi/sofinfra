@@ -10,12 +10,14 @@ interface SocietiesSectionProps {
   onSelectSociety?: (society: Society) => void;
   onSubmitPropertyClick?: () => void;
   data?: SocietiesSectionData;
+  societies?: Society[];
 }
 
-export default function SocietiesSection({ onSelectSociety, data }: SocietiesSectionProps) {
+export default function SocietiesSection({ onSelectSociety, data, societies }: SocietiesSectionProps) {
   const [selectedCity, setSelectedCity] = useState<'All' | 'Gurugram' | 'Noida' | 'New Delhi'>('All');
 
-  const filteredSocieties = DELHI_NCR_SOCIETIES.filter((soc) => {
+  const list = societies && societies.length > 0 ? societies : DELHI_NCR_SOCIETIES;
+  const filteredSocieties = list.filter((soc) => {
     if (selectedCity === 'All') return true;
     return soc.city === selectedCity;
   });

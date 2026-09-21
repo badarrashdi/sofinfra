@@ -1,9 +1,12 @@
 import { Property, PropertySubmissionPayload } from '@/types/property';
+import { Society, DELHI_NCR_SOCIETIES } from '@/data/societies';
 import { INITIAL_PROPERTIES } from '@/data/mock-properties';
 
-// WordPress endpoint - defaults to http://sofinfra.local/
+// WordPress endpoint - defaults to http://sofinfra.local/ or configured environment variable
 const WP_BASE_URL =
-  process.env.NEXT_PUBLIC_WORDPRESS_URL || 'http://sofinfra.local';
+  process.env.WORDPRESS_URL ||
+  process.env.NEXT_PUBLIC_WORDPRESS_URL ||
+  'http://sofinfra.local';
 const WP_API_ENDPOINT = `${WP_BASE_URL}/wp-json/sofinfra/v1`;
 
 export interface FetchPropertiesOptions {
@@ -97,6 +100,7 @@ export interface ContactSectionData {
   badge?: string;
   heading?: string;
   subheading?: string;
+  phone?: string;
   phone_numbers?: Array<{ number: string; label: string }>;
   email?: string;
   address?: string;
@@ -125,6 +129,10 @@ export interface HomepageData {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mapWpPropertyToFrontend(item: any): Property {
+  if (item && item.pricing && item.specs && item.location) {
+    return item as Property;
+  }
+
   return {
     id: item.id,
     title: item.title?.rendered || item.title || 'Untitled Property',
@@ -356,4 +364,37 @@ export async function getHomepageData(): Promise<HomepageData | null> {
 
   return null;
 }
+
+/**
+ * Fetches published projects/societies from WordPress REST API.
+ * Falls back gracefully to mock societies if WordPress is offline.
+ */
+export async function getProjects(): Promise<Society[]> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+    const res = await fetch(`${WP_API_ENDPOINT}/projects`, {
+      headers: {
+        Accept: 'application/json',
+      },
+      next: { revalidate: 60 },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data as Society[];
+      }
+    }
+  } catch (error) {
+    console.warn('WordPress getProjects unavailable, falling back to static societies:', error);
+  }
+
+  return DELHI_NCR_SOCIETIES;
+}
+
 

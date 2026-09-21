@@ -20,11 +20,13 @@ import SubmitPropertyModal from '@/components/submit/SubmitPropertyModal';
 
 interface HomeClientProps {
   initialProperties: Property[];
+  initialProjects?: Society[];
   homepageData?: HomepageData | null;
 }
 
-export default function HomeClient({ initialProperties, homepageData }: HomeClientProps) {
+export default function HomeClient({ initialProperties, initialProjects, homepageData }: HomeClientProps) {
   const [properties] = useState<Property[]>(initialProperties);
+  const [societies] = useState<Society[]>(initialProjects || []);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [selectedSociety, setSelectedSociety] = useState<Society | null>(null);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState<boolean>(false);
@@ -61,6 +63,7 @@ export default function HomeClient({ initialProperties, homepageData }: HomeClie
           <SocietiesSection
             key={`section-societies-${index}`}
             data={section}
+            societies={societies}
             onSelectSociety={handleSelectSociety}
             onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
           />
@@ -110,6 +113,7 @@ export default function HomeClient({ initialProperties, homepageData }: HomeClie
 
           {/* 3. Top Societies & Townships Section (#societies) */}
           <SocietiesSection
+            societies={societies}
             onSelectSociety={handleSelectSociety}
             onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
           />

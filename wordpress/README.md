@@ -1,28 +1,67 @@
-# SOFINFRA WordPress Backend Integration
+# SOFINFRA Headless WordPress Setup
 
-This directory contains the WordPress plugin for **SOFINFRA** (`http://sofinfra.local/`).
+This directory contains the WordPress backend configuration and custom code for SOFINFRA.
 
-## How to Install & Activate in Local WP
+## Directory Structure
+- `mu-plugins/sofinfra-headless.php`:
+  - Registers Custom Post Types:
+    - `projects` (Societies & Townships)
+    - `properties` (Property Listings)
+  - Registers Custom REST API endpoints:
+    - `GET /wp-json/sofinfra/v1/homepage`: Returns flexible content sections from the Homepage.
+    - `GET /wp-json/sofinfra/v1/projects`: Returns all active societies and megaprojects with ACF meta.
+    - `GET /wp-json/sofinfra/v1/properties`: Returns all active property listings with ACF meta.
+    - `POST /wp-json/sofinfra/v1/submit-property`: Public submission endpoint that creates pending listings for admin review.
+  - Configures CORS headers and REST API permissions.
 
-1. Open **Local WP** on your machine.
-2. Right click your `sofinfra` site in Local WP and select **Go to site folder**, or navigate to:
-   ```bash
-   ~/Local\ Sites/sofinfra/app/public/wp-content/plugins/
-   ```
-3. Copy or symlink the `sofinfra-properties` folder into your Local WP plugins directory:
-   ```bash
-   cp -r /Users/badarrashdi/Sites/sofinfra/wordpress/plugins/sofinfra-properties ~/Local\ Sites/sofinfra/app/public/wp-content/plugins/
-   ```
-4. Log into your WordPress Admin at [http://sofinfra.local/wp-admin/](http://sofinfra.local/wp-admin/).
-5. Navigate to **Plugins** and click **Activate** under **SOFINFRA Properties Engine**.
-6. You will see the new menu item **SOFINFRA Properties** in the WordPress sidebar:
-   - **All Properties**: View, edit, and publish properties.
-   - **Add New Property**: Add residential and commercial properties with custom pricing, specs, and detail display mode (Popup vs External URL).
-   - **Pending Submissions**: Submissions from the Next.js frontend are automatically saved as **Pending Review**, allowing you to verify owner contact info, review uploaded photos, set pricing, and publish.
+- `mu-plugins/sofinfra-acf-fields.php`:
+  - Programmatically defines all ACF Field Groups (no JSON or manual DB sync required):
+    - **Homepage Flexible Content**: Hero, Property Listings, Societies, About, Services, Testimonials, CTA, Contact.
+    - **Project / Society Meta**: Developer, Location, City, Price Range, Amenities, RERA ID, Master Plan, Brochure URL, etc.
+    - **Property Meta**: Category, Property Type, Price, Area, Specs, Location, Highlights, Brochure, Featured status.
 
-## REST API Endpoints Provided
+---
 
-- `GET http://sofinfra.local/wp-json/sofinfra/v1/properties`
-  - Returns only approved, published properties for the public Next.js frontend.
-- `POST http://sofinfra.local/wp-json/sofinfra/v1/submit-property`
-  - Public submission endpoint that creates properties with `post_status: 'pending'` for administrator review.
+## How to Deploy to a Remote / Production WordPress Site
+
+### 1. Prerequisites on Production WordPress:
+1. Install and activate **Advanced Custom Fields Pro** (ACF Pro) on your WordPress host.
+2. Ensure Pretty Permalinks are enabled (e.g. `/wp-admin/options-permalink.php` set to `Post name`).
+
+### 2. Install MU-Plugins:
+Copy the two files from `wordpress/mu-plugins/` into your live WordPress server's `wp-content/mu-plugins/` folder:
+- `wp-content/mu-plugins/sofinfra-headless.php`
+- `wp-content/mu-plugins/sofinfra-acf-fields.php`
+
+*(WordPress automatically loads files in `wp-content/mu-plugins/` without needing manual plugin activation).*
+
+### 3. Create the Homepage in WP-Admin:
+1. Go to **Pages → Add New**.
+2. Title it `Home` (slug: `home`).
+3. Set it as your static homepage in **Settings → Reading**.
+4. The **Homepage Flexible Content** sections will appear at the bottom of the page editor. Click **Add Row** to customize any section!
+
+---
+
+## How to Connect Next.js to Remote / Production WordPress
+
+In Next.js, the endpoint is controlled by environment variables. No code changes are required!
+
+### For Local Development:
+In `.env.local`:
+```bash
+NEXT_PUBLIC_WORDPRESS_URL=http://sofinfra.local
+WORDPRESS_URL=http://sofinfra.local
+```
+
+### For Production (e.g. Vercel, Netlify, AWS Amplify, Docker):
+In your hosting provider's Environment Variables settings, define:
+```bash
+NEXT_PUBLIC_WORDPRESS_URL=https://cms.yourdomain.com
+WORDPRESS_URL=https://cms.yourdomain.com
+```
+
+Next.js will automatically:
+- Fetch dynamic homepage sections, properties, and projects from `https://cms.yourdomain.com/wp-json/sofinfra/v1/...`
+- Use Incremental Static Regeneration (ISR) to cache and revalidate pages every 60 seconds.
+- Fall back gracefully to built-in data if the WordPress server is ever unreachable, ensuring 100% uptime.

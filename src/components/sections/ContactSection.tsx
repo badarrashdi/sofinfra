@@ -26,11 +26,11 @@ export default function ContactSection({ data }: ContactSectionProps) {
   const offices = [
     {
       city: 'Headquarters (Gurugram)',
-      address: 'S-306-308, 2nd Floor, Tower A, Palam Corporate Plaza, Palam Vihar, Gurugram(HR)-122017',
+      address: data?.address || 'S-306-308, 2nd Floor, Tower A, Palam Corporate Plaza, Palam Vihar, Gurugram(HR)-122017',
       landmark: 'Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2, Palam Vihar, Gurugram, Haryana 122017',
-      phone: '+91 81783 93751',
+      phone: data?.phone || data?.phone_numbers?.[0]?.number || '+91 81783 93751',
       secondaryPhone: '+91 92123 16521',
-      email: 'gurugram@sofinfra.local',
+      email: data?.email || 'gurugram@sofinfra.local',
       isPrimary: true,
     },
     {
