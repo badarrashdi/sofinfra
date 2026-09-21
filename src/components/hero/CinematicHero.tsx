@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import {
   Search,
   PlusCircle,
@@ -21,15 +21,6 @@ export default function CinematicHero({
   const [searchTab, setSearchTab] = useState<"buy" | "societies">("buy");
   const [selectedLocality, setSelectedLocality] = useState("Golf Course Road");
   const [selectedBudget, setSelectedBudget] = useState("All Budgets");
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  // Slow down video playback for a smooth, cinematic aerial glide (0.5x speed - 30% slower)
-  useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      video.playbackRate = 0.5;
-    }
-  }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,10 +50,9 @@ export default function CinematicHero({
       id="hero"
       className="relative min-h-[750px] lg:min-h-[850px] h-screen w-full flex items-center justify-center overflow-hidden bg-[#07162c]"
     >
-      {/* BACKGROUND DRONE VIDEO ONLY with 0.5x slow cinematic playback starting from 0s */}
+      {/* BACKGROUND DRONE VIDEO ONLY with natural playback speed */}
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
         <video
-          ref={videoRef}
           autoPlay
           loop
           muted
