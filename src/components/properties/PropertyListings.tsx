@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { Filter, ChevronDown, Building, X } from 'lucide-react';
+import { Search, Filter, ChevronDown } from 'lucide-react';
 import { Property } from '@/types/property';
 import { Society } from '@/data/societies';
 import { PropertyListingsSectionData } from '@/lib/wordpress';
@@ -17,7 +17,7 @@ interface PropertyListingsProps {
   onClearHeroFilter?: () => void;
 }
 
-// Matches a property to a project using name, keywords, and address
+// Matches a property to a project using title keywords and address
 function propertyMatchesProject(prop: Property, proj: Society): boolean {
   const propText = `${prop.title} ${prop.location?.locality || ''} ${prop.location?.fullAddress || ''} ${prop.description || ''}`.toLowerCase();
   const projName = proj.name.toLowerCase();
@@ -76,8 +76,11 @@ export default function PropertyListings({
   heroSearchFilter,
   onClearHeroFilter,
 }: PropertyListingsProps) {
-  const [selectedCity, setSelectedCity] = useState<string>('All');
-  const [selectedProjectId, setSelectedProjectId] = useState<string>('All');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'residential' | 'commercial'>('all');
+  const [selectedCity, setSelectedCity] = useState<string>('all');
+  const [selectedProject, setSelectedProject] = useState<string>('all');
+  const [selectedType, setSelectedType] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [visibleCount, setVisibleCount] = useState<number>(6);
 
   // Synchronize when a hero search occurs
@@ -87,56 +90,84 @@ export default function PropertyListings({
     }
   }, [heroSearchFilter]);
 
-  // Dynamically derive city tabs from projects
-  const dynamicCities = useMemo(() => {
+  // Extract unique cities dynamically from projects and properties
+  const cities = useMemo(() => {
     const set = new Set<string>();
     projects.forEach((p) => {
       if (p.city) set.add(p.city);
     });
-    // Fallback to property cities if projects don't have cities yet
-    if (set.size === 0) {
-      properties.forEach((p) => {
-        if (p.location?.city) set.add(p.location.city);
-      });
-    }
-    return ['All', ...Array.from(set)];
+    properties.forEach((p) => {
+      if (p.location?.city) set.add(p.location.city);
+    });
+    return Array.from(set);
   }, [projects, properties]);
 
-  // Dynamically derive project tabs (filtered by selected city if any)
-  const availableProjects = useMemo(() => {
-    if (selectedCity === 'All') return projects;
-    return projects.filter((p) => p.city.toLowerCase() === selectedCity.toLowerCase());
-  }, [projects, selectedCity]);
+  // Extract unique types dynamically
+  const propertyTypes = useMemo(() => {
+    const set = new Set<string>();
+    properties.forEach((p) => {
+      if (p.propertyType) set.add(p.propertyType);
+    });
+    projects.forEach((p) => {
+      if (p.type) set.add(p.type);
+    });
+    return Array.from(set);
+  }, [properties, projects]);
 
-  // Filter properties based on city, project, and any hero search parameters
+  // Filter properties
   const filteredProperties = useMemo(() => {
-    return properties.filter((prop) => {
-      // 1. City filter (derived from projects)
-      if (selectedCity !== 'All') {
-        const city = (prop.location?.city || '').toLowerCase();
+    return properties.filter((p) => {
+      // 1. Category tab
+      if (categoryFilter !== 'all' && p.category !== categoryFilter) {
+        return false;
+      }
+
+      // 2. City dropdown filter
+      if (selectedCity !== 'all') {
+        const pCity = (p.location?.city || '').toLowerCase();
         const target = selectedCity.toLowerCase();
-        const matches = city.includes(target) || (target === 'gurugram' && city.includes('gurgaon'));
+        const matches = pCity.includes(target) || (target === 'gurugram' && pCity.includes('gurgaon'));
         if (!matches) return false;
       }
 
-      // 2. Project filter (taken directly from projects)
-      if (selectedProjectId !== 'All') {
-        const proj = projects.find((p) => p.id === selectedProjectId);
-        if (proj && !propertyMatchesProject(prop, proj)) {
+      // 3. Project dropdown filter (taken dynamically from projects)
+      if (selectedProject !== 'all') {
+        const proj = projects.find(
+          (item) => item.id === selectedProject || item.name.toLowerCase() === selectedProject.toLowerCase()
+        );
+        if (proj && !propertyMatchesProject(p, proj)) {
           return false;
         }
       }
 
-      // 3. Hero search active filters
+      // 4. Property Type dropdown filter
+      if (selectedType !== 'all') {
+        const pType = (p.propertyType || '').toLowerCase();
+        const target = selectedType.toLowerCase();
+        if (!pType.includes(target) && !target.includes(pType)) {
+          return false;
+        }
+      }
+
+      // 5. Search query text
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const text = `${p.title} ${p.location?.city || ''} ${p.location?.locality || ''} ${p.location?.fullAddress || ''} ${p.propertyType || ''}`.toLowerCase();
+        if (!text.includes(q)) {
+          return false;
+        }
+      }
+
+      // 6. Hero search filter (from top of page)
       if (heroSearchFilter) {
-        if (!matchesLocation(prop, heroSearchFilter.location)) return false;
-        if (!matchesType(prop, heroSearchFilter.propertyType)) return false;
-        if (!matchesBudget(prop, heroSearchFilter.budget)) return false;
+        if (!matchesLocation(p, heroSearchFilter.location)) return false;
+        if (!matchesType(p, heroSearchFilter.propertyType)) return false;
+        if (!matchesBudget(p, heroSearchFilter.budget)) return false;
       }
 
       return true;
     });
-  }, [properties, projects, selectedCity, selectedProjectId, heroSearchFilter]);
+  }, [properties, projects, categoryFilter, selectedCity, selectedProject, selectedType, searchQuery, heroSearchFilter]);
 
   const displayedProperties = useMemo(() => {
     return filteredProperties.slice(0, visibleCount);
@@ -146,28 +177,20 @@ export default function PropertyListings({
     setVisibleCount((prev) => prev + 6);
   };
 
-  const handleCityChange = (city: string) => {
-    setSelectedCity(city);
-    setSelectedProjectId('All');
-    setVisibleCount(6);
-  };
-
-  const handleProjectChange = (projId: string) => {
-    setSelectedProjectId(projId);
+  const handleFilterChange = (cb: () => void) => {
+    cb();
     setVisibleCount(6);
   };
 
   const handleResetAll = () => {
-    setSelectedCity('All');
-    setSelectedProjectId('All');
+    setCategoryFilter('all');
+    setSelectedCity('all');
+    setSelectedProject('all');
+    setSelectedType('all');
+    setSearchQuery('');
     setVisibleCount(6);
     if (onClearHeroFilter) onClearHeroFilter();
   };
-
-  const isFiltered =
-    selectedCity !== 'All' ||
-    selectedProjectId !== 'All' ||
-    (heroSearchFilter && (heroSearchFilter.location !== 'all' || heroSearchFilter.propertyType !== 'all' || heroSearchFilter.budget !== 'all'));
 
   return (
     <section id="buy-properties" className="py-24 sm:py-32 bg-slate-50/70 relative">
@@ -175,7 +198,7 @@ export default function PropertyListings({
       <div id="buy-rent" className="absolute -top-24" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200 text-[#0b2240] text-xs font-semibold tracking-widest uppercase mb-3">
               {data?.badge || 'Delhi NCR Prime Portfolio'}
@@ -189,96 +212,112 @@ export default function PropertyListings({
             </p>
           </div>
 
-          {/* City Filter Tabs (Dynamically taken from Projects) */}
-          <div className="inline-flex p-1 bg-white rounded-xl shadow-xs border border-slate-200 self-start md:self-auto overflow-x-auto">
-            {dynamicCities.map((city) => (
+          {/* Category Filter Tabs */}
+          <div className="inline-flex p-1 bg-white rounded-xl shadow-xs border border-slate-200 self-start md:self-auto">
+            {(
+              [
+                { id: 'all', label: 'All Properties' },
+                { id: 'residential', label: 'Luxury Residential' },
+                { id: 'commercial', label: 'Grade-A Commercial' },
+              ] as const
+            ).map((tab) => (
               <button
-                key={city}
+                key={tab.id}
                 type="button"
-                onClick={() => handleCityChange(city)}
+                onClick={() => handleFilterChange(() => setCategoryFilter(tab.id))}
                 className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all tracking-wide whitespace-nowrap cursor-pointer ${
-                  selectedCity === city
+                  categoryFilter === tab.id
                     ? 'bg-[#0b2240] text-white shadow-xs'
                     : 'text-slate-600 hover:text-[#0b2240] hover:bg-slate-50'
                 }`}
               >
-                {city === 'All' ? 'All NCR' : city}
+                {tab.label}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Project Filter Pills (Dynamically taken from Projects) */}
-        {availableProjects.length > 0 && (
-          <div className="mb-10 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 shrink-0 pr-2">
-              <Building className="w-3.5 h-3.5 text-[#c59b27]" />
-              <span>Project:</span>
+        {/* Filter Bar (Restored with dynamic Projects, City, Type & Search, NO scroller) */}
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Search location, sector..."
+                value={searchQuery}
+                onChange={(e) => handleFilterChange(() => setSearchQuery(e.target.value))}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-[#c59b27]"
+              />
             </div>
-            <button
-              type="button"
-              onClick={() => handleProjectChange('All')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition-all cursor-pointer ${
-                selectedProjectId === 'All'
-                  ? 'bg-[#c59b27] text-[#07162c] shadow-xs'
-                  : 'bg-white text-slate-600 border border-slate-200/80 hover:border-[#c59b27] hover:text-[#0b2240]'
-              }`}
-            >
-              All Projects
-            </button>
-            {availableProjects.map((proj) => (
-              <button
-                key={proj.id}
-                type="button"
-                onClick={() => handleProjectChange(proj.id)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition-all cursor-pointer ${
-                  selectedProjectId === proj.id
-                    ? 'bg-[#c59b27] text-[#07162c] shadow-xs'
-                    : 'bg-white text-slate-600 border border-slate-200/80 hover:border-[#c59b27] hover:text-[#0b2240]'
-                }`}
-              >
-                {proj.name}
-              </button>
-            ))}
-          </div>
-        )}
 
-        {/* Active Filter Notification Bar if search or project is applied */}
-        {isFiltered && (
-          <div className="mb-8 p-3.5 rounded-xl bg-white border border-[#c59b27]/30 shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div className="flex flex-wrap items-center gap-2 text-slate-600">
-              <span className="font-semibold text-[#0b2240]">Active Filters:</span>
-              {selectedCity !== 'All' && (
-                <span className="px-2.5 py-1 rounded-md bg-slate-100 font-medium text-slate-700">
-                  City: {selectedCity}
-                </span>
-              )}
-              {selectedProjectId !== 'All' && (
-                <span className="px-2.5 py-1 rounded-md bg-[#faf7f2] border border-[#c59b27]/30 font-semibold text-[#ab841b]">
-                  Project: {projects.find((p) => p.id === selectedProjectId)?.name || selectedProjectId}
-                </span>
-              )}
-              {heroSearchFilter?.location && heroSearchFilter.location !== 'all' && (
-                <span className="px-2.5 py-1 rounded-md bg-slate-100 font-medium text-slate-700">
-                  Corridor: {heroSearchFilter.location}
-                </span>
-              )}
-              {heroSearchFilter?.propertyType && heroSearchFilter.propertyType !== 'all' && (
-                <span className="px-2.5 py-1 rounded-md bg-slate-100 font-medium text-slate-700">
-                  Typology: {heroSearchFilter.propertyType}
-                </span>
+            {/* Project Dropdown (Taken directly from Projects) */}
+            <div className="relative">
+              <select
+                value={selectedProject}
+                onChange={(e) => handleFilterChange(() => setSelectedProject(e.target.value))}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
+              >
+                <option value="all">All Projects &amp; Societies</option>
+                {projects.map((proj) => (
+                  <option key={proj.id} value={proj.id}>
+                    {proj.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* City Dropdown (Taken dynamically from Projects & Properties) */}
+            <div className="relative">
+              <select
+                value={selectedCity}
+                onChange={(e) => handleFilterChange(() => setSelectedCity(e.target.value))}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
+              >
+                <option value="all">All Delhi NCR Hubs</option>
+                {cities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Property Type Dropdown (Taken dynamically) */}
+            <div className="relative">
+              <select
+                value={selectedType}
+                onChange={(e) => handleFilterChange(() => setSelectedType(e.target.value))}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
+              >
+                <option value="all">All Typologies</option>
+                {propertyTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Reset / Status Counter */}
+            <div className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-xl border border-slate-100 text-xs">
+              <span className="text-slate-500 font-medium">
+                Showing <strong className="text-[#0b2240]">{displayedProperties.length}</strong> of{' '}
+                <strong className="text-[#0b2240]">{filteredProperties.length}</strong> listings
+              </span>
+              {(selectedCity !== 'all' || selectedProject !== 'all' || selectedType !== 'all' || searchQuery !== '' || categoryFilter !== 'all' || (heroSearchFilter && (heroSearchFilter.location !== 'all' || heroSearchFilter.propertyType !== 'all' || heroSearchFilter.budget !== 'all'))) && (
+                <button
+                  type="button"
+                  onClick={handleResetAll}
+                  className="text-[#c59b27] hover:underline font-semibold cursor-pointer"
+                >
+                  Reset
+                </button>
               )}
             </div>
-            <button
-              type="button"
-              onClick={handleResetAll}
-              className="inline-flex items-center gap-1 font-semibold text-[#c59b27] hover:text-[#a37f1b] hover:underline cursor-pointer"
-            >
-              <X className="w-3.5 h-3.5" />
-              <span>Clear All Filters</span>
-            </button>
           </div>
-        )}
+        </div>
 
         {/* Property Grid (6 by default) */}
         {displayedProperties.length > 0 ? (
@@ -310,18 +349,16 @@ export default function PropertyListings({
         ) : (
           <div className="py-20 text-center bg-white rounded-2xl border border-dashed border-slate-200">
             <Filter className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-lg font-semibold text-slate-700">
-              No properties found matching current criteria
-            </h3>
+            <h3 className="text-lg font-semibold text-slate-700">No properties match your filter</h3>
             <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-              We are constantly onboarding verified prime residences and commercial spaces in this hub.
+              Try adjusting your search criteria or resetting filters to explore all available properties.
             </p>
             <button
               type="button"
               onClick={handleResetAll}
               className="mt-4 px-4 py-2 rounded-lg bg-[#0b2240] text-white text-xs font-semibold cursor-pointer"
             >
-              Show All NCR Properties
+              Reset All Filters
             </button>
           </div>
         )}
