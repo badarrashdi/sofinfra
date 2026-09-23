@@ -13,10 +13,10 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
 
-  // Explicit menu: Buy Properties, Societies, List Property, Reviews, Contact Us
+  // Explicit menu: Buy Properties, List Property, Reviews, Contact Us
   const NAV_ITEMS = [
     { name: 'Buy Properties', href: '#buy-properties', isAction: false },
-    { name: 'Societies', href: '#societies', isAction: false },
+    // { name: 'Societies', href: '#societies', isAction: false },
     { name: 'List Property', href: '#list-property', isAction: true },
     { name: 'Reviews', href: '#reviews', isAction: false },
     { name: 'Contact Us', href: '#contact', isAction: false },
@@ -26,7 +26,7 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 40);
 
-      const sectionIds = ['buy-properties', 'buy-rent', 'societies', 'reviews', 'contact'];
+      const sectionIds = ['buy-properties', 'buy-rent', 'reviews', 'contact'];
       let current = '';
 
       for (const sectionId of sectionIds) {

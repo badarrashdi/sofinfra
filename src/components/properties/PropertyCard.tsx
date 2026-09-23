@@ -47,7 +47,12 @@ export default function PropertyCard({ property, onSelectProperty }: PropertyCar
           src={property.featuredImage}
           alt={property.title}
           fill
-          unoptimized={property.featuredImage?.includes('.local') || property.featuredImage?.includes('localhost')}
+          unoptimized={
+            property.featuredImage?.includes('.local') ||
+            property.featuredImage?.includes('localhost') ||
+            property.featuredImage?.includes('admin.sofinfra.com') ||
+            property.featuredImage?.includes('sofinfraadmin')
+          }
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />

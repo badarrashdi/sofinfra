@@ -20,6 +20,18 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'sofinfra.local',
       },
+      {
+        protocol: 'https',
+        hostname: 'admin.sofinfra.com',
+      },
+      {
+        protocol: 'http',
+        hostname: 'admin.sofinfra.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'sofinfraadmin.accelerance.in',
+      },
     ],
   },
 };

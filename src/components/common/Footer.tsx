@@ -102,7 +102,7 @@ export default function Footer({ onSubmitPropertyClick, properties, onSelectProp
             <ul className="space-y-2.5 text-xs sm:text-sm">
               {[
                 { name: 'Buy Properties', href: '#buy-properties' },
-                { name: 'Societies', href: '#societies' },
+                // { name: 'Societies', href: '#societies' },
                 { name: 'List Property', href: '#list-property' },
                 { name: 'Reviews', href: '#reviews' },
                 { name: 'Contact Us', href: '#contact' },

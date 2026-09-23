@@ -434,11 +434,11 @@ function sofinfra_headless_disable_wp_frontend() {
         return;
     }
 
-    $frontend_url = getenv('FRONTEND_URL') ?: 'http://localhost:3000';
+    $frontend_url = sofinfra_get_frontend_url();
 
     // Route single projects or properties directly to the Next.js section
     if (is_singular('projects')) {
-        wp_redirect(rtrim($frontend_url, '/') . '/#societies', 302);
+        wp_redirect(rtrim($frontend_url, '/') . '/#buy-properties', 302);
         exit;
     }
 
@@ -457,11 +457,8 @@ add_filter('preview_post_link', 'sofinfra_headless_filter_preview_link', 10, 2);
 add_filter('post_type_link', 'sofinfra_headless_filter_post_link', 10, 2);
 
 function sofinfra_headless_filter_preview_link($link, $post) {
-    $frontend_url = rtrim(getenv('FRONTEND_URL') ?: 'http://localhost:3000', '/');
-    if ($post->post_type === 'projects') {
-        return $frontend_url . '/#societies';
-    }
-    if ($post->post_type === 'properties') {
+    $frontend_url = sofinfra_get_frontend_url();
+    if ($post->post_type === 'projects' || $post->post_type === 'properties') {
         return $frontend_url . '/#buy-properties';
     }
     return $frontend_url;
@@ -469,11 +466,8 @@ function sofinfra_headless_filter_preview_link($link, $post) {
 
 function sofinfra_headless_filter_post_link($url, $post) {
     if (is_admin()) {
-        $frontend_url = rtrim(getenv('FRONTEND_URL') ?: 'http://localhost:3000', '/');
-        if ($post->post_type === 'projects') {
-            return $frontend_url . '/#societies';
-        }
-        if ($post->post_type === 'properties') {
+        $frontend_url = sofinfra_get_frontend_url();
+        if ($post->post_type === 'projects' || $post->post_type === 'properties') {
             return $frontend_url . '/#buy-properties';
         }
     }
@@ -492,7 +486,7 @@ add_action('after_setup_theme', function () {
 });
 
 // =========================================================================
-// 7. PUBLISH TRIGGER: INSTANT ON-DEMAND REVALIDATION FOR VERCEL NEXT.JS
+// 7. PUBLISH TRIGGER: INSTANT ON-DEMAND REVALIDATION FOR NEXT.JS FRONTEND
 // =========================================================================
 
 function sofinfra_get_frontend_url() {
@@ -504,7 +498,7 @@ function sofinfra_get_frontend_url() {
     if (strpos($host, 'local') !== false) {
         return 'http://localhost:3000';
     }
-    return 'https://sofinfra.vercel.app';
+    return 'https://sofinfra.com';
 }
 
 function sofinfra_get_revalidate_secret() {
@@ -545,7 +539,7 @@ function sofinfra_on_trash_post_trigger_revalidate($post_id) {
     sofinfra_trigger_frontend_revalidate('/');
 }
 
-// Add 1-Click "Sync Frontend (Vercel)" Button to WordPress Admin Bar
+// Add 1-Click "Sync Frontend (sofinfra.com)" Button to WordPress Admin Bar
 add_action('admin_bar_menu', 'sofinfra_add_admin_bar_purge_button', 100);
 
 function sofinfra_add_admin_bar_purge_button($admin_bar) {
@@ -555,10 +549,10 @@ function sofinfra_add_admin_bar_purge_button($admin_bar) {
 
     $admin_bar->add_node(array(
         'id' => 'sofinfra_purge_cache',
-        'title' => '<span style="color:#c59b27;font-weight:bold;">⚡ Sync Frontend (Vercel)</span>',
+        'title' => '<span style="color:#c59b27;font-weight:bold;">⚡ Sync Frontend (sofinfra.com)</span>',
         'href' => wp_nonce_url(admin_url('admin-post.php?action=sofinfra_purge_cache'), 'sofinfra_purge_nonce'),
         'meta' => array(
-            'title' => 'Instantly purge Vercel cache and publish latest changes to frontend',
+            'title' => 'Instantly purge frontend cache and publish latest changes to sofinfra.com',
         ),
     ));
 }
@@ -594,9 +588,9 @@ function sofinfra_handle_admin_bar_purge() {
 add_action('admin_notices', function () {
     if (isset($_GET['sofinfra_cache_purged'])) {
         if ($_GET['sofinfra_cache_purged'] === 'success') {
-            echo '<div class="notice notice-success is-dismissible"><p><strong>Vercel Frontend Synced:</strong> The cache has been successfully purged and updated!</p></div>';
+            echo '<div class="notice notice-success is-dismissible"><p><strong>sofinfra.com Frontend Synced:</strong> The cache has been successfully purged and updated!</p></div>';
         } else {
-            echo '<div class="notice notice-warning is-dismissible"><p><strong>Vercel Sync Dispatched:</strong> Request was sent to frontend.</p></div>';
+            echo '<div class="notice notice-warning is-dismissible"><p><strong>sofinfra.com Sync Dispatched:</strong> Request was sent to frontend.</p></div>';
         }
     }
 });

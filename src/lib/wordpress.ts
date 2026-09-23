@@ -14,7 +14,7 @@ const WP_BASE_URL =
   process.env.WORDPRESS_URL ||
   process.env.NEXT_PUBLIC_WORDPRESS_URL ||
   (process.env.NODE_ENV === 'production' || process.env.VERCEL
-    ? 'https://sofinfraadmin.accelerance.in'
+    ? 'https://admin.sofinfra.com'
     : 'http://sofinfra.local');
 const WP_API_ENDPOINT = `${WP_BASE_URL}/wp-json/sofinfra/v1`;
 

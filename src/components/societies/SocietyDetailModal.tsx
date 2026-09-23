@@ -158,7 +158,12 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
                   alt={society.name}
                   fill
                   priority
-                  unoptimized={images[selectedImageIndex]?.includes('.local') || images[selectedImageIndex]?.includes('localhost')}
+                  unoptimized={
+                    images[selectedImageIndex]?.includes('.local') ||
+                    images[selectedImageIndex]?.includes('localhost') ||
+                    images[selectedImageIndex]?.includes('admin.sofinfra.com') ||
+                    images[selectedImageIndex]?.includes('sofinfraadmin')
+                  }
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 1000px"
                 />
@@ -213,7 +218,12 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
                       src={img}
                       alt=""
                       fill
-                      unoptimized={img.includes('.local') || img.includes('localhost')}
+                      unoptimized={
+                        img.includes('.local') ||
+                        img.includes('localhost') ||
+                        img.includes('admin.sofinfra.com') ||
+                        img.includes('sofinfraadmin')
+                      }
                       className="object-cover"
                     />
                   </button>

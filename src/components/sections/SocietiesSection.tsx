@@ -84,7 +84,12 @@ export default function SocietiesSection({ onSelectSociety, data, societies }: S
                   src={society.image}
                   alt={society.name}
                   fill
-                  unoptimized={society.image?.includes('.local') || society.image?.includes('localhost')}
+                  unoptimized={
+                    society.image?.includes('.local') ||
+                    society.image?.includes('localhost') ||
+                    society.image?.includes('admin.sofinfra.com') ||
+                    society.image?.includes('sofinfraadmin')
+                  }
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
