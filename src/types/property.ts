@@ -24,6 +24,7 @@ export interface PropertyLocation {
   state?: string;
   country: string;
   locality?: string;
+  subLocation?: string;
   pincode?: string;
   fullAddress?: string;
 }
@@ -33,7 +34,10 @@ export interface PropertySpecs {
   areaUnit: 'sq ft' | 'sq m' | 'acres' | 'hectares';
   bedrooms?: number;
   bathrooms?: number;
-  furnishingStatus?: 'Furnished' | 'Semi-Furnished' | 'Unfurnished';
+  configurations?: string;
+  developer?: string;
+  reraId?: string;
+  furnishingStatus?: 'Furnished' | 'Semi-Furnished' | 'Unfurnished' | string;
   parking?: number | string;
   floor?: number | string;
   totalFloors?: number | string;
@@ -62,6 +66,8 @@ export interface Property {
   id: string | number;
   title: string;
   slug: string;
+  developer?: string;
+  reraId?: string;
   category: PropertyCategory;
   propertyType: PropertyType;
   listingType: ListingType;
@@ -75,10 +81,11 @@ export interface Property {
   shortDescription?: string;
   featuredImage: string;
   galleryImages: string[];
+  images?: string[];
   videoUrl?: string;
   floorPlanUrl?: string;
   brochureUrl?: string;
-  detailMode: DetailMode;
+  detailMode?: DetailMode;
   externalUrl?: string;
   status: 'publish' | 'pending' | 'draft';
   createdAt?: string;

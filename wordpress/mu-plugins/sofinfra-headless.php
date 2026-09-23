@@ -227,14 +227,32 @@ function sofinfra_get_projects_endpoint_data() {
             foreach ($acf['gallery_images'] as $img) {
                 if (is_array($img) && isset($img['url'])) {
                     $gallery[] = $img['url'];
+                } elseif (is_numeric($img)) {
+                    $img_url = wp_get_attachment_url(intval($img));
+                    if ($img_url) $gallery[] = $img_url;
                 } elseif (is_string($img)) {
-                    $gallery[] = $img;
+                    if (is_numeric($img)) {
+                        $img_url = wp_get_attachment_url(intval($img));
+                        if ($img_url) $gallery[] = $img_url;
+                    } else {
+                        $gallery[] = $img;
+                    }
                 }
             }
         }
-        $main_img = !empty($acf['image_url']) ? $acf['image_url'] : ($thumb_url ? $thumb_url : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=85');
-        if (empty($gallery)) {
+        if ($thumb_url) {
+            $main_img = $thumb_url;
+        } elseif (!empty($gallery)) {
+            $main_img = $gallery[0];
+        } elseif (!empty($acf['image_url'])) {
+            $main_img = $acf['image_url'];
+        } else {
+            $main_img = '';
+        }
+        if (empty($gallery) && $main_img) {
             $gallery = array($main_img);
+        } elseif (!empty($gallery) && $main_img && !in_array($main_img, $gallery)) {
+            array_unshift($gallery, $main_img);
         }
 
         $projects[] = array(
@@ -296,30 +314,61 @@ function sofinfra_get_properties_endpoint_data() {
             foreach ($acf['gallery_images'] as $img) {
                 if (is_array($img) && isset($img['url'])) {
                     $gallery[] = $img['url'];
+                } elseif (is_numeric($img)) {
+                    $img_url = wp_get_attachment_url(intval($img));
+                    if ($img_url) $gallery[] = $img_url;
                 } elseif (is_string($img)) {
-                    $gallery[] = $img;
+                    if (is_numeric($img)) {
+                        $img_url = wp_get_attachment_url(intval($img));
+                        if ($img_url) $gallery[] = $img_url;
+                    } else {
+                        $gallery[] = $img;
+                    }
                 }
             }
         }
-        $main_img = !empty($acf['featured_image_url']) ? $acf['featured_image_url'] : ($thumb_url ? $thumb_url : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=85');
-        if (empty($gallery)) {
-            $gallery = array($main_img);
+
+        // Main image priority: 1. WP post thumbnail, 2. First gallery image, 3. ACF featured_image_url
+        if ($thumb_url) {
+            $main_img = $thumb_url;
+        } elseif (!empty($gallery)) {
+            $main_img = $gallery[0];
+        } elseif (!empty($acf['featured_image_url'])) {
+            $main_img = $acf['featured_image_url'];
+        } else {
+            $main_img = '';
         }
+
+        // Ensure gallery is populated and includes main image
+        if (empty($gallery) && $main_img) {
+            $gallery = array($main_img);
+        } elseif (!empty($gallery) && $main_img && !in_array($main_img, $gallery)) {
+            array_unshift($gallery, $main_img);
+        }
+
+        $developer = !empty($acf['developer']) ? $acf['developer'] : (get_post_meta($id, 'developer', true) ?: 'SOFINFRA Prime');
+        $rera_id = !empty($acf['rera_id']) ? $acf['rera_id'] : (get_post_meta($id, 'rera_id', true) ?: 'RERA Approved');
+        $sub_location = !empty($acf['sub_location']) ? $acf['sub_location'] : (get_post_meta($id, 'sub_location', true) ?: '');
+        $prop_status = !empty($acf['property_status']) ? $acf['property_status'] : (get_post_meta($id, 'property_status', true) ?: 'Ready to Move');
+        $configs = !empty($acf['configurations']) ? $acf['configurations'] : (get_post_meta($id, 'configurations', true) ?: '');
 
         $properties[] = array(
             'id' => $id,
             'title' => $post->post_title,
             'slug' => $post->post_name,
+            'developer' => $developer,
+            'reraId' => $rera_id,
             'category' => !empty($acf['category']) ? $acf['category'] : 'residential',
             'propertyType' => !empty($acf['property_type']) ? $acf['property_type'] : 'Apartment',
             'listingType' => !empty($acf['listing_type']) ? $acf['listing_type'] : 'For Sale',
-            'propertyStatus' => !empty($acf['property_status']) ? $acf['property_status'] : 'Ready to Move',
+            'propertyStatus' => $prop_status,
             'featured' => !empty($acf['featured']) ? (bool)$acf['featured'] : false,
             'location' => array(
                 'city' => !empty($acf['city']) ? $acf['city'] : 'Gurugram',
                 'state' => !empty($acf['state']) ? $acf['state'] : 'Haryana',
                 'country' => 'India',
                 'locality' => !empty($acf['locality']) ? $acf['locality'] : '',
+                'subLocation' => $sub_location,
                 'fullAddress' => !empty($acf['full_address']) ? $acf['full_address'] : '',
             ),
             'pricing' => array(
@@ -333,12 +382,15 @@ function sofinfra_get_properties_endpoint_data() {
                 'areaUnit' => !empty($acf['area_unit']) ? $acf['area_unit'] : 'sq ft',
                 'bedrooms' => !empty($acf['bedrooms']) ? intval($acf['bedrooms']) : 0,
                 'bathrooms' => !empty($acf['bathrooms']) ? intval($acf['bathrooms']) : 0,
-                'furnishingStatus' => !empty($acf['furnishing_status']) ? $acf['furnishing_status'] : 'Furnished',
-                'parking' => !empty($acf['parking']) ? $acf['parking'] : 'Available',
-                'floor' => !empty($acf['floor']) ? strval($acf['floor']) : '1',
-                'totalFloors' => !empty($acf['total_floors']) ? strval($acf['total_floors']) : '1',
-                'propertyAge' => !empty($acf['property_age']) ? $acf['property_age'] : '1 Year',
-                'facing' => !empty($acf['facing']) ? $acf['facing'] : 'Open View',
+                'configurations' => $configs,
+                'developer' => $developer,
+                'reraId' => $rera_id,
+                'furnishingStatus' => !empty($acf['furnishing_status']) ? $acf['furnishing_status'] : (get_post_meta($id, 'furnishing_status', true) ?: 'Furnished'),
+                'parking' => !empty($acf['parking']) ? $acf['parking'] : (get_post_meta($id, 'parking', true) ?: 'Available'),
+                'floor' => !empty($acf['floor']) ? strval($acf['floor']) : (get_post_meta($id, 'floor', true) ?: '1'),
+                'totalFloors' => !empty($acf['total_floors']) ? strval($acf['total_floors']) : (get_post_meta($id, 'total_floors', true) ?: '1'),
+                'propertyAge' => !empty($acf['property_age']) ? $acf['property_age'] : (get_post_meta($id, 'property_age', true) ?: '1 Year'),
+                'facing' => !empty($acf['facing']) ? $acf['facing'] : (get_post_meta($id, 'facing', true) ?: 'Open View'),
                 'availability' => 'Immediate',
             ),
             'amenities' => array_filter($amenities),

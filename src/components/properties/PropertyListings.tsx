@@ -191,17 +191,40 @@ export default function PropertyListings({
       <div id="buy-rent" className="absolute -top-24" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200 text-[#0b2240] text-xs font-semibold tracking-widest uppercase mb-3">
-            {data?.badge || 'Delhi NCR Prime Portfolio'}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200 text-[#0b2240] text-xs font-semibold tracking-widest uppercase mb-3">
+              {data?.badge || 'Delhi NCR Prime Portfolio'}
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
+              {data?.heading || 'Curated Luxury Residences & Commercial Assets'}
+            </h2>
+            <p className="mt-3 text-slate-600 text-sm sm:text-base font-light max-w-2xl">
+              {data?.subheading ||
+                'Verified luxury apartments, golf-view sky villas, penthouses, and commercial floorplates across Gurugram, Noida, and New Delhi.'}
+            </p>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
-            {data?.heading || 'Curated Luxury Residences & Commercial Assets'}
-          </h2>
-          <p className="mt-3 text-slate-600 text-sm sm:text-base font-light max-w-2xl">
-            {data?.subheading ||
-              'Verified luxury apartments, golf-view sky villas, penthouses, and commercial floorplates across Gurugram, Noida, and New Delhi.'}
-          </p>
+
+          {/* City Filter Capsule Bar (All NCR | Gurugram | Noida | New Delhi) */}
+          <div className="inline-flex max-w-full p-1 bg-slate-100 rounded-xl border border-slate-200 self-start md:self-auto overflow-x-auto shrink-0 shadow-xs">
+            {['all', 'Gurugram', 'Noida', 'New Delhi'].map((city) => {
+              const isActive = selectedCity.toLowerCase() === city.toLowerCase();
+              return (
+                <button
+                  key={city}
+                  type="button"
+                  onClick={() => handleFilterChange(() => setSelectedCity(city))}
+                  className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                    isActive
+                      ? 'bg-[#0b2240] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-[#0b2240]'
+                  }`}
+                >
+                  {city === 'all' ? 'All NCR' : city}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Filter Bar (Restored with dynamic Projects, City, Type & Search, NO scroller) */}

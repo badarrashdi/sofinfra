@@ -158,6 +158,7 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
                   alt={society.name}
                   fill
                   priority
+                  unoptimized={images[selectedImageIndex]?.includes('.local') || images[selectedImageIndex]?.includes('localhost')}
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 1000px"
                 />
@@ -208,7 +209,13 @@ export default function SocietyDetailModal({ society, onClose }: SocietyDetailMo
                         : 'border-transparent opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <Image src={img} alt="" fill className="object-cover" />
+                    <Image
+                      src={img}
+                      alt=""
+                      fill
+                      unoptimized={img.includes('.local') || img.includes('localhost')}
+                      className="object-cover"
+                    />
                   </button>
                 ))}
               </div>

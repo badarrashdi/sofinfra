@@ -3,11 +3,15 @@
 import Image from 'next/image';
 import { ArrowUp, Mail, Phone, MapPin, Globe } from 'lucide-react';
 
+import { Property } from '@/types/property';
+
 interface FooterProps {
   onSubmitPropertyClick: () => void;
+  properties?: Property[];
+  onSelectProperty?: (property: Property) => void;
 }
 
-export default function Footer({ onSubmitPropertyClick }: FooterProps) {
+export default function Footer({ onSubmitPropertyClick, properties, onSelectProperty }: FooterProps) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -31,10 +35,18 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
     }
   };
 
+  const defaultBuySellLinks = [
+    { name: 'The Camellias (Gurugram)', keyword: 'camellias' },
+    { name: 'Godrej Woods (Noida)', keyword: 'godrej' },
+    { name: 'ATS Knightsbridge (Noida)', keyword: 'knightsbridge' },
+    { name: 'M3M Golfestate (Gurugram)', keyword: 'm3m' },
+    { name: 'The Amaryllis (New Delhi)', keyword: 'amaryllis' },
+  ];
+
   return (
     <footer className="bg-[#07162c] text-slate-300 pt-16 pb-12 border-t border-white/10 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-16 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-16 border-b border-white/10">
           {/* Col 1 & 2: Brand & Mission */}
           <div className="lg:col-span-2 space-y-5">
             <div className="relative h-16 sm:h-20 aspect-[995/665]">
@@ -82,7 +94,7 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
             </div>
           </div>
 
-          {/* Col 3: Navigation - Matching exact User Menu */}
+          {/* Col 3: Navigation - Explore Platform */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#c59b27] mb-4">
               Explore Platform
@@ -105,6 +117,50 @@ export default function Footer({ onSubmitPropertyClick }: FooterProps) {
                   </a>
                 </li>
               ))}
+            </ul>
+          </div>
+
+          {/* Col 4: Buy & Sell Property */}
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-widest text-[#c59b27] mb-4">
+              Buy &amp; Sell Property
+            </h4>
+            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
+              {defaultBuySellLinks.map((item) => {
+                const matchedProp = properties?.find((p) =>
+                  p.title.toLowerCase().includes(item.keyword)
+                );
+                return (
+                  <li key={item.name}>
+                    <a
+                      href="#buy-properties"
+                      onClick={(e) => {
+                        if (matchedProp && onSelectProperty) {
+                          e.preventDefault();
+                          onSelectProperty(matchedProp);
+                        } else {
+                          handleNavClick(e, '#buy-properties');
+                        }
+                      }}
+                      className="hover:text-white transition-colors cursor-pointer block truncate"
+                    >
+                      {item.name}
+                    </a>
+                  </li>
+                );
+              })}
+              <li className="pt-1.5">
+                <a
+                  href="#list-property"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSubmitPropertyClick();
+                  }}
+                  className="text-[#c59b27] hover:underline transition-colors inline-flex items-center gap-1 text-xs cursor-pointer font-medium"
+                >
+                  <span>+ Sell / List Your Property</span>
+                </a>
+              </li>
             </ul>
           </div>
 

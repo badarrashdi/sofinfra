@@ -151,7 +151,11 @@ export default function HomeClient({ initialProperties, initialProjects, homepag
       )}
 
       {/* 9. Footer */}
-      <Footer onSubmitPropertyClick={() => setIsSubmitModalOpen(true)} />
+      <Footer
+        onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
+        properties={properties}
+        onSelectProperty={handleSelectProperty}
+      />
 
       {/* Option A — Property Detail Popup Modal */}
       <PropertyDetailModal
