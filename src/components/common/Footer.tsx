@@ -4,14 +4,21 @@ import Image from 'next/image';
 import { ArrowUp, Mail, Phone, MapPin, Globe } from 'lucide-react';
 
 import { Property } from '@/types/property';
+import { Society } from '@/data/societies';
 
 interface FooterProps {
   onSubmitPropertyClick: () => void;
   properties?: Property[];
+  societies?: Society[];
   onSelectProperty?: (property: Property) => void;
+  onSelectSociety?: (society: Society) => void;
 }
 
-export default function Footer({ onSubmitPropertyClick, properties, onSelectProperty }: FooterProps) {
+export default function Footer({
+  onSubmitPropertyClick,
+  societies,
+  onSelectSociety,
+}: FooterProps) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -35,11 +42,11 @@ export default function Footer({ onSubmitPropertyClick, properties, onSelectProp
     }
   };
 
-  const defaultBuySellLinks = [
+  const defaultSocieties = [
     { name: 'The Camellias (Gurugram)', keyword: 'camellias' },
-    { name: 'Godrej Woods (Noida)', keyword: 'godrej' },
     { name: 'ATS Knightsbridge (Noida)', keyword: 'knightsbridge' },
-    { name: 'M3M Golfestate (Gurugram)', keyword: 'm3m' },
+    { name: 'M3M Golfestate (Extn Rd)', keyword: 'golfestate' },
+    { name: 'Godrej Woods (Sec 43 Noida)', keyword: 'godrej' },
     { name: 'The Amaryllis (New Delhi)', keyword: 'amaryllis' },
   ];
 
@@ -102,7 +109,7 @@ export default function Footer({ onSubmitPropertyClick, properties, onSelectProp
             <ul className="space-y-2.5 text-xs sm:text-sm">
               {[
                 { name: 'Buy Properties', href: '#buy-properties' },
-                // { name: 'Societies', href: '#societies' },
+                { name: 'Societies', href: '#societies' },
                 { name: 'List Property', href: '#list-property' },
                 { name: 'Reviews', href: '#reviews' },
                 { name: 'Contact Us', href: '#contact' },
@@ -120,26 +127,26 @@ export default function Footer({ onSubmitPropertyClick, properties, onSelectProp
             </ul>
           </div>
 
-          {/* Col 4: Buy & Sell Property */}
+          {/* Col 4: Top Societies & Townships */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#c59b27] mb-4">
-              Buy &amp; Sell Property
+              Societies &amp; Townships
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
-              {defaultBuySellLinks.map((item) => {
-                const matchedProp = properties?.find((p) =>
-                  p.title.toLowerCase().includes(item.keyword)
+              {defaultSocieties.map((item) => {
+                const matchedSoc = societies?.find((s) =>
+                  s.name.toLowerCase().includes(item.keyword)
                 );
                 return (
                   <li key={item.name}>
                     <a
-                      href="#buy-properties"
+                      href="#societies"
                       onClick={(e) => {
-                        if (matchedProp && onSelectProperty) {
+                        if (matchedSoc && onSelectSociety) {
                           e.preventDefault();
-                          onSelectProperty(matchedProp);
+                          onSelectSociety(matchedSoc);
                         } else {
-                          handleNavClick(e, '#buy-properties');
+                          handleNavClick(e, '#societies');
                         }
                       }}
                       className="hover:text-white transition-colors cursor-pointer block truncate"
@@ -151,14 +158,11 @@ export default function Footer({ onSubmitPropertyClick, properties, onSelectProp
               })}
               <li className="pt-1.5">
                 <a
-                  href="#list-property"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onSubmitPropertyClick();
-                  }}
+                  href="#societies"
+                  onClick={(e) => handleNavClick(e, '#societies')}
                   className="text-[#c59b27] hover:underline transition-colors inline-flex items-center gap-1 text-xs cursor-pointer font-medium"
                 >
-                  <span>+ Sell / List Your Property</span>
+                  <span>Explore All Societies &rarr;</span>
                 </a>
               </li>
             </ul>

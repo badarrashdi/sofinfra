@@ -66,9 +66,6 @@ export default function HomeClient({ initialProperties, initialProjects, homepag
           />
         );
       case 'societies_section':
-        // Top Societies & Townships section commented out for now as requested
-        return null;
-        /*
         return (
           <SocietiesSection
             key={`section-societies-${index}`}
@@ -78,7 +75,6 @@ export default function HomeClient({ initialProperties, initialProjects, homepag
             onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
           />
         );
-        */
       case 'about_section':
         return <AboutSection key={`section-about-${index}`} data={section} />;
       case 'services_section':
@@ -130,14 +126,12 @@ export default function HomeClient({ initialProperties, initialProjects, homepag
             onSelectProperty={handleSelectProperty}
           />
 
-          {/* 3. Top Societies & Townships Section (#societies) - commented out for now */}
-          {/*
+          {/* 3. Top Societies & Townships Section (#societies) */}
           <SocietiesSection
             societies={societies}
             onSelectSociety={handleSelectSociety}
             onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
           />
-          */}
 
           {/* 4. About SOFINFRA Standard */}
           <AboutSection />
@@ -160,7 +154,9 @@ export default function HomeClient({ initialProperties, initialProjects, homepag
       <Footer
         onSubmitPropertyClick={() => setIsSubmitModalOpen(true)}
         properties={properties}
+        societies={societies}
         onSelectProperty={handleSelectProperty}
+        onSelectSociety={handleSelectSociety}
       />
 
       {/* Option A — Property Detail Popup Modal */}
