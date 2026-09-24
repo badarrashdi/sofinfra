@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { ArrowUp, Mail, Phone, MapPin, Globe } from 'lucide-react';
+import Image from "next/image";
+import { ArrowUp, Mail, Phone, MapPin, Globe } from "lucide-react";
 
-import { Property } from '@/types/property';
-import { Society } from '@/data/societies';
+import { Property } from "@/types/property";
+import { Society } from "@/data/societies";
 
 interface FooterProps {
   onSubmitPropertyClick: () => void;
@@ -20,16 +20,19 @@ export default function Footer({
   onSelectSociety,
 }: FooterProps) {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
     e.preventDefault();
-    if (href === '#list-property') {
+    if (href === "#list-property") {
       onSubmitPropertyClick();
       return;
     }
-    const targetId = href.replace('#', '');
+    const targetId = href.replace("#", "");
     const element = document.getElementById(targetId);
     if (element) {
       const navHeight = 84;
@@ -37,17 +40,17 @@ export default function Footer({
       const offsetPosition = elementPosition + window.pageYOffset - navHeight;
       window.scrollTo({
         top: offsetPosition,
-        behavior: 'smooth',
+        behavior: "smooth",
       });
     }
   };
 
   const defaultSocieties = [
-    { name: 'The Camellias (Gurugram)', keyword: 'camellias' },
-    { name: 'ATS Knightsbridge (Noida)', keyword: 'knightsbridge' },
-    { name: 'M3M Golfestate (Extn Rd)', keyword: 'golfestate' },
-    { name: 'Godrej Woods (Sec 43 Noida)', keyword: 'godrej' },
-    { name: 'The Amaryllis (New Delhi)', keyword: 'amaryllis' },
+    { name: "The Camellias (Gurugram)", keyword: "camellias" },
+    { name: "ATS Knightsbridge (Noida)", keyword: "knightsbridge" },
+    { name: "M3M Golfestate (Extn Rd)", keyword: "golfestate" },
+    { name: "Godrej Woods (Sec 43 Noida)", keyword: "godrej" },
+    { name: "The Amaryllis (New Delhi)", keyword: "amaryllis" },
   ];
 
   return (
@@ -66,7 +69,10 @@ export default function Footer({
               />
             </div>
             <p className="text-xs sm:text-sm text-slate-400 font-light leading-relaxed max-w-sm">
-              SOFINFRA is a premier real estate advisory firm serving Delhi NCR. Representing iconic residential societies, golf-facing penthouses, and Grade-A commercial towers across Gurugram, Noida, and New Delhi.
+              SOFINFRA is a premier real estate advisory firm serving Delhi NCR.
+              Representing iconic residential societies, golf-facing penthouses,
+              and Grade-A commercial towers across Gurugram, Noida, and New
+              Delhi.
             </p>
             <div className="flex items-center space-x-3 pt-2">
               <a
@@ -108,11 +114,11 @@ export default function Footer({
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm">
               {[
-                { name: 'Buy Properties', href: '#buy-properties' },
-                { name: 'Societies', href: '#societies' },
-                { name: 'List Property', href: '#list-property' },
-                { name: 'Reviews', href: '#reviews' },
-                { name: 'Contact Us', href: '#contact' },
+                { name: "Societies", href: "#buy-properties" },
+                // { name: 'Societies', href: '#societies' },
+                { name: "List Property", href: "#list-property" },
+                { name: "Reviews", href: "#reviews" },
+                { name: "Contact Us", href: "#contact" },
               ].map((item) => (
                 <li key={item.name}>
                   <a
@@ -135,7 +141,7 @@ export default function Footer({
             <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
               {defaultSocieties.map((item) => {
                 const matchedSoc = societies?.find((s) =>
-                  s.name.toLowerCase().includes(item.keyword)
+                  s.name.toLowerCase().includes(item.keyword),
                 );
                 return (
                   <li key={item.name}>
@@ -146,7 +152,7 @@ export default function Footer({
                           e.preventDefault();
                           onSelectSociety(matchedSoc);
                         } else {
-                          handleNavClick(e, '#societies');
+                          handleNavClick(e, "#societies");
                         }
                       }}
                       className="hover:text-white transition-colors cursor-pointer block truncate"
@@ -159,7 +165,7 @@ export default function Footer({
               <li className="pt-1.5">
                 <a
                   href="#societies"
-                  onClick={(e) => handleNavClick(e, '#societies')}
+                  onClick={(e) => handleNavClick(e, "#societies")}
                   className="text-[#c59b27] hover:underline transition-colors inline-flex items-center gap-1 text-xs cursor-pointer font-medium"
                 >
                   <span>Explore All Societies &rarr;</span>
@@ -177,8 +183,13 @@ export default function Footer({
               <div className="flex items-start gap-1.5 leading-relaxed">
                 <MapPin className="w-3.5 h-3.5 text-[#c59b27] shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-white font-medium">Corporate Headquarters</p>
-                  <p>S-306-308, 2nd Floor, Tower A, Palam Vihar, Gurugram(HR)-122017</p>
+                  <p className="text-white font-medium">
+                    Corporate Headquarters
+                  </p>
+                  <p>
+                    S-306-308, 2nd Floor, Tower A, Palam Vihar,
+                    Gurugram(HR)-122017
+                  </p>
                   <a
                     href="https://maps.google.com/?q=Ansal+Corporate+Plaza,+block+c,+2,+Carterpuri+Rd,+Block+C+2,+Palam+Vihar,+Gurugram,+Haryana+122017"
                     target="_blank"
@@ -192,18 +203,27 @@ export default function Footer({
               <p className="flex items-center gap-1.5">
                 <Phone className="w-3.5 h-3.5 text-[#c59b27] shrink-0" />
                 <span className="space-x-1.5">
-                  <a href="tel:+918178393751" className="hover:text-white transition-colors">
+                  <a
+                    href="tel:+918178393751"
+                    className="hover:text-white transition-colors"
+                  >
                     +91 81783 93751
                   </a>
                   <span className="text-slate-500">/</span>
-                  <a href="tel:+919212316521" className="hover:text-white transition-colors">
+                  <a
+                    href="tel:+919212316521"
+                    className="hover:text-white transition-colors"
+                  >
                     +91 92123 16521
                   </a>
                 </span>
               </p>
               <p className="flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-[#c59b27] shrink-0" />
-                <a href="mailto:sales@sofinfra.com" className="hover:text-white transition-colors">
+                <a
+                  href="mailto:sales@sofinfra.com"
+                  className="hover:text-white transition-colors"
+                >
                   sales@sofinfra.com
                 </a>
               </p>
@@ -213,7 +233,10 @@ export default function Footer({
 
         {/* Bottom Strip */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} SOFINFRA India. Building A Brighter Tomorrow. RERA Registered.</p>
+          <p>
+            © {new Date().getFullYear()} SOFINFRA India. Building A Brighter
+            Tomorrow. RERA Registered.
+          </p>
           <div className="flex items-center">
             <button
               type="button"
