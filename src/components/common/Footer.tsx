@@ -146,13 +146,13 @@ export default function Footer({
                 return (
                   <li key={item.name}>
                     <a
-                      href="#societies"
+                      href="#buy-properties"
                       onClick={(e) => {
                         if (matchedSoc && onSelectSociety) {
                           e.preventDefault();
                           onSelectSociety(matchedSoc);
                         } else {
-                          handleNavClick(e, "#societies");
+                          handleNavClick(e, "#buy-properties");
                         }
                       }}
                       className="hover:text-white transition-colors cursor-pointer block truncate"
@@ -164,8 +164,8 @@ export default function Footer({
               })}
               <li className="pt-1.5">
                 <a
-                  href="#societies"
-                  onClick={(e) => handleNavClick(e, "#societies")}
+                  href="#buy-properties"
+                  onClick={(e) => handleNavClick(e, "#buy-properties")}
                   className="text-[#c59b27] hover:underline transition-colors inline-flex items-center gap-1 text-xs cursor-pointer font-medium"
                 >
                   <span>Explore All Societies &rarr;</span>
