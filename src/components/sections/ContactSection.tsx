@@ -74,7 +74,7 @@ export default function ContactSection({ data }: ContactSectionProps) {
 
   const offices = [
     {
-      city: "Headquarters (Gurugram)",
+      city: "Corporate Address",
       address: currentAddress,
       landmark:
         "Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2, Palam Vihar, Gurugram, Haryana 122017",
@@ -140,9 +140,6 @@ export default function ContactSection({ data }: ContactSectionProps) {
 
             {/* Offices List */}
             <div className="space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Corporate Address
-              </h4>
               {offices.map((office) => (
                 <div
                   key={office.city}
@@ -156,11 +153,6 @@ export default function ContactSection({ data }: ContactSectionProps) {
                     <p className="text-sm font-bold text-[#0b2240]">
                       {office.city}
                     </p>
-                    {office.isPrimary && (
-                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#c59b27]/20 text-[#ab841b]">
-                        Main HQ
-                      </span>
-                    )}
                   </div>
                   <p className="text-xs text-slate-600 mt-1.5 flex items-start gap-1.5 leading-relaxed">
                     <MapPin className="w-3.5 h-3.5 text-[#c59b27] shrink-0 mt-0.5" />
@@ -363,7 +355,7 @@ export default function ContactSection({ data }: ContactSectionProps) {
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-white/10 text-[#c59b27] text-xs font-semibold tracking-wider uppercase">
                 <MapPin className="w-3.5 h-3.5" />
-                <span>Headquarters &amp; Advisory Center</span>
+                <span>Corporate Address</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-light">
                 Ansal Corporate Plaza{" "}
