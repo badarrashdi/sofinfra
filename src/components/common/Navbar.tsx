@@ -15,8 +15,8 @@ export default function Navbar({ onSubmitPropertyClick }: NavbarProps) {
 
   // Explicit menu: Buy Properties, Societies, List Property, Reviews, Contact Us
   const NAV_ITEMS = [
-    { name: "Societies", href: "#buy-properties", isAction: false },
-    // { name: 'Societies', href: '#societies', isAction: false },
+    // { name: "Societies", href: "#buy-properties", isAction: false },
+    { name: "Societies", href: "#societies", isAction: false },
     { name: "List Property", href: "#list-property", isAction: true },
     { name: "Reviews", href: "#reviews", isAction: false },
     { name: "Contact Us", href: "#contact", isAction: false },

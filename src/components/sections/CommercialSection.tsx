@@ -1,17 +1,25 @@
-import { Building2 } from 'lucide-react';
-import { Property } from '@/types/property';
-import PropertyCard from '../properties/PropertyCard';
+import { Building2 } from "lucide-react";
+import { Property } from "@/types/property";
+import PropertyCard from "../properties/PropertyCard";
 
 interface CommercialSectionProps {
   properties: Property[];
   onSelectProperty: (property: Property) => void;
 }
 
-export default function CommercialSection({ properties, onSelectProperty }: CommercialSectionProps) {
-  const commercialProperties = properties.filter((p) => p.category === 'commercial').slice(0, 3);
+export default function CommercialSection({
+  properties,
+  onSelectProperty,
+}: CommercialSectionProps) {
+  const commercialProperties = properties
+    .filter((p) => p.category === "commercial")
+    .slice(0, 3);
 
   return (
-    <section id="commercial" className="py-24 sm:py-32 bg-[#faf7f2] relative overflow-hidden">
+    <section
+      id="commercial"
+      className="py-24 sm:py-32 bg-[#faf7f2] relative overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
@@ -24,13 +32,16 @@ export default function CommercialSection({ properties, onSelectProperty }: Comm
               Trophy <span className="font-semibold">Commercial Landmarks</span>
             </h2>
             <p className="mt-4 text-slate-600 text-sm sm:text-base font-light leading-relaxed">
-              Prime corporate headquarters, high-yield retail flagships, and sovereign-grade commercial developments positioned in high-velocity international business hubs.
+              Prime Corporate Address, high-yield retail flagships, and
+              sovereign-grade commercial developments positioned in
+              high-velocity international business hubs.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="p-3 bg-white rounded-xl shadow-xs border border-slate-200 text-xs text-slate-700 hidden sm:block">
-              <span className="font-bold text-[#0b2240]">7.8% - 10.4%</span> Average Commercial Net Yields
+              <span className="font-bold text-[#0b2240]">7.8% - 10.4%</span>{" "}
+              Average Commercial Net Yields
             </div>
           </div>
         </div>

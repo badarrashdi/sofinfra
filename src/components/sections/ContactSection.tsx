@@ -1,9 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Mail, Phone, MapPin, Send, CheckCircle2, Navigation, Loader2 } from 'lucide-react';
-import { ContactSectionData } from '@/lib/wordpress';
-import WhatsAppIcon from '@/components/common/WhatsAppIcon';
+import { useState } from "react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  CheckCircle2,
+  Navigation,
+  Loader2,
+} from "lucide-react";
+import { ContactSectionData } from "@/lib/wordpress";
+import WhatsAppIcon from "@/components/common/WhatsAppIcon";
 
 interface ContactSectionProps {
   data?: ContactSectionData;
@@ -14,11 +22,11 @@ export default function ContactSection({ data }: ContactSectionProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: 'Buying Residential (Gurugram/Noida)',
-    message: '',
+    name: "",
+    email: "",
+    phone: "",
+    subject: "Buying Residential (Gurugram/Noida)",
+    message: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,22 +35,27 @@ export default function ContactSection({ data }: ContactSectionProps) {
     setErrorMessage(null);
 
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
+      const res = await fetch("/api/contact", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
       const json = await res.json();
       if (!res.ok) {
-        throw new Error(json.error || 'Failed to submit inquiry. Please check your inputs.');
+        throw new Error(
+          json.error || "Failed to submit inquiry. Please check your inputs.",
+        );
       }
 
       setSubmitted(true);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Submission error. Please try again or WhatsApp us directly.';
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Submission error. Please try again or WhatsApp us directly.";
       setErrorMessage(msg);
     } finally {
       setIsSubmitting(false);
@@ -50,22 +63,24 @@ export default function ContactSection({ data }: ContactSectionProps) {
   };
 
   const currentAddress =
-    data?.address && !data.address.includes('Golf Course Road')
+    data?.address && !data.address.includes("Golf Course Road")
       ? data.address
-      : 'S-306-308, 2nd Floor, Tower A, Palam Vihar, Gurugram(HR)-122017';
+      : "S-306-308, 2nd Floor, Tower A, Palam Vihar, Gurugram(HR)-122017";
 
   const currentEmail =
-    data?.email && data.email !== 'contact@sofinfra.com'
+    data?.email && data.email !== "contact@sofinfra.com"
       ? data.email
-      : 'sales@sofinfra.com';
+      : "sales@sofinfra.com";
 
   const offices = [
     {
-      city: 'Headquarters (Gurugram)',
+      city: "Headquarters (Gurugram)",
       address: currentAddress,
-      landmark: 'Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2, Palam Vihar, Gurugram, Haryana 122017',
-      phone: data?.phone || data?.phone_numbers?.[0]?.number || '+91 81783 93751',
-      secondaryPhone: '+91 92123 16521',
+      landmark:
+        "Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2, Palam Vihar, Gurugram, Haryana 122017",
+      phone:
+        data?.phone || data?.phone_numbers?.[0]?.number || "+91 81783 93751",
+      secondaryPhone: "+91 92123 16521",
       email: currentEmail,
       isPrimary: true,
     },
@@ -77,14 +92,14 @@ export default function ContactSection({ data }: ContactSectionProps) {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#faf7f2] border border-[#c59b27]/20 text-[#ab841b] text-xs font-semibold tracking-widest uppercase mb-3">
-            {data?.badge || 'Private Client Advisory'}
+            {data?.badge || "Private Client Advisory"}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-[#0b2240] tracking-tight">
-            {data?.heading || 'Initiate Discreet Consultation'}
+            {data?.heading || "Initiate Discreet Consultation"}
           </h2>
           <p className="mt-4 text-slate-600 text-sm sm:text-base font-light leading-relaxed">
             {data?.subheading ||
-              'Direct access to senior partners specializing in high-value NCR society acquisitions, title due diligence, and capital asset placement.'}
+              "Direct access to senior partners specializing in high-value NCR society acquisitions, title due diligence, and capital asset placement."}
           </p>
         </div>
 
@@ -96,9 +111,12 @@ export default function ContactSection({ data }: ContactSectionProps) {
               <span className="text-[11px] uppercase tracking-wider text-[#c59b27] font-semibold">
                 Instant Advisory Desk
               </span>
-              <h3 className="text-lg font-bold mt-1">Priority WhatsApp &amp; Direct Phone</h3>
+              <h3 className="text-lg font-bold mt-1">
+                Priority WhatsApp &amp; Direct Phone
+              </h3>
               <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-                Connect directly with our desk for fast brochures, verified pricing sheets, and escorted site visits.
+                Connect directly with our desk for fast brochures, verified
+                pricing sheets, and escorted site visits.
               </p>
               <div className="mt-5 flex flex-wrap items-center gap-2.5">
                 <a
@@ -123,19 +141,21 @@ export default function ContactSection({ data }: ContactSectionProps) {
             {/* Offices List */}
             <div className="space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Corporate Headquarters
+                Corporate Address
               </h4>
               {offices.map((office) => (
                 <div
                   key={office.city}
                   className={`p-5 rounded-xl border transition-colors ${
                     office.isPrimary
-                      ? 'border-[#c59b27]/40 bg-[#faf7f2]/70 shadow-sm'
-                      : 'border-slate-200/80 bg-slate-50/50 hover:bg-white'
+                      ? "border-[#c59b27]/40 bg-[#faf7f2]/70 shadow-sm"
+                      : "border-slate-200/80 bg-slate-50/50 hover:bg-white"
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-bold text-[#0b2240]">{office.city}</p>
+                    <p className="text-sm font-bold text-[#0b2240]">
+                      {office.city}
+                    </p>
                     {office.isPrimary && (
                       <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#c59b27]/20 text-[#ab841b]">
                         Main HQ
@@ -150,7 +170,7 @@ export default function ContactSection({ data }: ContactSectionProps) {
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <Phone className="w-3 h-3 text-[#c59b27]" />
                       <a
-                        href={`tel:${office.phone.replace(/\s+/g, '')}`}
+                        href={`tel:${office.phone.replace(/\s+/g, "")}`}
                         className="hover:text-[#0b2240] transition-colors"
                       >
                         {office.phone}
@@ -159,7 +179,10 @@ export default function ContactSection({ data }: ContactSectionProps) {
                         <>
                           <span className="text-slate-400">/</span>
                           <a
-                            href={`tel:${office.secondaryPhone.replace(/\s+/g, '')}`}
+                            href={`tel:${office.secondaryPhone.replace(
+                              /\s+/g,
+                              "",
+                            )}`}
                             className="hover:text-[#0b2240] transition-colors"
                           >
                             {office.secondaryPhone}
@@ -182,9 +205,12 @@ export default function ContactSection({ data }: ContactSectionProps) {
 
           {/* Right: Contact Form */}
           <div className="lg:col-span-7 bg-slate-50 p-8 sm:p-10 rounded-2xl border border-slate-200/80">
-            <h3 className="text-xl font-bold text-[#0b2240] mb-2">Request Property Details / Site Visit</h3>
+            <h3 className="text-xl font-bold text-[#0b2240] mb-2">
+              Request Property Details / Site Visit
+            </h3>
             <p className="text-xs text-slate-500 mb-6">
-              Our certified RERA advisors will share verified society pricing and brochures.
+              Our certified RERA advisors will share verified society pricing
+              and brochures.
             </p>
 
             {submitted ? (
@@ -192,9 +218,12 @@ export default function ContactSection({ data }: ContactSectionProps) {
                 <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <h4 className="text-lg font-bold text-[#0b2240]">Inquiry Dispatched</h4>
+                <h4 className="text-lg font-bold text-[#0b2240]">
+                  Inquiry Dispatched
+                </h4>
                 <p className="text-xs text-slate-600 max-w-md mx-auto">
-                  Thank you for contacting SOFINFRA. An advisor will reach out via WhatsApp or call within 30 minutes.
+                  Thank you for contacting SOFINFRA. An advisor will reach out
+                  via WhatsApp or call within 30 minutes.
                 </p>
                 <button
                   type="button"
@@ -216,7 +245,9 @@ export default function ContactSection({ data }: ContactSectionProps) {
                       required
                       placeholder="e.g. Rahul Sharma"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-base sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
                     />
                   </div>
@@ -230,7 +261,9 @@ export default function ContactSection({ data }: ContactSectionProps) {
                       required
                       placeholder="e.g. rahul@example.com"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-base sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
                     />
                   </div>
@@ -246,7 +279,9 @@ export default function ContactSection({ data }: ContactSectionProps) {
                       required
                       placeholder="+91 81783 93751"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
                       className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-base sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
                     />
                   </div>
@@ -257,13 +292,23 @@ export default function ContactSection({ data }: ContactSectionProps) {
                     </label>
                     <select
                       value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, subject: e.target.value })
+                      }
                       className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-base sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white cursor-pointer"
                     >
-                      <option value="Buying Residential (Gurugram/Noida)">Buying Residential (Gurugram/Noida)</option>
-                      <option value="Commercial Acquisition / Cyber City">Commercial Acquisition / Cyber City</option>
-                      <option value="Listing My Property For Sale">Listing My Property For Sale</option>
-                      <option value="NRI Investment Consultation">NRI Investment Consultation</option>
+                      <option value="Buying Residential (Gurugram/Noida)">
+                        Buying Residential (Gurugram/Noida)
+                      </option>
+                      <option value="Commercial Acquisition / Cyber City">
+                        Commercial Acquisition / Cyber City
+                      </option>
+                      <option value="Listing My Property For Sale">
+                        Listing My Property For Sale
+                      </option>
+                      <option value="NRI Investment Consultation">
+                        NRI Investment Consultation
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -277,7 +322,9 @@ export default function ContactSection({ data }: ContactSectionProps) {
                     rows={4}
                     placeholder="Mention preferred budget, BHK configuration (3/4/5 BHK), target society (e.g. DLF, ATS, M3M, Godrej), or specific sector..."
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, message: e.target.value })
+                    }
                     className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-base sm:text-sm focus:outline-hidden focus:border-[#c59b27] bg-white"
                   />
                 </div>
@@ -319,14 +366,25 @@ export default function ContactSection({ data }: ContactSectionProps) {
                 <span>Headquarters &amp; Advisory Center</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-light">
-                Ansal Corporate Plaza <span className="font-medium text-slate-200">· Palam Vihar, Gurugram</span>
+                Ansal Corporate Plaza{" "}
+                <span className="font-medium text-slate-200">
+                  · Palam Vihar, Gurugram
+                </span>
               </h3>
               <div className="text-xs sm:text-sm text-slate-300 font-light max-w-2xl leading-relaxed space-y-1">
                 <p>
-                  <strong className="text-white font-medium">Official Address:</strong> S-306-308, 2nd Floor, Tower A, Palam Vihar, Gurugram(HR)-122017
+                  <strong className="text-white font-medium">
+                    Official Address:
+                  </strong>{" "}
+                  S-306-308, 2nd Floor, Tower A, Palam Vihar,
+                  Gurugram(HR)-122017
                 </p>
                 <p>
-                  <strong className="text-white font-medium">Map Landmark:</strong> Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2, Palam Vihar, Gurugram, Haryana 122017
+                  <strong className="text-white font-medium">
+                    Map Landmark:
+                  </strong>{" "}
+                  Ansal Corporate Plaza, block c, 2, Carterpuri Rd, Block C 2,
+                  Palam Vihar, Gurugram, Haryana 122017
                 </p>
               </div>
             </div>

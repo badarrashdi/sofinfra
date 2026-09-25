@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import Image from 'next/image';
+import { useState, useRef } from "react";
+import Image from "next/image";
 import {
   X,
   UploadCloud,
@@ -13,8 +13,12 @@ import {
   DollarSign,
   UserCheck,
   Clock,
-} from 'lucide-react';
-import { PropertyType, ListingType, PropertySubmissionPayload } from '@/types/property';
+} from "lucide-react";
+import {
+  PropertyType,
+  ListingType,
+  PropertySubmissionPayload,
+} from "@/types/property";
 
 interface SubmitPropertyModalProps {
   isOpen: boolean;
@@ -22,85 +26,100 @@ interface SubmitPropertyModalProps {
 }
 
 const PROPERTY_TYPES: PropertyType[] = [
-  'Apartment',
-  'Villa',
-  'House',
-  'Plot',
-  'Land',
-  'Office',
-  'Shop',
-  'Commercial Property',
-  'Residential Property',
-  'Building',
-  'Project',
-  'Penthouse',
-  'Other',
+  "Apartment",
+  "Villa",
+  "House",
+  "Plot",
+  "Land",
+  "Office",
+  "Shop",
+  "Commercial Property",
+  "Residential Property",
+  "Building",
+  "Project",
+  "Penthouse",
+  "Other",
 ];
 
-const LISTING_TYPES: ListingType[] = ['For Sale', 'Resale', 'New Launch', 'Other'];
+const LISTING_TYPES: ListingType[] = [
+  "For Sale",
+  "Resale",
+  "New Launch",
+  "Other",
+];
 
 const AMENITY_OPTIONS = [
-  'Swimming Pool',
-  'Private Elevator',
-  'Gym / Wellness Studio',
-  'Security & Concierge',
-  'Smart Home Automation',
-  'Covered Parking',
-  'Terrace / Balcony',
-  'Sea / Skyline View',
-  'Staff Accommodation',
-  'Green Building / Solar',
+  "Swimming Pool",
+  "Private Elevator",
+  "Gym / Wellness Studio",
+  "Security & Concierge",
+  "Smart Home Automation",
+  "Covered Parking",
+  "Terrace / Balcony",
+  "Sea / Skyline View",
+  "Staff Accommodation",
+  "Green Building / Solar",
 ];
 
-export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyModalProps) {
+export default function SubmitPropertyModal({
+  isOpen,
+  onClose,
+}: SubmitPropertyModalProps) {
   // Tabs / Steps
-  const [activeStep, setActiveStep] = useState<'owner' | 'property' | 'details' | 'media'>('owner');
+  const [activeStep, setActiveStep] = useState<
+    "owner" | "property" | "details" | "media"
+  >("owner");
 
   // Form State
   const [formData, setFormData] = useState<PropertySubmissionPayload>({
-    fullName: '',
-    email: '',
-    phone: '',
-    whatsapp: '',
-    preferredContactMethod: 'phone',
+    fullName: "",
+    email: "",
+    phone: "",
+    whatsapp: "",
+    preferredContactMethod: "phone",
 
-    title: '',
-    propertyType: 'Villa',
-    listingType: 'For Sale',
-    propertyStatus: 'Ready to Move',
-    city: 'Gurugram',
-    state: 'Haryana',
-    country: 'India',
-    locality: 'Palam Vihar',
-    pincode: '122017',
+    title: "",
+    propertyType: "Villa",
+    listingType: "For Sale",
+    propertyStatus: "Ready to Move",
+    city: "Gurugram",
+    state: "Haryana",
+    country: "India",
+    locality: "Palam Vihar",
+    pincode: "122017",
 
-    priceAvailability: 'request',
-    price: '',
-    priceMax: '',
-    currency: 'INR',
+    priceAvailability: "request",
+    price: "",
+    priceMax: "",
+    currency: "INR",
 
-    area: '',
-    areaUnit: 'sq ft',
+    area: "",
+    areaUnit: "sq ft",
     bedrooms: 3,
     bathrooms: 3,
-    furnishingStatus: 'Furnished',
-    parking: '2 Stalls',
-    floor: '',
-    totalFloors: '',
-    propertyAge: 'Brand New',
-    facing: 'East',
-    availability: 'Immediate',
-    amenities: ['Swimming Pool', 'Security & Concierge'],
-    description: '',
-    videoUrl: '',
+    furnishingStatus: "Furnished",
+    parking: "2 Stalls",
+    floor: "",
+    totalFloors: "",
+    propertyAge: "Brand New",
+    facing: "East",
+    availability: "Immediate",
+    amenities: ["Swimming Pool", "Security & Concierge"],
+    description: "",
+    videoUrl: "",
   });
 
   // Media state
-  const [selectedFiles, setSelectedFiles] = useState<{ file: File; previewUrl: string }[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<
+    { file: File; previewUrl: string }[]
+  >([]);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submissionResult, setSubmissionResult] = useState<{ postId?: string | number; message?: string } | null>(null);
+  const [submissionResult, setSubmissionResult] = useState<{
+    postId?: string | number;
+    message?: string;
+  } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -112,7 +131,7 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
     const files = e.target.files;
     if (!files) return;
 
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
     const maxFiles = 8;
     const maxSizeBytes = 10 * 1024 * 1024; // 10MB
 
@@ -127,7 +146,9 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
       const file = files[i];
 
       if (!allowedTypes.includes(file.type)) {
-        setUploadError(`"${file.name}" is not a supported format. Please use JPEG, PNG, or WebP.`);
+        setUploadError(
+          `"${file.name}" is not a supported format. Please use JPEG, PNG, or WebP.`,
+        );
         return;
       }
 
@@ -171,22 +192,22 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
     try {
       // Basic validation
       if (!formData.fullName || !formData.email || !formData.phone) {
-        setActiveStep('owner');
-        setUploadError('Please fill in all mandatory owner contact fields.');
+        setActiveStep("owner");
+        setUploadError("Please fill in all mandatory owner contact fields.");
         setIsSubmitting(false);
         return;
       }
 
       if (!formData.title || !formData.city) {
-        setActiveStep('property');
-        setUploadError('Please provide property title and city.');
+        setActiveStep("property");
+        setUploadError("Please provide property title and city.");
         setIsSubmitting(false);
         return;
       }
 
       if (!formData.area || !formData.description) {
-        setActiveStep('details');
-        setUploadError('Please provide property area size and description.');
+        setActiveStep("details");
+        setUploadError("Please provide property area size and description.");
         setIsSubmitting(false);
         return;
       }
@@ -195,7 +216,7 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
       const imageUrls = selectedFiles.map(
         (item) =>
           item.previewUrl ||
-          'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=85'
+          "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=85",
       );
 
       const payload = {
@@ -203,10 +224,10 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
         imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
       };
 
-      const res = await fetch('/api/submit-property', {
-        method: 'POST',
+      const res = await fetch("/api/submit-property", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
@@ -220,10 +241,10 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
           message: data.message,
         });
       } else {
-        setUploadError(data.error || 'Submission failed. Please check inputs.');
+        setUploadError(data.error || "Submission failed. Please check inputs.");
       }
     } catch {
-      setUploadError('Network communication error. Please try again.');
+      setUploadError("Network communication error. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -244,7 +265,8 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                 Submit Property For Consideration
               </h2>
               <p className="text-xs text-slate-300">
-                Direct Submission to SOFINFRA Portfolio (Subject to Verification)
+                Direct Submission to SOFINFRA Portfolio (Subject to
+                Verification)
               </p>
             </div>
           </div>
@@ -262,11 +284,11 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
           <div className="grid grid-cols-4 border-b border-slate-200 bg-slate-50 text-xs font-semibold">
             <button
               type="button"
-              onClick={() => setActiveStep('owner')}
+              onClick={() => setActiveStep("owner")}
               className={`py-3 px-2 flex items-center justify-center gap-1.5 transition-colors ${
-                activeStep === 'owner'
-                  ? 'bg-white text-[#0b2240] border-b-2 border-[#c59b27]'
-                  : 'text-slate-500 hover:text-slate-800'
+                activeStep === "owner"
+                  ? "bg-white text-[#0b2240] border-b-2 border-[#c59b27]"
+                  : "text-slate-500 hover:text-slate-800"
               }`}
             >
               <UserCheck className="w-3.5 h-3.5 text-[#c59b27]" />
@@ -275,11 +297,11 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
             </button>
             <button
               type="button"
-              onClick={() => setActiveStep('property')}
+              onClick={() => setActiveStep("property")}
               className={`py-3 px-2 flex items-center justify-center gap-1.5 transition-colors ${
-                activeStep === 'property'
-                  ? 'bg-white text-[#0b2240] border-b-2 border-[#c59b27]'
-                  : 'text-slate-500 hover:text-slate-800'
+                activeStep === "property"
+                  ? "bg-white text-[#0b2240] border-b-2 border-[#c59b27]"
+                  : "text-slate-500 hover:text-slate-800"
               }`}
             >
               <Building2 className="w-3.5 h-3.5 text-[#c59b27]" />
@@ -288,11 +310,11 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
             </button>
             <button
               type="button"
-              onClick={() => setActiveStep('details')}
+              onClick={() => setActiveStep("details")}
               className={`py-3 px-2 flex items-center justify-center gap-1.5 transition-colors ${
-                activeStep === 'details'
-                  ? 'bg-white text-[#0b2240] border-b-2 border-[#c59b27]'
-                  : 'text-slate-500 hover:text-slate-800'
+                activeStep === "details"
+                  ? "bg-white text-[#0b2240] border-b-2 border-[#c59b27]"
+                  : "text-slate-500 hover:text-slate-800"
               }`}
             >
               <DollarSign className="w-3.5 h-3.5 text-[#c59b27]" />
@@ -301,11 +323,11 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
             </button>
             <button
               type="button"
-              onClick={() => setActiveStep('media')}
+              onClick={() => setActiveStep("media")}
               className={`py-3 px-2 flex items-center justify-center gap-1.5 transition-colors ${
-                activeStep === 'media'
-                  ? 'bg-white text-[#0b2240] border-b-2 border-[#c59b27]'
-                  : 'text-slate-500 hover:text-slate-800'
+                activeStep === "media"
+                  ? "bg-white text-[#0b2240] border-b-2 border-[#c59b27]"
+                  : "text-slate-500 hover:text-slate-800"
               }`}
             >
               <UploadCloud className="w-3.5 h-3.5 text-[#c59b27]" />
@@ -323,17 +345,26 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
               <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
-              <h3 className="text-2xl font-bold text-[#0b2240]">Submission Received</h3>
+              <h3 className="text-2xl font-bold text-[#0b2240]">
+                Submission Received
+              </h3>
               <div className="p-5 rounded-xl bg-amber-50 border border-amber-200 text-left space-y-2 text-xs sm:text-sm text-amber-900">
                 <div className="flex items-center gap-2 font-bold text-amber-950">
                   <Clock className="w-4 h-4 text-amber-600" />
-                  <span>Status: Pending Review (Post #{submissionResult?.postId || 'New'})</span>
+                  <span>
+                    Status: Pending Review (Post #
+                    {submissionResult?.postId || "New"})
+                  </span>
                 </div>
                 <p className="leading-relaxed">
-                  In accordance with SOFINFRA security and verification policies, submitted properties <strong>never become public automatically</strong>.
+                  In accordance with SOFINFRA security and verification
+                  policies, submitted properties{" "}
+                  <strong>never become public automatically</strong>.
                 </p>
                 <p className="leading-relaxed">
-                  Our acquisitions team will review title integrity, architectural specifications, and imagery in the WordPress administration panel before publishing.
+                  Our acquisitions team will review title integrity,
+                  architectural specifications, and imagery in the WordPress
+                  administration panel before publishing.
                 </p>
               </div>
 
@@ -352,7 +383,7 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                   type="button"
                   onClick={() => {
                     setSubmitSuccess(false);
-                    setActiveStep('owner');
+                    setActiveStep("owner");
                     setSelectedFiles([]);
                   }}
                   className="px-6 py-2.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200"
@@ -371,12 +402,15 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
               )}
 
               {/* STEP 1: OWNER / CONTACT INFO */}
-              {activeStep === 'owner' && (
+              {activeStep === "owner" && (
                 <div className="space-y-5 animate-in fade-in duration-200">
                   <div className="border-b border-slate-100 pb-3">
-                    <h3 className="text-base font-bold text-[#0b2240]">Owner / Contact Information</h3>
+                    <h3 className="text-base font-bold text-[#0b2240]">
+                      Owner / Contact Information
+                    </h3>
                     <p className="text-xs text-slate-500">
-                      Your identity is kept strictly confidential and accessible only to authorized administrators.
+                      Your identity is kept strictly confidential and accessible
+                      only to authorized administrators.
                     </p>
                   </div>
 
@@ -388,9 +422,11 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Alistair Sterling"
+                        placeholder="e.g. Rahul Kumar"
                         value={formData.fullName}
-                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, fullName: e.target.value })
+                        }
                         className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27]"
                       />
                     </div>
@@ -402,9 +438,11 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                       <input
                         type="email"
                         required
-                        placeholder="e.g. principal@sterling.co.uk"
+                        placeholder="e.g. rahul@example.com"
                         value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, email: e.target.value })
+                        }
                         className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27]"
                       />
                     </div>
@@ -418,7 +456,9 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                         required
                         placeholder="+91 81783 93751"
                         value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, phone: e.target.value })
+                        }
                         className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27]"
                       />
                     </div>
@@ -431,7 +471,9 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                         type="tel"
                         placeholder="+91 81783 93751"
                         value={formData.whatsapp}
-                        onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, whatsapp: e.target.value })
+                        }
                         className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27]"
                       />
                     </div>
@@ -442,25 +484,37 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                       Preferred Contact Method
                     </label>
                     <div className="flex gap-4">
-                      {(['phone', 'whatsapp', 'email'] as const).map((method) => (
-                        <label key={method} className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="contactMethod"
-                            checked={formData.preferredContactMethod === method}
-                            onChange={() => setFormData({ ...formData, preferredContactMethod: method })}
-                            className="text-[#c59b27] focus:ring-[#c59b27]"
-                          />
-                          <span className="capitalize">{method}</span>
-                        </label>
-                      ))}
+                      {(["phone", "whatsapp", "email"] as const).map(
+                        (method) => (
+                          <label
+                            key={method}
+                            className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer"
+                          >
+                            <input
+                              type="radio"
+                              name="contactMethod"
+                              checked={
+                                formData.preferredContactMethod === method
+                              }
+                              onChange={() =>
+                                setFormData({
+                                  ...formData,
+                                  preferredContactMethod: method,
+                                })
+                              }
+                              className="text-[#c59b27] focus:ring-[#c59b27]"
+                            />
+                            <span className="capitalize">{method}</span>
+                          </label>
+                        ),
+                      )}
                     </div>
                   </div>
 
                   <div className="pt-4 flex justify-end">
                     <button
                       type="button"
-                      onClick={() => setActiveStep('property')}
+                      onClick={() => setActiveStep("property")}
                       className="px-6 py-2.5 rounded-lg bg-[#0b2240] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#122f55]"
                     >
                       Next: Property Info →
@@ -470,23 +524,30 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
               )}
 
               {/* STEP 2: PROPERTY / PROJECT INFORMATION */}
-              {activeStep === 'property' && (
+              {activeStep === "property" && (
                 <div className="space-y-5 animate-in fade-in duration-200">
                   <div className="border-b border-slate-100 pb-3">
-                    <h3 className="text-base font-bold text-[#0b2240]">Property / Project Information</h3>
-                    <p className="text-xs text-slate-500">Provide geographical and taxonomic classifications.</p>
+                    <h3 className="text-base font-bold text-[#0b2240]">
+                      Property / Project Information
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Provide geographical and taxonomic classifications.
+                    </p>
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Property / Project Title <span className="text-red-500">*</span>
+                      Property / Project Title{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. DLF The Camellias 4BHK Golf Facing"
                       value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, title: e.target.value })
+                      }
                       className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27]"
                     />
                   </div>
@@ -498,7 +559,12 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                       </label>
                       <select
                         value={formData.propertyType}
-                        onChange={(e) => setFormData({ ...formData, propertyType: e.target.value as PropertyType })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            propertyType: e.target.value as PropertyType,
+                          })
+                        }
                         className="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27]"
                       >
                         {PROPERTY_TYPES.map((type) => (
@@ -515,7 +581,12 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                       </label>
                       <select
                         value={formData.listingType}
-                        onChange={(e) => setFormData({ ...formData, listingType: e.target.value as ListingType })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            listingType: e.target.value as ListingType,
+                          })
+                        }
                         className="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27]"
                       >
                         {LISTING_TYPES.map((type) => (
@@ -534,7 +605,12 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                         type="text"
                         placeholder="e.g. Ready to Move, Under Construction"
                         value={formData.propertyStatus}
-                        onChange={(e) => setFormData({ ...formData, propertyStatus: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            propertyStatus: e.target.value,
+                          })
+                        }
                         className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27]"
                       />
                     </div>
@@ -550,7 +626,9 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                         required
                         placeholder="e.g. Gurugram, Noida, New Delhi"
                         value={formData.city}
-                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, city: e.target.value })
+                        }
                         className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27]"
                       />
                     </div>
@@ -563,7 +641,9 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                         type="text"
                         placeholder="e.g. Palam Vihar, Golf Course Rd, Sector 126"
                         value={formData.locality}
-                        onChange={(e) => setFormData({ ...formData, locality: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, locality: e.target.value })
+                        }
                         className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27]"
                       />
                     </div>
@@ -576,7 +656,9 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                         type="text"
                         placeholder="e.g. India"
                         value={formData.country}
-                        onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, country: e.target.value })
+                        }
                         className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-hidden focus:border-[#c59b27]"
                       />
                     </div>
@@ -585,14 +667,14 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                   <div className="pt-4 flex justify-between">
                     <button
                       type="button"
-                      onClick={() => setActiveStep('owner')}
+                      onClick={() => setActiveStep("owner")}
                       className="px-5 py-2 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200"
                     >
                       ← Back
                     </button>
                     <button
                       type="button"
-                      onClick={() => setActiveStep('details')}
+                      onClick={() => setActiveStep("details")}
                       className="px-6 py-2.5 rounded-lg bg-[#0b2240] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#122f55]"
                     >
                       Next: Pricing & Details →
@@ -602,12 +684,15 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
               )}
 
               {/* STEP 3: PRICING & PROPERTY SPECIFICATIONS */}
-              {activeStep === 'details' && (
+              {activeStep === "details" && (
                 <div className="space-y-5 animate-in fade-in duration-200">
                   <div className="border-b border-slate-100 pb-3">
-                    <h3 className="text-base font-bold text-[#0b2240]">Pricing & Architectural Specifications</h3>
+                    <h3 className="text-base font-bold text-[#0b2240]">
+                      Pricing & Architectural Specifications
+                    </h3>
                     <p className="text-xs text-slate-500">
-                      Pricing is completely optional. You may select &apos;Price on Request&apos; without entering a figure.
+                      Pricing is completely optional. You may select &apos;Price
+                      on Request&apos; without entering a figure.
                     </p>
                   </div>
 
@@ -621,31 +706,50 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                         <input
                           type="radio"
                           name="priceAvail"
-                          checked={formData.priceAvailability === 'request'}
-                          onChange={() => setFormData({ ...formData, priceAvailability: 'request' })}
+                          checked={formData.priceAvailability === "request"}
+                          onChange={() =>
+                            setFormData({
+                              ...formData,
+                              priceAvailability: "request",
+                            })
+                          }
                           className="text-[#c59b27] focus:ring-[#c59b27]"
                         />
-                        <span>Price on Request (Do not display exact price)</span>
+                        <span>
+                          Price on Request (Do not display exact price)
+                        </span>
                       </label>
                       <label className="flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer">
                         <input
                           type="radio"
                           name="priceAvail"
-                          checked={formData.priceAvailability === 'price'}
-                          onChange={() => setFormData({ ...formData, priceAvailability: 'price' })}
+                          checked={formData.priceAvailability === "price"}
+                          onChange={() =>
+                            setFormData({
+                              ...formData,
+                              priceAvailability: "price",
+                            })
+                          }
                           className="text-[#c59b27] focus:ring-[#c59b27]"
                         />
                         <span>Enter Specific Price / Range</span>
                       </label>
                     </div>
 
-                    {formData.priceAvailability === 'price' && (
+                    {formData.priceAvailability === "price" && (
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                         <div>
-                          <label className="block text-[11px] text-slate-600 mb-1">Currency</label>
+                          <label className="block text-[11px] text-slate-600 mb-1">
+                            Currency
+                          </label>
                           <select
                             value={formData.currency}
-                            onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                currency: e.target.value,
+                              })
+                            }
                             className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
                           >
                             <option value="USD">USD ($)</option>
@@ -656,22 +760,36 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                           </select>
                         </div>
                         <div>
-                          <label className="block text-[11px] text-slate-600 mb-1">Price (or Min Price)</label>
+                          <label className="block text-[11px] text-slate-600 mb-1">
+                            Price (or Min Price)
+                          </label>
                           <input
                             type="number"
                             placeholder="e.g. 8500000"
                             value={formData.price}
-                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                price: e.target.value,
+                              })
+                            }
                             className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
                           />
                         </div>
                         <div>
-                          <label className="block text-[11px] text-slate-600 mb-1">Max Price (If Range)</label>
+                          <label className="block text-[11px] text-slate-600 mb-1">
+                            Max Price (If Range)
+                          </label>
                           <input
                             type="number"
                             placeholder="Optional max price"
                             value={formData.priceMax}
-                            onChange={(e) => setFormData({ ...formData, priceMax: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                priceMax: e.target.value,
+                              })
+                            }
                             className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
                           />
                         </div>
@@ -690,17 +808,27 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                         required
                         placeholder="e.g. 5400"
                         value={formData.area}
-                        onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, area: e.target.value })
+                        }
                         className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Unit</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        Unit
+                      </label>
                       <select
                         value={formData.areaUnit}
                         onChange={(e) =>
-                          setFormData({ ...formData, areaUnit: e.target.value as 'sq ft' | 'sq m' | 'acres' })
+                          setFormData({
+                            ...formData,
+                            areaUnit: e.target.value as
+                              | "sq ft"
+                              | "sq m"
+                              | "acres",
+                          })
                         }
                         className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
                       >
@@ -711,25 +839,39 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Bedrooms</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        Bedrooms
+                      </label>
                       <input
                         type="number"
                         min={0}
                         placeholder="e.g. 4"
-                        value={formData.bedrooms || ''}
-                        onChange={(e) => setFormData({ ...formData, bedrooms: Number(e.target.value) })}
+                        value={formData.bedrooms || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            bedrooms: Number(e.target.value),
+                          })
+                        }
                         className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Bathrooms</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        Bathrooms
+                      </label>
                       <input
                         type="number"
                         min={0}
                         placeholder="e.g. 5"
-                        value={formData.bathrooms || ''}
-                        onChange={(e) => setFormData({ ...formData, bathrooms: Number(e.target.value) })}
+                        value={formData.bathrooms || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            bathrooms: Number(e.target.value),
+                          })
+                        }
                         className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
                       />
                     </div>
@@ -761,14 +903,20 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                   {/* Description */}
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Property Description <span className="text-red-500">*</span>
+                      Property Description{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       required
                       rows={4}
                       placeholder="Detailed architectural summary, unique fixtures, views, and provenance..."
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-hidden focus:border-[#c59b27]"
                     />
                   </div>
@@ -776,14 +924,14 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                   <div className="pt-4 flex justify-between">
                     <button
                       type="button"
-                      onClick={() => setActiveStep('property')}
+                      onClick={() => setActiveStep("property")}
                       className="px-5 py-2 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200"
                     >
                       ← Back
                     </button>
                     <button
                       type="button"
-                      onClick={() => setActiveStep('media')}
+                      onClick={() => setActiveStep("media")}
                       className="px-6 py-2.5 rounded-lg bg-[#0b2240] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#122f55]"
                     >
                       Next: Media & Review →
@@ -793,12 +941,15 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
               )}
 
               {/* STEP 4: MEDIA UPLOAD & REVIEW */}
-              {activeStep === 'media' && (
+              {activeStep === "media" && (
                 <div className="space-y-5 animate-in fade-in duration-200">
                   <div className="border-b border-slate-100 pb-3">
-                    <h3 className="text-base font-bold text-[#0b2240]">Property Images & Media</h3>
+                    <h3 className="text-base font-bold text-[#0b2240]">
+                      Property Images & Media
+                    </h3>
                     <p className="text-xs text-slate-500">
-                      Upload high-resolution photographs. Stored securely and reviewed in WordPress Media Library.
+                      Upload high-resolution photographs. Stored securely and
+                      reviewed in WordPress Media Library.
                     </p>
                   </div>
 
@@ -838,7 +989,12 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                             key={idx}
                             className="relative h-24 rounded-xl overflow-hidden border border-slate-200 group bg-slate-100"
                           >
-                            <Image src={item.previewUrl} alt="Preview" fill className="object-cover" />
+                            <Image
+                              src={item.previewUrl}
+                              alt="Preview"
+                              fill
+                              className="object-cover"
+                            />
                             <button
                               type="button"
                               onClick={(e) => {
@@ -865,7 +1021,9 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                       type="url"
                       placeholder="e.g. YouTube, Vimeo, or MP4 direct link"
                       value={formData.videoUrl}
-                      onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, videoUrl: e.target.value })
+                      }
                       className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-hidden focus:border-[#c59b27]"
                     />
                   </div>
@@ -877,14 +1035,17 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                       <strong className="text-slate-900 block mb-0.5">
                         Fiduciary Verification Protocol
                       </strong>
-                      Submissions are transferred to the WordPress backend as <em>Pending Review</em>. Our governance committee validates all disclosures before any property is syndicated on the public platform.
+                      Submissions are transferred to the WordPress backend as{" "}
+                      <em>Pending Review</em>. Our governance committee
+                      validates all disclosures before any property is
+                      syndicated on the public platform.
                     </div>
                   </div>
 
                   <div className="pt-4 flex justify-between items-center">
                     <button
                       type="button"
-                      onClick={() => setActiveStep('details')}
+                      onClick={() => setActiveStep("details")}
                       className="px-5 py-2 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200"
                     >
                       ← Back
@@ -895,7 +1056,9 @@ export default function SubmitPropertyModal({ isOpen, onClose }: SubmitPropertyM
                       disabled={isSubmitting}
                       className="px-8 py-3 rounded-lg bg-[#c59b27] text-[#07162c] text-xs font-bold uppercase tracking-wider hover:bg-[#d4af37] disabled:opacity-50 shadow-md transition-all"
                     >
-                      {isSubmitting ? 'Submitting to WordPress...' : 'Confirm & Submit Property'}
+                      {isSubmitting
+                        ? "Submitting to WordPress..."
+                        : "Confirm & Submit Property"}
                     </button>
                   </div>
                 </div>

@@ -114,8 +114,8 @@ export default function Footer({
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm">
               {[
-                { name: "Societies", href: "#buy-properties" },
-                // { name: 'Societies', href: '#societies' },
+                // { name: "Societies", href: "#buy-properties" },
+                { name: "Societies", href: "#societies" },
                 { name: "List Property", href: "#list-property" },
                 { name: "Reviews", href: "#reviews" },
                 { name: "Contact Us", href: "#contact" },
@@ -183,9 +183,7 @@ export default function Footer({
               <div className="flex items-start gap-1.5 leading-relaxed">
                 <MapPin className="w-3.5 h-3.5 text-[#c59b27] shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-white font-medium">
-                    Corporate Headquarters
-                  </p>
+                  <p className="text-white font-medium">Corporate Address</p>
                   <p>
                     S-306-308, 2nd Floor, Tower A, Palam Vihar,
                     Gurugram(HR)-122017
