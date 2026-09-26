@@ -82,8 +82,13 @@ export default function AboutSection({ data }: AboutSectionProps) {
           <div className="lg:col-span-7 relative">
             <div className="relative h-[380px] sm:h-[480px] rounded-2xl overflow-hidden shadow-2xl border border-slate-100">
               <Image
-                src="/images/luxury-architecture.jpg"
-                alt="SOFINFRA Luxury Architecture"
+                src={
+                  (typeof data?.image === "string" && data.image) ||
+                  (typeof data?.image === "object" && data.image?.url) ||
+                  data?.image_url ||
+                  "/images/luxury-architecture.jpg"
+                }
+                alt={data?.heading || "SOFINFRA Luxury Architecture"}
                 fill
                 priority
                 className="object-cover transition-transform duration-700 hover:scale-105"
@@ -92,10 +97,11 @@ export default function AboutSection({ data }: AboutSectionProps) {
               <div className="absolute inset-0 bg-linear-to-t from-[#0b2240]/80 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 text-white">
                 <p className="text-xs uppercase tracking-widest text-[#c59b27] font-semibold">
-                  Excellence In Execution
+                  {data?.image_badge || "Excellence In Execution"}
                 </p>
                 <p className="text-lg font-light mt-1">
-                  Transforming premier spaces into generational legacies.
+                  {data?.image_caption ||
+                    "Transforming premier spaces into generational legacies."}
                 </p>
               </div>
             </div>
@@ -103,13 +109,12 @@ export default function AboutSection({ data }: AboutSectionProps) {
 
           <div className="lg:col-span-5 space-y-6">
             <h3 className="text-xl font-semibold text-[#0b2240]">
-              An Uncompromised Approach to Real Estate
+              {data?.approach_heading ||
+                "An Uncompromised Approach to Real Estate"}
             </h3>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-              We do not treat real estate as a static transaction. From zoning
-              intricacies and structural feasibility to private wealth
-              preservation, our multidisciplinary team ensures every asset
-              adheres to the highest benchmarks of value creation.
+              {data?.paragraph_2 ||
+                "We do not treat real estate as a static transaction. From zoning intricacies and structural feasibility to private wealth preservation, our multidisciplinary team ensures every asset adheres to the highest benchmarks of value creation."}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
               {pillars.map((pillar) => {

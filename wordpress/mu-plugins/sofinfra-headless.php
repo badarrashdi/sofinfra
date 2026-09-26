@@ -183,6 +183,29 @@ function sofinfra_get_homepage_endpoint_data() {
                     $sec['address'] = 'S-306-308, 2nd Floor, Tower A, Palam Vihar, Gurugram(HR)-122017';
                 }
             }
+            if (isset($sec['acf_fc_layout']) && $sec['acf_fc_layout'] === 'about_section') {
+                if (empty($sec['approach_heading'])) {
+                    $sec['approach_heading'] = 'An Uncompromised Approach to Real Estate';
+                }
+                if (!empty($sec['image'])) {
+                    if (is_array($sec['image']) && isset($sec['image']['url'])) {
+                        $sec['image_url'] = $sec['image']['url'];
+                    } elseif (is_numeric($sec['image'])) {
+                        $sec['image_url'] = wp_get_attachment_url($sec['image']);
+                    } elseif (is_string($sec['image'])) {
+                        $sec['image_url'] = $sec['image'];
+                    }
+                }
+                if (empty($sec['image_url'])) {
+                    $sec['image_url'] = '/images/luxury-architecture.jpg';
+                }
+                if (empty($sec['image_badge'])) {
+                    $sec['image_badge'] = 'Excellence In Execution';
+                }
+                if (empty($sec['image_caption'])) {
+                    $sec['image_caption'] = 'Transforming premier spaces into generational legacies.';
+                }
+            }
             if (isset($sec['acf_fc_layout']) && $sec['acf_fc_layout'] === 'testimonials_section') {
                 if (empty($sec['trust_metrics']) || !is_array($sec['trust_metrics'])) {
                     $sec['trust_metrics'] = array(

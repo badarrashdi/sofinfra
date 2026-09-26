@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "jev:models": "node scripts/verify-jev.mjs",
+    "jev:decision": "node scripts/verify-jev.mjs --decision"
   },
   "dependencies": {
     "@storyblok/react": "^7.3.1",
+    "@typesafe-ai/sdk": "^0.6.0",
     "clsx": "^2.1.1",
     "framer-motion": "^13.4.0",
     "lucide-react": "^1.47.0",

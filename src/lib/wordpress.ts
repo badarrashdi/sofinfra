@@ -179,7 +179,12 @@ export interface AboutSectionData {
   badge?: string;
   heading?: string;
   paragraph_1?: string;
+  approach_heading?: string;
   paragraph_2?: string;
+  image?: string | { url?: string };
+  image_url?: string;
+  image_badge?: string;
+  image_caption?: string;
   stats?: Array<{ value: string; label: string }>;
   pillars?: Array<{ title: string; description: string; icon?: string }>;
 }
