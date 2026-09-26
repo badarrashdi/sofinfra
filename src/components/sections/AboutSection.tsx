@@ -55,7 +55,7 @@ export default function AboutSection({ data }: AboutSectionProps) {
   return (
     <section
       id="about"
-      className="py-24 sm:pt-0 sm:pb-32 bg-white relative overflow-hidden"
+      className="py-16 sm:pt-0 sm:pb-20 bg-white relative overflow-hidden"
     >
       {/* Subtle Background Geometry */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-slate-50 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />

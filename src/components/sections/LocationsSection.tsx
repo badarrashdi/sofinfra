@@ -56,7 +56,7 @@ export default function LocationsSection() {
   };
 
   return (
-    <section id="locations" className="py-24 sm:py-32 bg-white relative">
+    <section id="locations" className="py-16 sm:py-20 bg-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="max-w-3xl mb-16">

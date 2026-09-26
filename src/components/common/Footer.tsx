@@ -53,6 +53,14 @@ export default function Footer({
     { name: "The Amaryllis (New Delhi)", keyword: "amaryllis" },
   ];
 
+  // Dynamic top 5 societies from CMS / inventory
+  const topSocieties =
+    societies && societies.length > 0
+      ? [...societies]
+          .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
+          .slice(0, 5)
+      : null;
+
   return (
     <footer className="bg-[#07162c] text-slate-300 pt-16 pb-12 border-t border-white/10 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -114,7 +122,6 @@ export default function Footer({
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm">
               {[
-                // { name: "Societies", href: "#buy-properties" },
                 { name: "Societies", href: "#societies" },
                 { name: "List Property", href: "#list-property" },
                 { name: "Reviews", href: "#reviews" },
@@ -133,39 +140,59 @@ export default function Footer({
             </ul>
           </div>
 
-          {/* Col 4: Top Societies & Townships */}
+          {/* Col 4: Top Societies & Townships (Dynamic Top 5) */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#c59b27] mb-4">
               Societies &amp; Townships
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
-              {defaultSocieties.map((item) => {
-                const matchedSoc = societies?.find((s) =>
-                  s.name.toLowerCase().includes(item.keyword),
-                );
-                return (
-                  <li key={item.name}>
-                    <a
-                      href="#buy-properties"
-                      onClick={(e) => {
-                        if (matchedSoc && onSelectSociety) {
+              {topSocieties && topSocieties.length > 0
+                ? topSocieties.map((soc) => (
+                    <li key={soc.id || soc.name}>
+                      <a
+                        href="#societies"
+                        onClick={(e) => {
                           e.preventDefault();
-                          onSelectSociety(matchedSoc);
-                        } else {
-                          handleNavClick(e, "#buy-properties");
-                        }
-                      }}
-                      className="hover:text-white transition-colors cursor-pointer block truncate"
-                    >
-                      {item.name}
-                    </a>
-                  </li>
-                );
-              })}
+                          if (onSelectSociety) {
+                            onSelectSociety(soc);
+                          } else {
+                            handleNavClick(e, "#societies");
+                          }
+                        }}
+                        className="hover:text-white transition-colors cursor-pointer block truncate"
+                        title={`${soc.name} (${soc.city})`}
+                      >
+                        {soc.name}
+                      </a>
+                    </li>
+                  ))
+                : defaultSocieties.map((item) => {
+                    const matchedSoc = societies?.find((s) =>
+                      s.name.toLowerCase().includes(item.keyword),
+                    );
+                    return (
+                      <li key={item.name}>
+                        <a
+                          href="#societies"
+                          onClick={(e) => {
+                            if (matchedSoc && onSelectSociety) {
+                              e.preventDefault();
+                              onSelectSociety(matchedSoc);
+                            } else {
+                              handleNavClick(e, "#societies");
+                            }
+                          }}
+                          className="hover:text-white transition-colors cursor-pointer block truncate"
+                        >
+                          {item.name}
+                        </a>
+                      </li>
+                    );
+                  })}
               <li className="pt-1.5">
                 <a
-                  href="#buy-properties"
-                  onClick={(e) => handleNavClick(e, "#buy-properties")}
+                  href="#societies"
+                  onClick={(e) => handleNavClick(e, "#societies")}
                   className="text-[#c59b27] hover:underline transition-colors inline-flex items-center gap-1 text-xs cursor-pointer font-medium"
                 >
                   <span>Explore All Societies &rarr;</span>

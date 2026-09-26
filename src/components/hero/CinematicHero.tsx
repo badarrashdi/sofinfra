@@ -141,7 +141,7 @@ export default function CinematicHero({
   return (
     <section
       id="hero"
-      className="relative min-h-screen h-auto md:h-screen sm:min-h-[750px] lg:min-h-[850px] w-full flex items-center justify-center overflow-hidden bg-[#07162c] py-24 sm:py-0"
+      className="relative min-h-screen h-auto md:h-screen sm:min-h-[750px] lg:min-h-[850px] w-full flex items-center justify-center overflow-hidden bg-[#07162c] py-16 sm:py-0"
     >
       {/* BACKGROUND DRONE VIDEO ONLY with natural playback speed */}
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">

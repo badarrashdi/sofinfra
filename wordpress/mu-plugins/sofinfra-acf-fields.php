@@ -374,6 +374,29 @@ function sofinfra_register_homepage_acf_fields() {
                                 'default_value' => '120+ Verified Client Reviews',
                             ),
                             array(
+                                'key' => 'field_reviews_trust_metrics',
+                                'label' => 'Trust Metrics & Compliance Badges',
+                                'name' => 'trust_metrics',
+                                'type' => 'repeater',
+                                'button_label' => 'Add Trust Metric Badge',
+                                'sub_fields' => array(
+                                    array(
+                                        'key' => 'field_trust_metric_label',
+                                        'label' => 'Metric Label',
+                                        'name' => 'label',
+                                        'type' => 'text',
+                                        'default_value' => 'RERA Certified Advisory',
+                                    ),
+                                    array(
+                                        'key' => 'field_trust_metric_desc',
+                                        'label' => 'Metric Description',
+                                        'name' => 'desc',
+                                        'type' => 'text',
+                                        'default_value' => '100% compliant documentation',
+                                    ),
+                                ),
+                            ),
+                            array(
                                 'key' => 'field_reviews_items',
                                 'label' => 'Testimonials List',
                                 'name' => 'testimonials',
@@ -930,3 +953,36 @@ function sofinfra_register_property_acf_fields() {
         'show_in_rest' => 1,
     ));
 }
+
+// Pre-fill default Trust Metrics & Compliance Badges in ACF editor when empty
+add_filter('acf/load_value/name=trust_metrics', function ($value, $post_id, $field) {
+    if (empty($value) || !is_array($value)) {
+        return array(
+            array(
+                'field_trust_metric_label' => 'RERA Certified Advisory',
+                'field_trust_metric_desc' => '100% compliant documentation',
+                'label' => 'RERA Certified Advisory',
+                'desc' => '100% compliant documentation',
+            ),
+            array(
+                'field_trust_metric_label' => '₹1,500+ Cr Handled',
+                'field_trust_metric_desc' => 'In Delhi NCR luxury transactions',
+                'label' => '₹1,500+ Cr Handled',
+                'desc' => 'In Delhi NCR luxury transactions',
+            ),
+            array(
+                'field_trust_metric_label' => 'Zero Hidden Charges',
+                'field_trust_metric_desc' => 'Complete fiduciary transparency',
+                'label' => 'Zero Hidden Charges',
+                'desc' => 'Complete fiduciary transparency',
+            ),
+            array(
+                'field_trust_metric_label' => 'Verified Societies Only',
+                'field_trust_metric_desc' => 'Clear legal & structural titles',
+                'label' => 'Verified Societies Only',
+                'desc' => 'Clear legal & structural titles',
+            ),
+        );
+    }
+    return $value;
+}, 10, 3);

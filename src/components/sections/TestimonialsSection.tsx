@@ -47,20 +47,36 @@ export default function TestimonialsSection({
 }: TestimonialsSectionProps) {
   const reviews =
     data?.testimonials && data.testimonials.length > 0
-      ? data.testimonials.map((t) => ({
-          quote: t.review_text,
-          author: t.author_name,
-          title: t.role_locality,
-          location: t.role_locality,
-          rating: t.rating || 5,
-          verified: "Verified Client",
-        }))
+      ? data.testimonials.map((t) => {
+          const parsed =
+            typeof t.rating === "number"
+              ? t.rating
+              : parseInt(String(t.rating), 10);
+          const ratingCount =
+            !isNaN(parsed) && parsed > 0 ? Math.min(parsed, 5) : 5;
+          return {
+            quote: t.review_text,
+            author: t.author_name,
+            title: t.role_locality,
+            location: t.role_locality,
+            rating: ratingCount,
+            verified: "Verified Client",
+          };
+        })
       : REVIEWS;
+
+  const trustMetrics =
+    data?.trust_metrics && data.trust_metrics.length > 0
+      ? data.trust_metrics.map((m) => ({
+          label: m.label || m.title || "Trust Metric",
+          desc: m.desc || m.description || "",
+        }))
+      : TRUST_METRICS;
 
   return (
     <section
       id="reviews"
-      className="py-24 sm:pt-0 sm:pb-32 bg-slate-50/70 relative"
+      className="py-16 sm:pt-0 sm:pb-20 bg-slate-50/70 relative"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -90,8 +106,11 @@ export default function TestimonialsSection({
               <div>
                 {/* Rating Stars & Badge */}
                 <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-1">
-                    {[...Array(r.rating)].map((_, i) => (
+                  <div
+                    className="flex items-center gap-1"
+                    aria-label={`${r.rating} stars`}
+                  >
+                    {Array.from({ length: r.rating }).map((_, i) => (
                       <Star
                         key={i}
                         className="w-4 h-4 fill-[#c59b27] text-[#c59b27]"
@@ -122,7 +141,7 @@ export default function TestimonialsSection({
 
         {/* Trust Badges Bar */}
         <div className="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200/90 shadow-xs grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {TRUST_METRICS.map((metric, idx) => (
+          {trustMetrics.map((metric, idx) => (
             <div
               key={idx}
               className="flex flex-col items-center justify-center p-2"

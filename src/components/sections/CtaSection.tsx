@@ -15,7 +15,7 @@ export default function CtaSection({ onSubmitPropertyClick, data }: CtaSectionPr
   };
 
   return (
-    <section id="list-property" className="py-20 sm:py-28 bg-[#0b2240] text-white relative overflow-hidden">
+    <section id="list-property" className="py-16 sm:py-20 bg-[#0b2240] text-white relative overflow-hidden">
       {/* Background accents */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#c59b27]/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />

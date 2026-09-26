@@ -363,7 +363,7 @@ export default function SubmitPropertyModal({
                 </p>
                 <p className="leading-relaxed">
                   Our acquisitions team will review title integrity,
-                  architectural specifications, and imagery in the WordPress
+                  architectural specifications, and imagery in the SOFINFRA
                   administration panel before publishing.
                 </p>
               </div>
@@ -949,7 +949,7 @@ export default function SubmitPropertyModal({
                     </h3>
                     <p className="text-xs text-slate-500">
                       Upload high-resolution photographs. Stored securely and
-                      reviewed in WordPress Media Library.
+                      reviewed in SOFINFRA Media Archive.
                     </p>
                   </div>
 
@@ -1035,7 +1035,7 @@ export default function SubmitPropertyModal({
                       <strong className="text-slate-900 block mb-0.5">
                         Fiduciary Verification Protocol
                       </strong>
-                      Submissions are transferred to the WordPress backend as{" "}
+                      Submissions are transferred to the SOFINFRA backend as{" "}
                       <em>Pending Review</em>. Our governance committee
                       validates all disclosures before any property is
                       syndicated on the public platform.
@@ -1057,7 +1057,7 @@ export default function SubmitPropertyModal({
                       className="px-8 py-3 rounded-lg bg-[#c59b27] text-[#07162c] text-xs font-bold uppercase tracking-wider hover:bg-[#d4af37] disabled:opacity-50 shadow-md transition-all"
                     >
                       {isSubmitting
-                        ? "Submitting to WordPress..."
+                        ? "Submitting to SOFINFRA..."
                         : "Confirm & Submit Property"}
                     </button>
                   </div>

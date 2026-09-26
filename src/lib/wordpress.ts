@@ -199,10 +199,16 @@ export interface TestimonialsSectionData {
   subheading?: string;
   average_rating?: string;
   total_reviews?: string;
+  trust_metrics?: Array<{
+    label?: string;
+    desc?: string;
+    title?: string;
+    description?: string;
+  }>;
   testimonials?: Array<{
     author_name: string;
     role_locality: string;
-    rating?: number;
+    rating?: number | string;
     review_text: string;
   }>;
 }
@@ -406,7 +412,7 @@ export async function submitPropertyToWordPress(
   throw new Error(
     (result.data as { error?: string; message?: string })?.error ||
       (result.data as { error?: string; message?: string })?.message ||
-      `Failed to record property submission in WordPress (HTTP ${result.status}).`
+      `Failed to record property submission in SOFINFRA backend (HTTP ${result.status}).`
   );
 }
 
@@ -506,6 +512,6 @@ export async function submitContactInquiry(
   throw new Error(
     (result.data as { error?: string; message?: string })?.error ||
       (result.data as { error?: string; message?: string })?.message ||
-      `Failed to record inquiry in WordPress (HTTP ${result.status}).`
+      `Failed to record inquiry in SOFINFRA backend (HTTP ${result.status}).`
   );
 }

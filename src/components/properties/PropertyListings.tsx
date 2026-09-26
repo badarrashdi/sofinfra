@@ -186,7 +186,7 @@ export default function PropertyListings({
   };
 
   return (
-    <section id="buy-properties" className="py-24 sm:py-32 bg-slate-50/70 relative">
+    <section id="buy-properties" className="py-16 sm:py-20 bg-slate-50/70 relative">
       {/* Anchor alias for smooth legacy navigation */}
       <div id="buy-rent" className="absolute -top-24" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

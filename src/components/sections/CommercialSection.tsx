@@ -18,7 +18,7 @@ export default function CommercialSection({
   return (
     <section
       id="commercial"
-      className="py-24 sm:py-32 bg-[#faf7f2] relative overflow-hidden"
+      className="py-16 sm:py-20 bg-[#faf7f2] relative overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
