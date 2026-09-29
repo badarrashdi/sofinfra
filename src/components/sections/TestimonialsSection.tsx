@@ -131,9 +131,6 @@ export default function TestimonialsSection({
               <div className="mt-8 pt-4 border-t border-slate-100">
                 <p className="text-sm font-bold text-[#0b2240]">{r.author}</p>
                 <p className="text-xs text-slate-500">{r.title}</p>
-                <p className="text-[11px] text-[#c59b27] font-medium mt-0.5">
-                  {r.location}
-                </p>
               </div>
             </div>
           ))}
